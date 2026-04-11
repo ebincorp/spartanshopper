@@ -7,8 +7,8 @@ export default defineConfig({
   name: 'spartanshopper',
   title: 'SpartanShopper',
 
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  projectId: 'eohdr7jw',
+  dataset: 'production',
 
   plugins: [structureTool(), visionTool()],
 
