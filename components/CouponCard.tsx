@@ -8,6 +8,7 @@ interface CouponCardProps {
   code: string
   discount?: string
   affiliateUrl: string
+  slug: string
   expiryDate?: string
   verified?: boolean
 }
@@ -23,6 +24,7 @@ export default function CouponCard({
   code,
   discount,
   affiliateUrl,
+  slug,
   expiryDate,
   verified,
 }: CouponCardProps) {
@@ -99,7 +101,7 @@ export default function CouponCard({
 
         {/* CTA */}
         <a
-          href={affiliateUrl}
+          href={`/go/${slug}`}
           target="_blank"
           rel="noopener noreferrer nofollow"
           className={`block w-full text-center font-bold py-2.5 rounded-xl text-sm transition ${

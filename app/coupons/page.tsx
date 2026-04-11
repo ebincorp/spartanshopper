@@ -54,6 +54,7 @@ export default async function CouponsPage() {
                 code={coupon.code}
                 discount={coupon.discount}
                 affiliateUrl={coupon.affiliateUrl}
+                slug={coupon.slug.current}
                 expiryDate={coupon.expiryDate}
                 verified={coupon.verified}
               />
