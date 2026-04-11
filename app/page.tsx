@@ -109,6 +109,7 @@ export default async function HomePage() {
                   salePrice={deal.salePrice}
                   originalPrice={deal.originalPrice}
                   affiliateUrl={deal.affiliateUrl}
+                  slug={deal.slug.current}
                   image={deal.image ? urlFor(deal.image).width(400).url() : undefined}
                   expiryDate={deal.expiryDate}
                 />

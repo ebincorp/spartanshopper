@@ -6,6 +6,7 @@ interface DealCardProps {
   salePrice: number
   originalPrice?: number
   affiliateUrl: string
+  slug: string
   image?: string
   expiryDate?: string
 }
@@ -26,6 +27,7 @@ export default function DealCard({
   salePrice,
   originalPrice,
   affiliateUrl,
+  slug,
   image,
   expiryDate,
 }: DealCardProps) {
@@ -39,13 +41,13 @@ export default function DealCard({
     <div className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-200 group">
 
       {/* Image */}
-      <div className="relative w-full h-44 bg-gray-100 overflow-hidden">
+      <div className="relative w-full h-44 bg-white overflow-hidden">
         {image ? (
           <Image
             src={image}
             alt={title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-contain group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-300">
@@ -96,7 +98,7 @@ export default function DealCard({
 
         {/* CTA */}
         <a
-          href={affiliateUrl}
+          href={`/go/${slug}`}
           target="_blank"
           rel="noopener noreferrer nofollow"
           className={`block w-full text-center text-white font-bold py-2.5 rounded-xl text-sm transition-opacity ${
