@@ -37,12 +37,12 @@ export default function SweepstakesCard({
     >
       {/* Image or accent bar */}
       {image ? (
-        <div className="relative w-full h-44 overflow-hidden">
+        <div className="relative w-full h-44 overflow-hidden bg-gray-100">
           <Image
             src={image}
             alt={title}
             fill
-            className="object-cover"
+            className="object-contain"
           />
         </div>
       ) : (
