@@ -76,6 +76,18 @@ export const dealCategoriesQuery = `
   array::unique(*[_type == "deal" && active == true && defined(category)].category)
 `
 
+// ── LINK CLOAKER ─────────────────────────────────────────────────────────────
+// Returns affiliateUrl (deals/coupons) or entryUrl (sweepstakes) for a given slug
+export const affiliateUrlBySlugQuery = `
+  *[slug.current == $slug && active == true][0] {
+    _type,
+    "url": select(
+      _type == "sweepstake" => entryUrl,
+      affiliateUrl
+    )
+  }
+`
+
 // ── SITEMAP SLUGS ────────────────────────────────────────────────────────────
 export const dealSlugsQuery = `
   *[_type == "deal" && active == true && defined(slug.current)] {
