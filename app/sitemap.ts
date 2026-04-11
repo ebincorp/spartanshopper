@@ -12,6 +12,10 @@ interface SlugEntry {
 export const revalidate = 3600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
+    return [{ url: BASE_URL }]
+  }
+
   const [deals, coupons, sweepstakes] = await Promise.all([
     client.fetch<SlugEntry[]>(dealSlugsQuery).catch(() => [] as SlugEntry[]),
     client.fetch<SlugEntry[]>(couponSlugsQuery).catch(() => [] as SlugEntry[]),
