@@ -182,6 +182,7 @@ export default async function HomePage() {
                   sponsor={sweep.sponsor}
                   prize={sweep.prize}
                   entryUrl={sweep.entryUrl}
+                  slug={sweep.slug.current}
                   entryDeadline={sweep.entryDeadline}
                   entryFrequency={sweep.entryFrequency}
                 />
