@@ -1,4 +1,4 @@
-import { client } from '@/lib/sanity.client'
+import { client, urlFor } from '@/lib/sanity.client'
 import { sweepstakesQuery } from '@/lib/queries'
 import type { Sweepstake } from '@/lib/types'
 import SweepstakesCard from '@/components/SweepstakesCard'
@@ -62,6 +62,7 @@ export default async function SweepstakesPage() {
                   entryUrl={sweep.entryUrl}
                   entryDeadline={sweep.entryDeadline}
                   entryFrequency={sweep.entryFrequency}
+                  image={sweep.image ? urlFor(sweep.image).width(600).url() : undefined}
                 />
               ))}
             </div>

@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 interface SweepstakesCardProps {
   title: string
   sponsor: string
@@ -5,6 +7,7 @@ interface SweepstakesCardProps {
   entryUrl: string
   entryDeadline: string
   entryFrequency?: string
+  image?: string
 }
 
 function getDeadlineInfo(deadline: string): { label: string; urgent: boolean; expired: boolean } {
@@ -23,6 +26,7 @@ export default function SweepstakesCard({
   entryUrl,
   entryDeadline,
   entryFrequency,
+  image,
 }: SweepstakesCardProps) {
   const deadline = getDeadlineInfo(entryDeadline)
 
@@ -31,10 +35,21 @@ export default function SweepstakesCard({
       className="rounded-2xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-200"
       style={{ backgroundColor: '#1A1A2E' }}
     >
-      {/* Red accent bar */}
-      <div style={{ backgroundColor: '#E63946' }} className="h-1.5 w-full" />
+      {/* Image or accent bar */}
+      {image ? (
+        <div className="relative w-full h-44 overflow-hidden">
+          <Image
+            src={image}
+            alt={title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      ) : (
+        <div style={{ backgroundColor: '#E63946' }} className="h-1.5 w-full" />
+      )}
 
-      {/* Trophy icon header */}
+      {/* Header row */}
       <div className="px-5 pt-5 pb-3 flex items-start justify-between">
         <div
           style={{ backgroundColor: '#E63946' }}
