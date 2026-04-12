@@ -28,13 +28,15 @@ export default function CouponCard({
   expiryDate,
   verified,
 }: CouponCardProps) {
+  const [revealed, setRevealed] = useState(false)
   const [copied, setCopied] = useState(false)
   const expired = isExpired(expiryDate)
 
-  const handleCopy = () => {
+  const handleReveal = () => {
+    setRevealed(true)
     navigator.clipboard.writeText(code).then(() => {
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      setTimeout(() => setCopied(false), 2500)
     })
   }
 
@@ -71,26 +73,38 @@ export default function CouponCard({
         <h3 className="text-gray-900 font-bold text-sm leading-snug mb-4 flex-1">{title}</h3>
 
         {/* Coupon Code Box */}
-        <button
-          onClick={handleCopy}
-          disabled={expired}
-          className={`w-full flex items-center justify-between border-2 border-dashed rounded-xl px-4 py-3 mb-4 transition group ${
-            expired
-              ? 'border-gray-200 cursor-default opacity-50'
-              : 'border-[#E63946] hover:bg-[#E63946]/5 cursor-pointer'
-          }`}
-        >
-          <span
-            className={`font-mono font-bold text-lg tracking-widest ${
-              expired ? 'text-gray-400' : 'text-[#E63946]'
+        {!revealed && !expired ? (
+          <button
+            onClick={handleReveal}
+            className="w-full flex items-center justify-between border-2 border-dashed border-[#E63946] rounded-xl px-4 py-3 mb-4 transition hover:bg-[#E63946]/5 cursor-pointer group"
+          >
+            <span className="font-mono font-bold text-lg tracking-widest text-gray-300 select-none">
+              {'•'.repeat(code.length)}
+            </span>
+            <span className="text-xs font-bold text-white px-3 py-1 rounded-lg" style={{ backgroundColor: '#E63946' }}>
+              Reveal Code
+            </span>
+          </button>
+        ) : (
+          <div
+            className={`w-full flex items-center justify-between border-2 border-dashed rounded-xl px-4 py-3 mb-4 ${
+              expired ? 'border-gray-200 opacity-50' : 'border-[#E63946]'
             }`}
           >
-            {code}
-          </span>
-          <span className={`text-xs font-semibold ${expired ? 'text-gray-300' : 'text-gray-400 group-hover:text-[#E63946]'}`}>
-            {copied ? '✓ Copied!' : 'Click to copy'}
-          </span>
-        </button>
+            <span
+              className={`font-mono font-bold text-lg tracking-widest ${
+                expired ? 'text-gray-400' : 'text-[#E63946]'
+              }`}
+            >
+              {code}
+            </span>
+            {!expired && (
+              <span className="text-xs font-semibold text-green-600">
+                {copied ? 'Copied! ✓' : '✓ Revealed'}
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Expiry */}
         {expiryDate && !expired && (
