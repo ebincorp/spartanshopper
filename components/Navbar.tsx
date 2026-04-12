@@ -11,6 +11,7 @@ export default function Navbar() {
     { label: 'Deals', href: '/deals' },
     { label: 'Coupons', href: '/coupons' },
     { label: 'Sweepstakes', href: '/sweepstakes' },
+    { label: 'Blog', href: '/blog' },
   ]
 
   return (

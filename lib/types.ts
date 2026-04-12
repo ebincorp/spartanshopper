@@ -34,6 +34,19 @@ export interface Coupon {
   active: boolean
 }
 
+export interface Post {
+  _id: string
+  title: string
+  slug: { current: string }
+  publishedAt: string
+  author?: string
+  category?: string
+  excerpt?: string
+  coverImage?: SanityImage
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  body?: any[]
+}
+
 export interface Sweepstake {
   _id: string
   title: string
