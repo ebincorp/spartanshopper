@@ -15,6 +15,15 @@ export const metadata: Metadata = {
   description: 'Find the best deals, verified coupon codes, and free sweepstakes — all in one place.',
   keywords: 'deals, coupons, coupon codes, sweepstakes, discounts, promo codes, free prizes',
   metadataBase: new URL('https://spartanshopper.com'),
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/site.webmanifest',
   openGraph: {
     title: 'SpartanShopper — Deals, Coupons & Sweepstakes',
     description: 'Find the best deals, verified coupon codes, and free sweepstakes — all in one place.',
