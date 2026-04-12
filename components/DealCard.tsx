@@ -56,8 +56,8 @@ export default function DealCard({
             </svg>
           </div>
         )}
-        {/* Savings badge */}
-        {savings && (
+        {/* Savings badge — only show for realistic discounts (≤75%) */}
+        {savings && savings <= 75 && (
           <div
             style={{ backgroundColor: '#E63946' }}
             className="absolute top-3 left-3 text-white text-xs font-bold px-2 py-1 rounded-full"
