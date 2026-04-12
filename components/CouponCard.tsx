@@ -8,6 +8,7 @@ interface CouponCardProps {
   store: string
   code: string
   discount?: string
+  description?: string
   image?: string
   affiliateUrl: string
   slug: string
@@ -25,6 +26,7 @@ export default function CouponCard({
   store,
   code,
   discount,
+  description,
   image,
   affiliateUrl,
   slug,
@@ -85,7 +87,11 @@ export default function CouponCard({
 
       {/* Body */}
       <div className="p-4 flex flex-col flex-1">
-        <h3 className="text-gray-900 font-bold text-sm leading-snug mb-4 flex-1">{title}</h3>
+        <h3 className="text-gray-900 font-bold text-sm leading-snug mb-1">{title}</h3>
+        {description && (
+          <p className="text-gray-500 text-xs leading-relaxed mb-4">{description}</p>
+        )}
+        {!description && <div className="mb-4" />}
 
         {/* Coupon Code Box */}
         {!revealed && !expired ? (

@@ -152,6 +152,7 @@ export default async function HomePage() {
                   store={coupon.store}
                   code={coupon.code}
                   discount={coupon.discount}
+                  description={coupon.description}
                   image={coupon.image ? urlFor(coupon.image).width(600).url() : undefined}
                   affiliateUrl={coupon.affiliateUrl}
                   slug={coupon.slug.current}

@@ -40,6 +40,12 @@ export default defineType({
       description: 'e.g. "20% off" or "$10 off sitewide"',
     }),
     defineField({
+      name: 'description',
+      title: 'Description',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
       name: 'image',
       title: 'Image',
       type: 'image',

@@ -26,6 +26,7 @@ export interface Coupon {
   store: string
   code: string
   discount?: string
+  description?: string
   image?: SanityImage
   affiliateUrl: string
   expiryDate?: string
