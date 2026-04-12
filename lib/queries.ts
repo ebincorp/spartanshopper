@@ -76,6 +76,11 @@ export const dealCategoriesQuery = `
   array::unique(*[_type == "deal" && active == true && defined(category)].category)
 `
 
+// ── COUNTS ───────────────────────────────────────────────────────────────────
+export const dealCountQuery = `count(*[_type == "deal" && active == true])`
+export const couponCountQuery = `count(*[_type == "coupon" && active == true])`
+export const sweepstakeCountQuery = `count(*[_type == "sweepstake" && active == true])`
+
 // ── LINK CLOAKER ─────────────────────────────────────────────────────────────
 // Returns affiliateUrl (deals/coupons) or entryUrl (sweepstakes) for a given slug
 export const affiliateUrlBySlugQuery = `

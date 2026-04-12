@@ -4,6 +4,9 @@ import {
   featuredDealsQuery,
   featuredCouponsQuery,
   featuredSweepstakesQuery,
+  dealCountQuery,
+  couponCountQuery,
+  sweepstakeCountQuery,
 } from '@/lib/queries'
 import type { Deal, Coupon, Sweepstake } from '@/lib/types'
 import DealCard from '@/components/DealCard'
@@ -12,19 +15,22 @@ import SweepstakesCard from '@/components/SweepstakesCard'
 
 async function getData() {
   try {
-    const [deals, coupons, sweepstakes] = await Promise.all([
+    const [deals, coupons, sweepstakes, dealCount, couponCount, sweepstakeCount] = await Promise.all([
       client.fetch<Deal[]>(featuredDealsQuery),
       client.fetch<Coupon[]>(featuredCouponsQuery),
       client.fetch<Sweepstake[]>(featuredSweepstakesQuery),
+      client.fetch<number>(dealCountQuery),
+      client.fetch<number>(couponCountQuery),
+      client.fetch<number>(sweepstakeCountQuery),
     ])
-    return { deals, coupons, sweepstakes }
+    return { deals, coupons, sweepstakes, dealCount, couponCount, sweepstakeCount }
   } catch {
-    return { deals: [], coupons: [], sweepstakes: [] }
+    return { deals: [], coupons: [], sweepstakes: [], dealCount: 0, couponCount: 0, sweepstakeCount: 0 }
   }
 }
 
 export default async function HomePage() {
-  const { deals, coupons, sweepstakes } = await getData()
+  const { deals, coupons, sweepstakes, dealCount, couponCount, sweepstakeCount } = await getData()
 
   return (
     <main>
@@ -70,9 +76,9 @@ export default async function HomePage() {
           </div>
           <div className="flex justify-center gap-10 mt-12 flex-wrap">
             {[
-              { num: '500+', label: 'Active Deals' },
-              { num: '200+', label: 'Coupon Codes' },
-              { num: '50+', label: 'Sweepstakes' },
+              { num: dealCount > 0 ? `${dealCount}+` : 'Coming Soon', label: 'Active Deals' },
+              { num: couponCount > 0 ? `${couponCount}+` : 'Coming Soon', label: 'Coupon Codes' },
+              { num: sweepstakeCount > 0 ? `${sweepstakeCount}+` : 'Coming Soon', label: 'Sweepstakes' },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <div style={{ color: '#E63946' }} className="text-3xl font-extrabold">{stat.num}</div>
