@@ -16,12 +16,12 @@ export const metadata: Metadata = {
   keywords: 'deals, coupons, coupon codes, sweepstakes, discounts, promo codes, free prizes',
   metadataBase: new URL('https://spartanshopper.com'),
   icons: {
-    icon: [
-      { url: '/favicon.ico' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-    ],
+    icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
+    other: [
+      { rel: 'icon', url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { rel: 'icon', url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    ],
   },
   manifest: '/site.webmanifest',
   openGraph: {
