@@ -6,7 +6,7 @@ import Image from 'next/image'
 interface CouponCardProps {
   title: string
   store: string
-  code: string
+  code?: string
   discount?: string
   description?: string
   image?: string
@@ -39,7 +39,7 @@ export default function CouponCard({
 
   const handleReveal = () => {
     setRevealed(true)
-    navigator.clipboard.writeText(code).then(() => {
+    navigator.clipboard.writeText(code!).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)
     })
@@ -94,37 +94,39 @@ export default function CouponCard({
         {!description && <div className="mb-4" />}
 
         {/* Coupon Code Box */}
-        {!revealed && !expired ? (
-          <button
-            onClick={handleReveal}
-            className="w-full flex items-center justify-between border-2 border-dashed border-[#E63946] rounded-xl px-4 py-3 mb-4 transition hover:bg-[#E63946]/5 cursor-pointer group"
-          >
-            <span className="font-mono font-bold text-lg tracking-widest text-gray-300 select-none">
-              {'•'.repeat(code.length)}
-            </span>
-            <span className="text-xs font-bold text-white px-3 py-1 rounded-lg" style={{ backgroundColor: '#E63946' }}>
-              Reveal Code
-            </span>
-          </button>
-        ) : (
-          <div
-            className={`w-full flex items-center justify-between border-2 border-dashed rounded-xl px-4 py-3 mb-4 ${
-              expired ? 'border-gray-200 opacity-50' : 'border-[#E63946]'
-            }`}
-          >
-            <span
-              className={`font-mono font-bold text-lg tracking-widest ${
-                expired ? 'text-gray-400' : 'text-[#E63946]'
+        {code && code.trim() !== '' && (
+          !revealed && !expired ? (
+            <button
+              onClick={handleReveal}
+              className="w-full flex items-center justify-between border-2 border-dashed border-[#E63946] rounded-xl px-4 py-3 mb-4 transition hover:bg-[#E63946]/5 cursor-pointer group"
+            >
+              <span className="font-mono font-bold text-lg tracking-widest text-gray-300 select-none">
+                {'•'.repeat(code.length)}
+              </span>
+              <span className="text-xs font-bold text-white px-3 py-1 rounded-lg" style={{ backgroundColor: '#E63946' }}>
+                Reveal Code
+              </span>
+            </button>
+          ) : (
+            <div
+              className={`w-full flex items-center justify-between border-2 border-dashed rounded-xl px-4 py-3 mb-4 ${
+                expired ? 'border-gray-200 opacity-50' : 'border-[#E63946]'
               }`}
             >
-              {code}
-            </span>
-            {!expired && (
-              <span className="text-xs font-semibold text-green-600">
-                {copied ? 'Copied! ✓' : '✓ Revealed'}
+              <span
+                className={`font-mono font-bold text-lg tracking-widest ${
+                  expired ? 'text-gray-400' : 'text-[#E63946]'
+                }`}
+              >
+                {code}
               </span>
-            )}
-          </div>
+              {!expired && (
+                <span className="text-xs font-semibold text-green-600">
+                  {copied ? 'Copied! ✓' : '✓ Revealed'}
+                </span>
+              )}
+            </div>
+          )
         )}
 
         {/* Expiry */}
