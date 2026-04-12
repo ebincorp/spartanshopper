@@ -8,6 +8,7 @@ export default function Footer() {
     { label: 'Contact', href: '/contact' },
     { label: 'Privacy Policy', href: '/privacy-policy' },
     { label: 'Affiliate Disclosure', href: '/affiliate-disclosure' },
+    { label: 'Terms of Service', href: '/terms-of-service' },
   ]
 
   return (
