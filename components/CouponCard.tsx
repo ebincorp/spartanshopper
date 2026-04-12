@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 
 interface CouponCardProps {
   title: string
   store: string
   code: string
   discount?: string
+  image?: string
   affiliateUrl: string
   slug: string
   expiryDate?: string
@@ -23,6 +25,7 @@ export default function CouponCard({
   store,
   code,
   discount,
+  image,
   affiliateUrl,
   slug,
   expiryDate,
@@ -42,6 +45,18 @@ export default function CouponCard({
 
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-200">
+
+      {/* Image */}
+      {image && (
+        <div className="relative w-full h-36 bg-gray-100 overflow-hidden">
+          <Image
+            src={image}
+            alt={title}
+            fill
+            className="object-contain"
+          />
+        </div>
+      )}
 
       {/* Top bar */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="px-4 py-3 flex items-center justify-between">

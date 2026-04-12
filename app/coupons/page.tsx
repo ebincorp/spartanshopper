@@ -1,4 +1,4 @@
-import { client } from '@/lib/sanity.client'
+import { client, urlFor } from '@/lib/sanity.client'
 import { couponsQuery } from '@/lib/queries'
 import type { Coupon } from '@/lib/types'
 import CouponCard from '@/components/CouponCard'
@@ -53,6 +53,7 @@ export default async function CouponsPage() {
                 store={coupon.store}
                 code={coupon.code}
                 discount={coupon.discount}
+                image={coupon.image ? urlFor(coupon.image).width(600).url() : undefined}
                 affiliateUrl={coupon.affiliateUrl}
                 slug={coupon.slug.current}
                 expiryDate={coupon.expiryDate}

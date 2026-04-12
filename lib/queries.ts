@@ -31,14 +31,14 @@ export const dealBySlugQuery = `
 export const couponsQuery = `
   *[_type == "coupon" && active == true] | order(_createdAt desc) {
     _id, title, slug, store, code, discount,
-    affiliateUrl, expiryDate, verified, active
+    image, affiliateUrl, expiryDate, verified, active
   }
 `
 
 export const featuredCouponsQuery = `
   *[_type == "coupon" && active == true] | order(_createdAt desc)[0...3] {
     _id, title, slug, store, code, discount,
-    affiliateUrl, expiryDate, verified, active
+    image, affiliateUrl, expiryDate, verified, active
   }
 `
 
