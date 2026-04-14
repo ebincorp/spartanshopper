@@ -65,6 +65,13 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'affiliateSlug',
+      title: 'Affiliate Link Slug',
+      type: 'slug',
+      description: 'Used for cloaked links e.g. spartanshopper.com/go/valvoline-10-off',
+      options: { source: 'title', maxLength: 96 },
+    }),
+    defineField({
       name: 'expiryDate',
       title: 'Expiry Date',
       type: 'datetime',

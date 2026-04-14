@@ -64,6 +64,19 @@ export default defineType({
       ],
     }),
     defineField({
+      name: 'affiliateUrl',
+      title: 'Affiliate URL',
+      type: 'url',
+      description: 'Optional affiliate link for this post e.g. a featured product.',
+    }),
+    defineField({
+      name: 'affiliateSlug',
+      title: 'Affiliate Link Slug',
+      type: 'slug',
+      description: 'Used for cloaked links e.g. spartanshopper.com/go/japanese-exfoliating-towel',
+      options: { source: 'title', maxLength: 96 },
+    }),
+    defineField({
       name: 'body',
       title: 'Body',
       type: 'array',

@@ -63,6 +63,13 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'affiliateSlug',
+      title: 'Affiliate Link Slug',
+      type: 'slug',
+      description: 'Used for cloaked links e.g. spartanshopper.com/go/nike-deal',
+      options: { source: 'title', maxLength: 96 },
+    }),
+    defineField({
       name: 'category',
       title: 'Category',
       type: 'string',
