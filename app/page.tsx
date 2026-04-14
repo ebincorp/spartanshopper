@@ -116,6 +116,7 @@ export default async function HomePage() {
                   originalPrice={deal.originalPrice}
                   affiliateUrl={deal.affiliateUrl}
                   slug={deal.slug.current}
+                  affiliateSlug={deal.affiliateSlug}
                   image={deal.image ? urlFor(deal.image).width(400).url() : undefined}
                   expiryDate={deal.expiryDate}
                 />
@@ -156,6 +157,7 @@ export default async function HomePage() {
                   image={coupon.image ? urlFor(coupon.image).width(600).url() : undefined}
                   affiliateUrl={coupon.affiliateUrl}
                   slug={coupon.slug.current}
+                  affiliateSlug={coupon.affiliateSlug}
                   expiryDate={coupon.expiryDate}
                   verified={coupon.verified}
                 />
@@ -193,6 +195,7 @@ export default async function HomePage() {
                   prize={sweep.prize}
                   entryUrl={sweep.entryUrl}
                   slug={sweep.slug.current}
+                  affiliateSlug={sweep.affiliateSlug}
                   entryDeadline={sweep.entryDeadline}
                   entryFrequency={sweep.entryFrequency}
                 />

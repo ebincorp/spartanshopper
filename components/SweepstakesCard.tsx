@@ -6,6 +6,7 @@ interface SweepstakesCardProps {
   prize: string
   entryUrl: string
   slug: string
+  affiliateSlug?: string
   entryDeadline: string
   entryFrequency?: string
   image?: string
@@ -26,10 +27,12 @@ export default function SweepstakesCard({
   prize,
   entryUrl,
   slug,
+  affiliateSlug,
   entryDeadline,
   entryFrequency,
   image,
 }: SweepstakesCardProps) {
+  const entryHref = affiliateSlug ? `/go/${affiliateSlug}` : entryUrl
   const deadline = getDeadlineInfo(entryDeadline)
 
   return (
@@ -99,7 +102,7 @@ export default function SweepstakesCard({
 
         {/* CTA */}
         <a
-          href={`/go/${slug}`}
+          href={entryHref}
           target="_blank"
           rel="noopener noreferrer nofollow"
           className={`block w-full text-center font-extrabold py-3 rounded-xl text-sm tracking-wide transition mt-auto ${

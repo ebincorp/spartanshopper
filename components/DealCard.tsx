@@ -7,6 +7,7 @@ interface DealCardProps {
   originalPrice?: number
   affiliateUrl: string
   slug: string
+  affiliateSlug?: string
   image?: string
   expiryDate?: string
 }
@@ -28,9 +29,11 @@ export default function DealCard({
   originalPrice,
   affiliateUrl,
   slug,
+  affiliateSlug,
   image,
   expiryDate,
 }: DealCardProps) {
+  const shopUrl = affiliateSlug ? `/go/${affiliateSlug}` : affiliateUrl
   const expiryStatus = getExpiryStatus(expiryDate)
   const savings =
     originalPrice && originalPrice > salePrice
@@ -98,7 +101,7 @@ export default function DealCard({
 
         {/* CTA */}
         <a
-          href={`/go/${slug}`}
+          href={shopUrl}
           target="_blank"
           rel="noopener noreferrer nofollow"
           className={`block w-full text-center text-white font-bold py-2.5 rounded-xl text-sm transition-opacity ${

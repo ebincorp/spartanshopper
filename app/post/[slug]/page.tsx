@@ -185,7 +185,7 @@ export default async function PostPage({ params }: Props) {
                   >
                     {coupon.code}
                   </div>
-                  <CopyButton code={coupon.code} />
+                  <CopyButton code={coupon.code ?? ''} />
                 </div>
               </div>
             )}

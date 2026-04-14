@@ -57,6 +57,7 @@ export default async function CouponsPage() {
                 image={coupon.image ? urlFor(coupon.image).width(600).url() : undefined}
                 affiliateUrl={coupon.affiliateUrl}
                 slug={coupon.slug.current}
+                affiliateSlug={coupon.affiliateSlug}
                 expiryDate={coupon.expiryDate}
                 verified={coupon.verified}
               />

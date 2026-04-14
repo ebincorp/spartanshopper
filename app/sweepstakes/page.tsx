@@ -61,6 +61,7 @@ export default async function SweepstakesPage() {
                   prize={sweep.prize}
                   entryUrl={sweep.entryUrl}
                   slug={sweep.slug.current}
+                  affiliateSlug={sweep.affiliateSlug}
                   entryDeadline={sweep.entryDeadline}
                   entryFrequency={sweep.entryFrequency}
                   image={sweep.image ? urlFor(sweep.image).width(600).url() : undefined}

@@ -1,21 +1,21 @@
 // ── DEALS ──────────────────────────────────────────────────────────────────
 export const dealsQuery = `
   *[_type == "deal" && active == true] | order(_createdAt desc) {
-    _id, title, slug, store, salePrice, originalPrice,
+    _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
     description, image, affiliateUrl, category, expiryDate, active
   }
 `
 
 export const featuredDealsQuery = `
   *[_type == "deal" && active == true] | order(_createdAt desc)[0...3] {
-    _id, title, slug, store, salePrice, originalPrice,
+    _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
     image, affiliateUrl, category, expiryDate, active
   }
 `
 
 export const dealsByCategoryQuery = `
   *[_type == "deal" && active == true && category == $category] | order(_createdAt desc) {
-    _id, title, slug, store, salePrice, originalPrice,
+    _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
     description, image, affiliateUrl, category, expiryDate, active
   }
 `
@@ -30,14 +30,14 @@ export const dealBySlugQuery = `
 // ── COUPONS ─────────────────────────────────────────────────────────────────
 export const couponsQuery = `
   *[_type == "coupon" && active == true] | order(_createdAt desc) {
-    _id, title, slug, store, code, discount, description,
+    _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
     image, affiliateUrl, expiryDate, verified, active
   }
 `
 
 export const featuredCouponsQuery = `
   *[_type == "coupon" && active == true] | order(_createdAt desc)[0...3] {
-    _id, title, slug, store, code, discount, description,
+    _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
     image, affiliateUrl, expiryDate, verified, active
   }
 `
@@ -52,14 +52,14 @@ export const couponBySlugQuery = `
 // ── SWEEPSTAKES ──────────────────────────────────────────────────────────────
 export const sweepstakesQuery = `
   *[_type == "sweepstake" && active == true] | order(entryDeadline asc) {
-    _id, title, slug, sponsor, prize, entryUrl,
+    _id, title, slug, "affiliateSlug": affiliateSlug.current, sponsor, prize, entryUrl,
     entryDeadline, entryFrequency, description, image, active
   }
 `
 
 export const featuredSweepstakesQuery = `
   *[_type == "sweepstake" && active == true] | order(entryDeadline asc)[0...3] {
-    _id, title, slug, sponsor, prize, entryUrl,
+    _id, title, slug, "affiliateSlug": affiliateSlug.current, sponsor, prize, entryUrl,
     entryDeadline, entryFrequency, active
   }
 `

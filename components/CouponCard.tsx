@@ -12,6 +12,7 @@ interface CouponCardProps {
   image?: string
   affiliateUrl: string
   slug: string
+  affiliateSlug?: string
   expiryDate?: string
   verified?: boolean
 }
@@ -30,9 +31,11 @@ export default function CouponCard({
   image,
   affiliateUrl,
   slug,
+  affiliateSlug,
   expiryDate,
   verified,
 }: CouponCardProps) {
+  const shopUrl = affiliateSlug ? `/go/${affiliateSlug}` : affiliateUrl
   const [revealed, setRevealed] = useState(false)
   const [copied, setCopied] = useState(false)
   const expired = isExpired(expiryDate)
@@ -138,7 +141,7 @@ export default function CouponCard({
 
         {/* CTA */}
         <a
-          href={`/go/${slug}`}
+          href={shopUrl}
           target="_blank"
           rel="noopener noreferrer nofollow"
           className={`block w-full text-center font-bold py-2.5 rounded-xl text-sm transition ${

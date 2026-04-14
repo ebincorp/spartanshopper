@@ -8,6 +8,7 @@ export interface Deal {
   _id: string
   title: string
   slug: { current: string }
+  affiliateSlug?: string
   store: string
   salePrice: number
   originalPrice?: number
@@ -23,8 +24,9 @@ export interface Coupon {
   _id: string
   title: string
   slug: { current: string }
+  affiliateSlug?: string
   store: string
-  code: string
+  code?: string
   discount?: string
   description?: string
   image?: SanityImage
@@ -51,6 +53,7 @@ export interface Sweepstake {
   _id: string
   title: string
   slug: { current: string }
+  affiliateSlug?: string
   sponsor: string
   prize: string
   entryUrl: string

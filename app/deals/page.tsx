@@ -93,6 +93,7 @@ export default async function DealsPage({ searchParams }: Props) {
                 originalPrice={deal.originalPrice}
                 affiliateUrl={deal.affiliateUrl}
                 slug={deal.slug.current}
+                affiliateSlug={deal.affiliateSlug}
                 image={deal.image ? urlFor(deal.image).width(400).url() : undefined}
                 expiryDate={deal.expiryDate}
               />
