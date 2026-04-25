@@ -177,6 +177,60 @@ export default defineType({
             },
           ],
         },
+        {
+          type: 'object',
+          name: 'table',
+          title: 'Table',
+          description: 'First row is treated as the header row.',
+          fields: [
+            {
+              name: 'caption',
+              title: 'Caption',
+              type: 'string',
+              description: 'Optional label shown below the table.',
+            },
+            {
+              name: 'rows',
+              title: 'Rows',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  name: 'tableRow',
+                  title: 'Row',
+                  fields: [
+                    {
+                      name: 'cells',
+                      title: 'Cells',
+                      type: 'array',
+                      of: [{ type: 'string' }],
+                    },
+                  ],
+                  preview: {
+                    select: { cells: 'cells' },
+                    prepare({ cells }: { cells?: string[] }) {
+                      return {
+                        title: Array.isArray(cells) && cells.length
+                          ? cells.join(' | ')
+                          : 'Empty row',
+                      }
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+          preview: {
+            select: { rows: 'rows', caption: 'caption' },
+            prepare({ rows, caption }: { rows?: unknown[]; caption?: string }) {
+              const count = Array.isArray(rows) ? rows.length : 0
+              return {
+                title: caption ? `Table: ${caption}` : 'Table',
+                subtitle: `${count} row${count !== 1 ? 's' : ''}${count > 0 ? ' (first row = header)' : ''}`,
+              }
+            },
+          },
+        },
       ],
     }),
   ],

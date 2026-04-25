@@ -77,6 +77,47 @@ const portableTextComponents: PortableTextComponents = {
 
       return <InlineCouponCard coupon={coupon} />
     },
+    table: ({ value }) => {
+      const rows: { _key: string; cells: string[] }[] = value?.rows ?? []
+      if (!rows.length) return null
+      const [header, ...body] = rows
+      return (
+        <div className="overflow-x-auto my-8">
+          <table className="w-full border-collapse text-sm">
+            {value?.caption && (
+              <caption className="text-xs text-gray-400 mb-2 text-left">{value.caption}</caption>
+            )}
+            <thead>
+              <tr>
+                {(header.cells ?? []).map((cell, i) => (
+                  <th
+                    key={i}
+                    className="px-4 py-2.5 text-left text-white font-bold text-xs uppercase tracking-wide"
+                    style={{ backgroundColor: '#1A1A2E' }}
+                  >
+                    {cell}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {body.map((row, ri) => (
+                <tr key={row._key ?? ri} className={ri % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  {(row.cells ?? []).map((cell, ci) => (
+                    <td
+                      key={ci}
+                      className="px-4 py-2.5 text-gray-700 border-b border-gray-100"
+                    >
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    },
     image: ({ value }) => {
       const imageUrl = value?.asset ? urlFor(value).width(800).url() : null
       if (!imageUrl) return null
