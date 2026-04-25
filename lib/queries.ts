@@ -1,4 +1,21 @@
 // ── DEALS ──────────────────────────────────────────────────────────────────
+// ── COUPON CATEGORIES (shared list) ─────────────────────────────────────────
+export const COUPON_CATEGORIES = [
+  { title: 'Health & Wellness', value: 'health' },
+  { title: 'Tech & Gadgets',    value: 'tech' },
+  { title: 'Home & Kitchen',    value: 'home' },
+  { title: 'Food & Grocery',    value: 'food' },
+  { title: 'Beauty',            value: 'beauty' },
+  { title: 'Fitness',           value: 'fitness' },
+  { title: 'Pets',              value: 'pets' },
+  { title: 'Travel',            value: 'travel' },
+  { title: 'Fashion',           value: 'fashion' },
+  { title: 'Amazon Deals',      value: 'amazon' },
+] as const
+
+export type CouponCategoryValue = typeof COUPON_CATEGORIES[number]['value']
+
+// ── DEALS ──────────────────────────────────────────────────────────────────
 export const dealsQuery = `
   *[_type == "deal" && active == true] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
@@ -28,24 +45,37 @@ export const dealBySlugQuery = `
 `
 
 // ── COUPONS ─────────────────────────────────────────────────────────────────
+const COUPON_DATE_FILTER = `
+  active == true
+  && (!defined(startDate) || startDate <= now())
+  && (!defined(expiryDate) || expiryDate > now())
+`
+
 export const couponsQuery = `
-  *[_type == "coupon" && active == true] | order(_createdAt desc) {
+  *[_type == "coupon" && ${COUPON_DATE_FILTER}] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
-    image, affiliateUrl, expiryDate, verified, active
+    image, affiliateUrl, startDate, expiryDate, verified, active, category, tags
   }
 `
 
 export const featuredCouponsQuery = `
-  *[_type == "coupon" && active == true] | order(_createdAt desc)[0...3] {
+  *[_type == "coupon" && ${COUPON_DATE_FILTER}] | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
-    image, affiliateUrl, expiryDate, verified, active
+    image, affiliateUrl, startDate, expiryDate, verified, active, category, tags
   }
 `
 
 export const couponBySlugQuery = `
-  *[_type == "coupon" && slug.current == $slug][0] {
+  *[_type == "coupon" && slug.current == $slug && ${COUPON_DATE_FILTER}][0] {
     _id, title, slug, store, code, discount,
-    affiliateUrl, expiryDate, verified, active
+    affiliateUrl, startDate, expiryDate, verified, active, category, tags
+  }
+`
+
+export const relatedCouponsQuery = `
+  *[_type == "coupon" && ${COUPON_DATE_FILTER} && category == $category && _id != $currentId] | order(_createdAt desc) [0...3] {
+    _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
+    image, affiliateUrl, startDate, expiryDate, verified, active, category
   }
 `
 
