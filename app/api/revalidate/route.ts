@@ -13,5 +13,15 @@ export async function POST(req: NextRequest) {
   revalidatePath('/coupons')
   revalidatePath('/sweepstakes')
 
+  try {
+    const body = await req.json()
+    const slug = body?.slug?.current ?? body?.slug
+    if (slug) {
+      revalidatePath(`/blog/${slug}`)
+    }
+  } catch {
+    // body absent or not JSON — skip slug revalidation
+  }
+
   return NextResponse.json({ revalidated: true, now: Date.now() })
 }

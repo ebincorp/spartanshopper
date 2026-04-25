@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface CouponCardProps {
   title: string
@@ -53,14 +54,14 @@ export default function CouponCard({
 
       {/* Image */}
       {image && (
-        <div className="relative w-full h-36 bg-gray-100 overflow-hidden">
+        <Link href={`/coupons/${slug}`} className="block relative w-full h-36 bg-gray-100 overflow-hidden">
           <Image
             src={image}
             alt={title}
             fill
             className="object-contain"
           />
-        </div>
+        </Link>
       )}
 
       {/* Top bar */}
@@ -90,7 +91,9 @@ export default function CouponCard({
 
       {/* Body */}
       <div className="p-4 flex flex-col flex-1">
-        <h3 className="text-gray-900 font-bold text-sm leading-snug mb-1">{title}</h3>
+        <Link href={`/coupons/${slug}`} className="hover:underline">
+          <h3 className="text-gray-900 font-bold text-sm leading-snug mb-1">{title}</h3>
+        </Link>
         {description && (
           <p className="text-gray-500 text-xs leading-relaxed mb-4">{description}</p>
         )}

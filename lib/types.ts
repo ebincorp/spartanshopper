@@ -31,9 +31,12 @@ export interface Coupon {
   description?: string
   image?: SanityImage
   affiliateUrl: string
+  startDate?: string
   expiryDate?: string
   verified?: boolean
   active: boolean
+  category?: string
+  tags?: string[]
 }
 
 export interface Post {
@@ -45,6 +48,8 @@ export interface Post {
   category?: string
   excerpt?: string
   coverImage?: SanityImage
+  relatedCategory?: string
+  jsonLd?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any[]
 }

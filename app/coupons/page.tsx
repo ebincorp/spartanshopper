@@ -1,7 +1,7 @@
-import { client, urlFor } from '@/lib/sanity.client'
+import { client } from '@/lib/sanity.client'
 import { couponsQuery } from '@/lib/queries'
 import type { Coupon } from '@/lib/types'
-import CouponCard from '@/components/CouponCard'
+import CouponFilterBar from '@/components/CouponFilterBar'
 import Link from 'next/link'
 
 export const revalidate = 3600
@@ -45,24 +45,7 @@ export default async function CouponsPage() {
         )}
 
         {sorted.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sorted.map((coupon) => (
-              <CouponCard
-                key={coupon._id}
-                title={coupon.title}
-                store={coupon.store}
-                code={coupon.code}
-                discount={coupon.discount}
-                description={coupon.description}
-                image={coupon.image ? urlFor(coupon.image).width(600).url() : undefined}
-                affiliateUrl={coupon.affiliateUrl}
-                slug={coupon.slug.current}
-                affiliateSlug={coupon.affiliateSlug}
-                expiryDate={coupon.expiryDate}
-                verified={coupon.verified}
-              />
-            ))}
-          </div>
+          <CouponFilterBar coupons={sorted} />
         ) : (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🏷️</div>

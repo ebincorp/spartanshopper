@@ -72,6 +72,12 @@ export default defineType({
       options: { source: 'title', maxLength: 96 },
     }),
     defineField({
+      name: 'startDate',
+      title: 'Start Date',
+      type: 'datetime',
+      description: 'Optional. If set, the coupon will not appear on the site until this date.',
+    }),
+    defineField({
       name: 'expiryDate',
       title: 'Expiry Date',
       type: 'datetime',
@@ -87,6 +93,32 @@ export default defineType({
       title: 'Active',
       type: 'boolean',
       initialValue: true,
+    }),
+    defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Health & Wellness', value: 'health' },
+          { title: 'Tech & Gadgets', value: 'tech' },
+          { title: 'Home & Kitchen', value: 'home' },
+          { title: 'Food & Grocery', value: 'food' },
+          { title: 'Beauty', value: 'beauty' },
+          { title: 'Fitness', value: 'fitness' },
+          { title: 'Pets', value: 'pets' },
+          { title: 'Travel', value: 'travel' },
+          { title: 'Fashion', value: 'fashion' },
+          { title: 'Amazon Deals', value: 'amazon' },
+        ],
+      },
+    }),
+    defineField({
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Free-form tags for more specific matching e.g. "ear-care", "sleep"',
     }),
   ],
   preview: {
