@@ -9,33 +9,23 @@ const redirectClient = createClient({
   token: process.env.SANITY_API_TOKEN,
 })
 
-// Checks dedicated affiliateLink documents first, then falls back to
-// affiliateSlug fields on content types — all in a single GROQ round-trip.
+// Priority order: dedicated affiliateLink → sweepstake entryUrl → content affiliateUrl.
+// coalesce() returns the first non-null value, avoiding nested projection chaining.
 const redirectQuery = `
-  {
-    "fromLink": *[_type == "affiliateLink" && slug.current == $slug][0].destination,
-    "fromContent": *[affiliateSlug.current == $slug][0] {
-      "url": select(
-        _type == "sweepstake" => entryUrl,
-        affiliateUrl
-      )
-    }.url
-  }
+  coalesce(
+    *[_type == "affiliateLink" && slug.current == $slug][0].destination,
+    *[_type == "sweepstake" && affiliateSlug.current == $slug][0].entryUrl,
+    *[affiliateSlug.current == $slug][0].affiliateUrl
+  )
 `
-
-interface RedirectLookup {
-  fromLink: string | null
-  fromContent: string | null
-}
 
 export async function getRedirectBySlug(slug: string): Promise<{ url: string } | null> {
   console.log(`[/go] Looking up slug: "${slug}"`)
 
-  const result = await redirectClient.fetch<RedirectLookup>(redirectQuery, { slug })
+  const url = await redirectClient.fetch<string | null>(redirectQuery, { slug })
 
-  console.log(`[/go] Sanity result for "${slug}":`, JSON.stringify(result))
+  console.log(`[/go] Resolved URL for "${slug}": ${url ?? 'none'}`)
 
-  const url = result?.fromLink || result?.fromContent
   if (!url) return null
   return { url }
 }
