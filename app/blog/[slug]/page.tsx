@@ -6,8 +6,11 @@ import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { client, urlFor } from '@/lib/sanity.client'
 import { getPostBySlugQuery, getAllPostSlugsQuery } from '@/lib/blogQueries'
 import type { Post } from '@/lib/types'
+import InlineCouponCard from '@/components/InlineCouponCard'
+import RelatedCoupons from '@/components/RelatedCoupons'
 
 export const revalidate = 3600
+export const dynamicParams = true
 
 const CATEGORY_COLORS: Record<string, string> = {
   Deals: '#E63946',
@@ -51,6 +54,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const portableTextComponents: PortableTextComponents = {
   types: {
+    couponEmbed: ({ value }) => {
+      const coupon = value?.coupon
+      if (!coupon) return null
+
+      const now = new Date()
+      const startsAt = coupon.startDate ? new Date(coupon.startDate) : null
+
+      if (startsAt && startsAt > now) {
+        return (
+          <div
+            className="my-6 rounded-xl p-5 border-2 border-dashed text-center"
+            style={{ borderColor: '#E63946', backgroundColor: '#fff5f5' }}
+          >
+            <p className="text-sm font-semibold" style={{ color: '#E63946' }}>
+              Deal available{' '}
+              {startsAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
+          </div>
+        )
+      }
+
+      return <InlineCouponCard coupon={coupon} />
+    },
     image: ({ value }) => {
       const imageUrl = value?.asset ? urlFor(value).width(800).url() : null
       if (!imageUrl) return null
@@ -119,6 +145,13 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound()
 
   return (
+    <>
+    {post.jsonLd && (
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: post.jsonLd }}
+      />
+    )}
     <main className="min-h-screen bg-gray-50">
       {/* Cover image */}
       {post.coverImage && (
@@ -127,7 +160,7 @@ export default async function BlogPostPage({ params }: Props) {
             src={urlFor(post.coverImage).width(1200).url()}
             alt={post.title}
             fill
-            className="object-cover"
+            className="object-cover object-top"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -176,6 +209,9 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         )}
 
+        {/* Related coupons */}
+        <RelatedCoupons currentId={post!._id} category={post!.relatedCategory} />
+
         {/* Back link */}
         <div className="mt-12 pt-8 border-t border-gray-200">
           <Link
@@ -188,5 +224,6 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </div>
     </main>
+    </>
   )
 }

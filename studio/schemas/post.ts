@@ -40,6 +40,27 @@ export default defineType({
           { title: 'Sweepstakes', value: 'Sweepstakes' },
           { title: 'Saving Tips', value: 'Saving Tips' },
           { title: 'News', value: 'News' },
+          { title: 'Reviews', value: 'Reviews' },
+        ],
+      },
+    }),
+    defineField({
+      name: 'relatedCategory',
+      title: 'Related Coupon Category',
+      type: 'string',
+      description: 'Show related coupons from this category at the bottom of the post.',
+      options: {
+        list: [
+          { title: 'Health & Wellness', value: 'health' },
+          { title: 'Tech & Gadgets', value: 'tech' },
+          { title: 'Home & Kitchen', value: 'home' },
+          { title: 'Food & Grocery', value: 'food' },
+          { title: 'Beauty', value: 'beauty' },
+          { title: 'Fitness', value: 'fitness' },
+          { title: 'Pets', value: 'pets' },
+          { title: 'Travel', value: 'travel' },
+          { title: 'Fashion', value: 'fashion' },
+          { title: 'Amazon Deals', value: 'amazon' },
         ],
       },
     }),
@@ -77,6 +98,13 @@ export default defineType({
       options: { source: 'title', maxLength: 96 },
     }),
     defineField({
+      name: 'jsonLd',
+      title: 'Structured Data (JSON-LD)',
+      type: 'text',
+      rows: 6,
+      description: 'Paste a JSON-LD schema block here (e.g. Review, Product, FAQPage). Injected as <script type="application/ld+json"> in the page head.',
+    }),
+    defineField({
       name: 'body',
       title: 'Body',
       type: 'array',
@@ -112,6 +140,25 @@ export default defineType({
                 ],
               },
             ],
+          },
+        },
+        {
+          type: 'object',
+          name: 'couponEmbed',
+          title: 'Coupon Card',
+          fields: [
+            {
+              name: 'coupon',
+              title: 'Coupon',
+              type: 'reference',
+              to: [{ type: 'coupon' }],
+            },
+          ],
+          preview: {
+            select: { title: 'coupon.title' },
+            prepare({ title }: { title?: string }) {
+              return { title: `Coupon: ${title ?? 'Untitled'}` }
+            },
           },
         },
         {

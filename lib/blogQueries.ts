@@ -6,6 +6,7 @@ export const getAllPostsQuery = `
     publishedAt,
     author,
     category,
+    relatedCategory,
     excerpt,
     coverImage
   }
@@ -19,9 +20,19 @@ export const getPostBySlugQuery = `
     publishedAt,
     author,
     category,
+    relatedCategory,
+    jsonLd,
     excerpt,
     coverImage,
-    body
+    body[] {
+      ...,
+      _type == "couponEmbed" => {
+        "coupon": coupon-> {
+          _id, title, store, code, discount, description, affiliateUrl, expiryDate, startDate, active,
+          "imageUrl": image.asset->url
+        }
+      }
+    }
   }
 `
 
