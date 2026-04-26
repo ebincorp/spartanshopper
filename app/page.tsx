@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { client, urlFor } from '@/lib/sanity.client'
 import {
@@ -12,6 +13,24 @@ import type { Deal, Coupon, Sweepstake } from '@/lib/types'
 import DealCard from '@/components/DealCard'
 import CouponCard from '@/components/CouponCard'
 import SweepstakesCard from '@/components/SweepstakesCard'
+
+export const metadata: Metadata = {
+  title: {
+    absolute: 'SpartanShopper — Coupon Codes, Promo Codes & Daily Deals',
+  },
+  description:
+    'Find verified coupon codes, promo codes, and daily deals — plus free sweepstakes you can enter to win. SpartanShopper updates deals every day so you never miss a saving.',
+  openGraph: {
+    title: 'SpartanShopper — Coupon Codes, Promo Codes & Daily Deals',
+    description:
+      'Find verified coupon codes, promo codes, and daily deals — plus free sweepstakes you can enter to win. SpartanShopper updates deals every day so you never miss a saving.',
+  },
+  twitter: {
+    title: 'SpartanShopper — Coupon Codes, Promo Codes & Daily Deals',
+    description:
+      'Find verified coupon codes, promo codes, and daily deals — plus free sweepstakes you can enter to win. SpartanShopper updates deals every day so you never miss a saving.',
+  },
+}
 
 async function getData() {
   try {
@@ -50,11 +69,9 @@ export default async function HomePage() {
           >
             Updated Daily
           </div>
-          <h1 className="text-white text-5xl sm:text-6xl font-extrabold leading-tight mb-5 tracking-tight">
-            Save Big.{' '}
-            <span style={{ color: '#E63946' }}>Enter to Win.</span>
-            <br />
-            Shop Smart.
+          <h1 className="text-white text-4xl sm:text-5xl font-extrabold leading-tight mb-5 tracking-tight">
+            Verified Coupon Codes &amp; Daily Deals —{' '}
+            <span style={{ color: '#E63946' }}>Updated Every Day</span>
           </h1>
           <p className="text-white/60 text-lg mb-8 max-w-xl mx-auto">
             The freshest deals, verified coupon codes, and free sweepstakes — all in one place.
