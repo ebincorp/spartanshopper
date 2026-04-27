@@ -72,6 +72,18 @@ export default async function CouponPage({ params }: Props) {
 
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
 
+          {coupon.image && (
+            <div className="relative w-full h-64 sm:h-80 bg-gray-100">
+              <Image
+                src={urlFor(coupon.image).width(800).url()}
+                alt={coupon.title}
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          )}
+
           <div className="p-6 sm:p-8">
 
             <div className="flex items-center gap-3 mb-4">
