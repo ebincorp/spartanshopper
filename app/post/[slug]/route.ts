@@ -39,5 +39,5 @@ export async function GET(
     console.error(`[/post] Error looking up "${slug}":`, err)
   }
 
-  return NextResponse.redirect(new URL('/', req.url), { status: 301 })
+  return new NextResponse(null, { status: 404 })
 }

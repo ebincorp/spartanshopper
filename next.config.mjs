@@ -7,6 +7,11 @@ const nextConfig = {
         destination: '/blog/magnesium-glycinate-for-sleep-the-natural-melatonin-alternative-you-ve-been-looking-for',
         permanent: true,
       },
+      {
+        source: '/post/magnesium-glycinate-for-sleep',
+        destination: '/blog/magnesium-glycinate-for-sleep-the-natural-melatonin-alternative-you-ve-been-looking-for',
+        permanent: true,
+      },
     ]
   },
   serverExternalPackages: ['@sanity/client', 'sanity'],

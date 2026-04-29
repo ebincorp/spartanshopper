@@ -1,10 +1,10 @@
 import { client, urlFor } from '@/lib/sanity.client'
-import { couponBySlugQuery, couponSlugsQuery } from '@/lib/queries'
+import { couponBySlugQuery, couponSlugsQuery, couponExistsBySlugQuery } from '@/lib/queries'
 import type { Coupon } from '@/lib/types'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import CopyButton from '@/components/CopyButton'
 import RelatedCoupons from '@/components/RelatedCoupons'
 
@@ -56,7 +56,13 @@ export default async function CouponPage({ params }: Props) {
     .fetch<Coupon | null>(couponBySlugQuery, { slug })
     .catch(() => null)
 
-  if (!coupon) notFound()
+  if (!coupon) {
+    const exists = await client
+      .fetch<boolean>(couponExistsBySlugQuery, { slug })
+      .catch(() => false)
+    if (exists) permanentRedirect('/coupons')
+    notFound()
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 py-10 px-4">
