@@ -171,6 +171,15 @@ export default async function CouponPage({ params }: Props) {
           </div>
         </div>
 
+        {coupon.whyWeLikeThis && (
+          <div className="mt-8 bg-white rounded-2xl shadow-sm p-6 sm:p-8">
+            <h2 className="text-lg font-extrabold text-gray-900 mb-3">Why We Like This</h2>
+            <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">
+              {coupon.whyWeLikeThis}
+            </p>
+          </div>
+        )}
+
         <RelatedCoupons currentId={coupon._id} category={coupon.category} />
       </div>
     </main>

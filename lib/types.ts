@@ -37,6 +37,7 @@ export interface Coupon {
   active: boolean
   category?: string
   tags?: string[]
+  whyWeLikeThis?: string
 }
 
 export interface Post {

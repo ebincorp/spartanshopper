@@ -120,6 +120,13 @@ export default defineType({
       of: [{ type: 'string' }],
       description: 'Free-form tags for more specific matching e.g. "ear-care", "sleep"',
     }),
+    defineField({
+      name: 'whyWeLikeThis',
+      title: 'Why We Like This',
+      type: 'text',
+      rows: 5,
+      description: 'Optional editorial note shown on the coupon detail page (~200 words).',
+    }),
   ],
   preview: {
     select: {

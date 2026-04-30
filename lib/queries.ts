@@ -67,7 +67,7 @@ export const featuredCouponsQuery = `
 
 export const couponBySlugQuery = `
   *[_type == "coupon" && slug.current == $slug && ${COUPON_DATE_FILTER}][0] {
-    _id, title, slug, store, code, discount, description,
+    _id, title, slug, store, code, discount, description, whyWeLikeThis,
     image, affiliateUrl, affiliateSlug, startDate, expiryDate, verified, active, category, tags
   }
 `
