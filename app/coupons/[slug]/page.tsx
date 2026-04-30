@@ -64,7 +64,26 @@ export default async function CouponPage({ params }: Props) {
     notFound()
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Offer',
+    name: coupon.title,
+    ...(coupon.description && { description: coupon.description }),
+    ...(coupon.discount && { discount: coupon.discount }),
+    url: coupon.affiliateUrl,
+    ...(coupon.expiryDate && { validThrough: `${coupon.expiryDate}T23:59:59` }),
+    seller: {
+      '@type': 'Organization',
+      name: coupon.store,
+    },
+  }
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
     <main className="min-h-screen bg-gray-50 py-10 px-4">
       <div className="max-w-3xl mx-auto">
 
@@ -155,5 +174,6 @@ export default async function CouponPage({ params }: Props) {
         <RelatedCoupons currentId={coupon._id} category={coupon.category} />
       </div>
     </main>
+    </>
   )
 }
