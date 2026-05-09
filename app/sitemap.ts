@@ -2,17 +2,21 @@ import type { MetadataRoute } from 'next'
 import { client } from '@/lib/sanity.client'
 import { dealSlugsQuery, couponSlugsQuery, sweepstakeSlugsQuery } from '@/lib/queries'
 
-const BASE_URL = 'https://spartanshopper.com'
+const BASE_URL = 'https://www.spartanshopper.com'
 
 const postSlugsQuery = `
   *[_type == "post" && defined(slug.current)] {
-    "slug": slug.current, _updatedAt
+    "slug": slug.current, _updatedAt, publishedAt
   }
 `
 
 interface SlugEntry {
   slug: string
   _updatedAt: string
+}
+
+interface PostSlugEntry extends SlugEntry {
+  publishedAt?: string
 }
 
 export const revalidate = 3600
@@ -26,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     client.fetch<SlugEntry[]>(dealSlugsQuery).catch(() => [] as SlugEntry[]),
     client.fetch<SlugEntry[]>(couponSlugsQuery).catch(() => [] as SlugEntry[]),
     client.fetch<SlugEntry[]>(sweepstakeSlugsQuery).catch(() => [] as SlugEntry[]),
-    client.fetch<SlugEntry[]>(postSlugsQuery).catch(() => [] as SlugEntry[]),
+    client.fetch<PostSlugEntry[]>(postSlugsQuery).catch(() => [] as PostSlugEntry[]),
   ])
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -40,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const dynamicPages: MetadataRoute.Sitemap = [
     ...posts.map((p) => ({
       url: `${BASE_URL}/blog/${p.slug}`,
-      lastModified: new Date(p._updatedAt),
+      lastModified: new Date(p._updatedAt ?? p.publishedAt ?? Date.now()),
       changeFrequency: 'daily' as const,
       priority: 0.6,
     })),

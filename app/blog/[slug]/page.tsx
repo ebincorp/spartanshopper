@@ -39,17 +39,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!post) return { title: 'Post Not Found — SpartanShopper' }
 
+  const metaTitle = post.seo?.metaTitle || post.title
+  const metaDescription = post.seo?.metaDescription || post.excerpt
+
   return {
-    title: post.title,
-    description: post.excerpt,
+    title: metaTitle,
+    description: metaDescription,
+    ...(post.seo?.canonicalUrl && {
+      alternates: { canonical: post.seo.canonicalUrl },
+    }),
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: metaTitle,
+      description: metaDescription,
       images: post.coverImage
         ? [{ url: urlFor(post.coverImage).width(1200).url() }]
         : [],
     },
   }
+}
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .trim()
+    .replace(/[\s_]+/g, '-')
+    .replace(/-+/g, '-')
+}
+
+function blockText(value: { children?: unknown[] }): string {
+  return (value.children ?? [])
+    .map((s) => (s && typeof s === 'object' && 'text' in s ? String((s as { text: unknown }).text) : ''))
+    .join('')
 }
 
 const portableTextComponents: PortableTextComponents = {
@@ -134,11 +155,11 @@ const portableTextComponents: PortableTextComponents = {
     },
   },
   block: {
-    h2: ({ children }) => (
-      <h2 className="text-2xl font-extrabold text-gray-900 mt-10 mb-4">{children}</h2>
+    h2: ({ value, children }) => (
+      <h2 id={slugify(blockText(value))} className="text-2xl font-extrabold text-gray-900 mt-10 mb-4">{children}</h2>
     ),
-    h3: ({ children }) => (
-      <h3 className="text-xl font-bold text-gray-900 mt-8 mb-3">{children}</h3>
+    h3: ({ value, children }) => (
+      <h3 id={slugify(blockText(value))} className="text-xl font-bold text-gray-900 mt-8 mb-3">{children}</h3>
     ),
     blockquote: ({ children }) => (
       <blockquote

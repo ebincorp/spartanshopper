@@ -50,6 +50,11 @@ export interface Post {
   excerpt?: string
   coverImage?: SanityImage
   relatedCategory?: string
+  seo?: {
+    metaTitle?: string
+    metaDescription?: string
+    canonicalUrl?: string
+  }
   jsonLd?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any[]

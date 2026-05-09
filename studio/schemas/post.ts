@@ -98,6 +98,32 @@ export default defineType({
       options: { source: 'title', maxLength: 96 },
     }),
     defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'metaTitle',
+          title: 'Meta Title',
+          type: 'string',
+          description: 'Overrides the post title in search results. Leave blank to use the post title.',
+        }),
+        defineField({
+          name: 'metaDescription',
+          title: 'Meta Description',
+          type: 'text',
+          rows: 3,
+          description: 'Overrides the excerpt as meta description. Aim for 150–160 characters.',
+        }),
+        defineField({
+          name: 'canonicalUrl',
+          title: 'Canonical URL',
+          type: 'url',
+          description: 'Set only if this content is syndicated from another URL.',
+        }),
+      ],
+    }),
+    defineField({
       name: 'jsonLd',
       title: 'Structured Data (JSON-LD)',
       type: 'text',

@@ -21,6 +21,7 @@ export const getPostBySlugQuery = `
     author,
     category,
     relatedCategory,
+    seo,
     jsonLd,
     excerpt,
     coverImage,

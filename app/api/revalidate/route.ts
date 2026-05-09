@@ -9,9 +9,11 @@ export async function POST(req: NextRequest) {
   }
 
   revalidatePath('/')
+  revalidatePath('/blog')
   revalidatePath('/deals')
   revalidatePath('/coupons')
   revalidatePath('/sweepstakes')
+  revalidatePath('/sitemap.xml')
 
   try {
     const body = await req.json()
