@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/studio',
     },
-    sitemap: 'https://spartanshopper.com/sitemap.xml',
+    sitemap: 'https://www.spartanshopper.com/sitemap.xml',
   }
 }
