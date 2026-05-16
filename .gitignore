@@ -35,4 +35,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
+# local/unrelated directories
+/dist
+/.sanity
+/.claude/worktrees
+/stealth
