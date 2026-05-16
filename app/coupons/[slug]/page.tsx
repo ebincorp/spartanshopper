@@ -29,16 +29,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!coupon) return {}
 
-  const title = `${coupon.title} — SpartanShopper`
-  const description = `Use code ${coupon.code} at ${coupon.store}${coupon.discount ? ` for ${coupon.discount}` : ''}. Verified coupon on SpartanShopper.`
+  const title = coupon.seo?.metaTitle || `${coupon.title} — SpartanShopper`
+  const description = coupon.seo?.metaDescription
+    || coupon.description
+    || `Use code ${coupon.code} at ${coupon.store}${coupon.discount ? ` for ${coupon.discount}` : ''}. Verified coupon on SpartanShopper.`
 
   return {
     title,
     description,
+    ...(coupon.seo?.canonicalUrl && {
+      alternates: { canonical: coupon.seo.canonicalUrl },
+    }),
     openGraph: {
       title,
       description,
-      url: `https://spartanshopper.com/coupons/${slug}`,
+      url: `https://www.spartanshopper.com/coupons/${slug}`,
       siteName: 'SpartanShopper',
       type: 'article',
     },

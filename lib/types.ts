@@ -38,6 +38,11 @@ export interface Coupon {
   category?: string
   tags?: string[]
   whyWeLikeThis?: string
+  seo?: {
+    metaTitle?: string
+    metaDescription?: string
+    canonicalUrl?: string
+  }
 }
 
 export interface Post {

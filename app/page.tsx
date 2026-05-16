@@ -48,11 +48,29 @@ async function getData() {
   }
 }
 
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'SpartanShopper.com',
+  url: 'https://www.spartanshopper.com',
+  logo: {
+    '@type': 'ImageObject',
+    url: 'https://www.spartanshopper.com/android-chrome-512x512.png',
+    width: 512,
+    height: 512,
+  },
+  sameAs: ['https://www.instagram.com/spartanshopper'],
+}
+
 export default async function HomePage() {
   const { deals, coupons, sweepstakes, dealCount, couponCount, sweepstakeCount } = await getData()
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
       {/* ===== HERO ===== */}
       <section
         style={{ backgroundColor: '#1A1A2E' }}

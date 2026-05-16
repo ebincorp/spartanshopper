@@ -110,6 +110,7 @@ export default defineType({
           { title: 'Travel', value: 'travel' },
           { title: 'Fashion', value: 'fashion' },
           { title: 'Amazon Deals', value: 'amazon' },
+          { title: 'Gaming', value: 'gaming' },
         ],
       },
     }),
@@ -126,6 +127,33 @@ export default defineType({
       type: 'text',
       rows: 5,
       description: 'Optional editorial note shown on the coupon detail page (~200 words).',
+    }),
+    defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'metaTitle',
+          title: 'Meta Title',
+          type: 'string',
+          description: 'Overrides the coupon title in search results. Leave blank to use the coupon title.',
+        }),
+        defineField({
+          name: 'metaDescription',
+          title: 'Meta Description',
+          type: 'text',
+          rows: 3,
+          description: 'Overrides the description as meta description. Aim for 150–160 characters.',
+          validation: (Rule) => Rule.max(160),
+        }),
+        defineField({
+          name: 'canonicalUrl',
+          title: 'Canonical URL',
+          type: 'url',
+          description: 'Set only if this content is syndicated from another URL.',
+        }),
+      ],
     }),
   ],
   preview: {
