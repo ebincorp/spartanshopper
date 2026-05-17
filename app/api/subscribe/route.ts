@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        api_key: 'Q9F2UIdT9aKfxcI806c7QQ',
+        api_secret: 'AL5xOi9VW2CboZy7ifuv37V_q920NOSzRov1i48SKgY',
         email,
       }),
     })
