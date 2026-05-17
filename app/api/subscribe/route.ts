@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email required' }, { status: 400 })
     }
 
-    const res = await fetch(`https://api.convertkit.com/v3/forms/5b21462827/subscribe`, {
+    const res = await fetch(`https://api.convertkit.com/v3/forms/9454781/subscribe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
