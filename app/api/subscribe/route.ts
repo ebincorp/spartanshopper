@@ -8,13 +8,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email required' }, { status: 400 })
     }
 
-    const res = await fetch(`https://api.kit.com/v4/forms/5b21462827/subscribers`, {
+    const res = await fetch(`https://api.convertkit.com/v3/forms/5b21462827/subscribe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
-      body: JSON.stringify({ email_address: email }),
+      body: JSON.stringify({
+        api_key: process.env.KIT_API_KEY,
+        email,
+      }),
     })
 
     const data = await res.json()
