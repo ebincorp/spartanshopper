@@ -12,7 +12,6 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.KIT_API_KEY}`,
         'Accept': 'application/json',
       },
       body: JSON.stringify({ email_address: email }),
@@ -23,13 +22,10 @@ export async function POST(req: NextRequest) {
     if (res.ok) {
       return NextResponse.json({ success: true })
     } else {
-      // Return full error details temporarily for debugging
       return NextResponse.json({
         error: 'Subscription failed',
         status: res.status,
-        details: data,
-        formId: '5b21462827',
-        hasKey: !!process.env.KIT_API_KEY
+        details: data
       }, { status: 500 })
     }
   } catch (err) {
