@@ -8,6 +8,7 @@ import { getPostBySlugQuery, getAllPostSlugsQuery } from '@/lib/blogQueries'
 import type { Post } from '@/lib/types'
 import InlineCouponCard from '@/components/InlineCouponCard'
 import RelatedCoupons from '@/components/RelatedCoupons'
+import EmailSignup from '@/components/EmailSignup'
 
 export const revalidate = 3600
 export const dynamicParams = true
@@ -278,6 +279,8 @@ export default async function BlogPostPage({ params }: Props) {
             <PortableText value={post.body} components={portableTextComponents} />
           </div>
         )}
+
+        <EmailSignup />
 
         {/* Related coupons */}
         <RelatedCoupons currentId={post!._id} category={post!.relatedCategory} />
