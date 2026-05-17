@@ -4,15 +4,21 @@ import { useEffect } from 'react'
 
 export default function EmailSignup() {
   useEffect(() => {
+    // @ts-ignore
+    if (window.ck) {
+      // @ts-ignore
+      window.ck.show('9454781')
+      return
+    }
+
     const script = document.createElement('script')
     script.src = 'https://f.kit.com/ck.5.js'
-    script.setAttribute('data-uid', '9454781')
     script.async = true
-    document.body.appendChild(script)
-
-    return () => {
-      document.body.removeChild(script)
+    script.onload = () => {
+      // @ts-ignore
+      if (window.ck) window.ck.show('9454781')
     }
+    document.body.appendChild(script)
   }, [])
 
   return (
