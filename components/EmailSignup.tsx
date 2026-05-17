@@ -12,14 +12,11 @@ export default function EmailSignup() {
     setStatus('loading')
 
     try {
-      const res = await fetch(
-        `https://app.kit.com/forms/5b21462827/subscriptions`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `email_address=${encodeURIComponent(email)}`,
-        }
-      )
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
       if (res.ok) {
         setStatus('success')
         setEmail('')
@@ -48,8 +45,8 @@ export default function EmailSignup() {
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-          placeholder="Enter your email"
-          className="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+          placeholder="Enter your email address"
+          className="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <button
           onClick={handleSubmit}
