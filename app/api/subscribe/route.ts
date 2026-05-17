@@ -8,14 +8,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email required' }, { status: 400 })
     }
 
-    const formData = new URLSearchParams()
-    formData.append('email_address', email)
-    formData.append('api_key', process.env.KIT_API_KEY || '')
-
-    const res = await fetch('https://api.kit.com/v1/forms/5b21462827/subscribe', {
+    const res = await fetch('https://api.kit.com/v4/forms/5b21462827/subscribers', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formData.toString(),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.KIT_API_KEY}`,
+        'X-Kit-Api-Version': '2025-01-01',
+      },
+      body: JSON.stringify({ email_address: email }),
     })
 
     const data = await res.json()
