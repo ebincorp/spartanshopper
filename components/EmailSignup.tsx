@@ -1,29 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
-
 export default function EmailSignup() {
-  useEffect(() => {
-    // @ts-ignore
-    if (window.ck) {
-      // @ts-ignore
-      window.ck.show('9454781')
-      return
-    }
-
-    const script = document.createElement('script')
-    script.src = 'https://f.kit.com/ck.5.js'
-    script.async = true
-    script.onload = () => {
-      // @ts-ignore
-      if (window.ck) window.ck.show('9454781')
-    }
-    document.body.appendChild(script)
-  }, [])
-
   return (
-    <div className="my-8">
-      <div data-uid="9454781" />
+    <div className="my-8 rounded-lg overflow-hidden">
+      <iframe
+        src="https://spartanshopper-com.kit.com/9454781/index.js"
+        style={{ width: '100%', border: 'none', minHeight: '200px' }}
+        title="Subscribe to SpartanShopper"
+      />
     </div>
   )
 }
