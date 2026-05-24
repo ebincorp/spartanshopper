@@ -88,9 +88,9 @@ interface CJLink {
   advertiserId: string
   advertiserName: string
   linkId?: string
-  linkName?: string
-  description: string | null
-  promotionType?: string
+  linkName?: string | null
+  description?: string | null
+  promotionType?: string | null
   couponCode: string | null
   startDate: string | null
   endDate: string | null
@@ -281,7 +281,7 @@ function mapLink(link: CJLink): PromoInput | null {
   const brand      = advertiser?.brand    ?? link.advertiserName
   const category   = advertiser?.category ?? 'amazon'
   const startDate  = toISODate(link.startDate)
-  const discount   = parseDiscount(link.description, link.linkName ?? null)
+  const discount   = parseDiscount(link.description ?? null, link.linkName ?? null)
   const rawDesc   = link.description ?? link.linkName ?? null
   const description = sanitizeDescription(rawDesc, code)
 
