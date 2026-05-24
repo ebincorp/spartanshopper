@@ -204,9 +204,9 @@ async function fetchViaRest(): Promise<CJLink[]> {
     links.push({
       advertiserId:  get('advertiser-id') ?? '',
       advertiserName: get('advertiser-name') ?? '',
-      linkName:      get('link-name'),
-      description:   get('description'),
-      promotionType: get('promotion-type'),
+      linkName:      get('link-name') ?? undefined,
+      description:   get('description') ?? undefined,
+      promotionType: get('promotion-type') ?? undefined,
       couponCode:    code,
       startDate:     get('promotion-start-date') ?? get('start-date'),
       endDate:       get('promotion-end-date') ?? get('end-date'),
