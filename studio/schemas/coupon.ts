@@ -113,6 +113,7 @@ export default defineType({
           { title: 'Gaming', value: 'gaming' },
           { title: 'Korean Skincare', value: 'korean-skincare' },
           { title: 'Automotive', value: 'automotive' },
+          { title: 'Outdoor',    value: 'outdoor'    },
         ],
       },
     }),

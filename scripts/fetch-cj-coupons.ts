@@ -65,7 +65,7 @@ const ADVERTISERS = [
   { id: '6282055', brand: 'Surfshark',       category: 'tech'       },
   { id: '5661292', brand: 'SwitchBot',       category: 'tech'       },
   { id: '5824323', brand: 'UNice',           category: 'beauty'     },
-  { id: '6038648', brand: 'Velocity Outdoor', category: 'fitness'   },
+  { id: '6038648', brand: 'Velocity Outdoor', category: 'outdoor'   },
 ] as const
 
 const ADVERTISER_IDS = ADVERTISERS.map(a => a.id)

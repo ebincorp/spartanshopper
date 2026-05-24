@@ -188,7 +188,7 @@ Requires `SANITY_API_TOKEN` in `.env.local`.
 
 **Optional fields:** `startDate`, `description` (both ISO `YYYY-MM-DD`)
 
-**Valid `category` values:** `health` | `tech` | `home` | `food` | `beauty` | `fitness` | `pets` | `travel` | `fashion` | `amazon` | `korean-skincare` | `automotive`
+**Valid `category` values:** `health` | `tech` | `home` | `food` | `beauty` | `fitness` | `pets` | `travel` | `fashion` | `amazon` | `korean-skincare` | `automotive` | `outdoor`
 
 ---
 

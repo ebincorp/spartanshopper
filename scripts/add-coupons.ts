@@ -116,7 +116,7 @@ function buildDescription(promo: PromoInput): string {
 const VALID_CATEGORIES = new Set([
   'health', 'tech', 'home', 'food', 'beauty',
   'fitness', 'pets', 'travel', 'fashion', 'amazon',
-  'korean-skincare', 'automotive',
+  'korean-skincare', 'automotive', 'outdoor',
 ])
 
 function validate(promo: PromoInput, index: number): string[] {
