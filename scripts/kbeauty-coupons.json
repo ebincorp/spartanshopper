@@ -1,0 +1,42 @@
+[
+  {
+    "brand": "Dr.G",
+    "code": "DRGDEWYGLOW",
+    "discount": "10% Off",
+    "category": "beauty",
+    "startDate": "2026-06-15",
+    "expiryDate": "2026-06-30",
+    "affiliateUrl": "https://www.amazon.com/dp/B07WNMS4LS?tag=sku18798384-20",
+    "description": "Save 10% on the Dr.G Brightening Peeling Gel at Amazon. Gentle exfoliating gel that removes dead skin cells and brightens skin tone. Visit the page for the code."
+  },
+  {
+    "brand": "DERMAL",
+    "code": "DERMALMASK20",
+    "discount": "20% Off",
+    "category": "beauty",
+    "startDate": "2026-06-01",
+    "expiryDate": "2026-11-25",
+    "affiliateUrl": "https://www.amazon.com/dp/B00R97V26Y?tag=sku18798384-20",
+    "description": "Save 20% on the DERMAL 24-Pack Korean Collagen Essence Full Face Facial Mask Sheet at Amazon. Hydrating sheet masks with collagen, hyaluronic acid, and vitamin C. Visit the page for the code."
+  },
+  {
+    "brand": "JUMISO",
+    "code": "JUMISO20",
+    "discount": "20% Off",
+    "category": "beauty",
+    "startDate": "2026-06-01",
+    "expiryDate": "2026-11-25",
+    "affiliateUrl": "https://www.amazon.com/dp/B0C4WRWP56?tag=sku18798384-20",
+    "description": "Save 20% on the JUMISO Niacinamide Dark Spot Serum at Amazon. Targets dark spots, uneven skin tone, and post-acne marks with 10% niacinamide and alpha arbutin. Visit the page for the code."
+  },
+  {
+    "brand": "Dermafirm",
+    "code": "DMFIPSY2026",
+    "discount": "20% Off",
+    "category": "beauty",
+    "startDate": "2026-06-01",
+    "expiryDate": "2026-10-31",
+    "affiliateUrl": "https://www.amazon.com/dp/B0CQTN8KYW?tag=sku18798384-20",
+    "description": "Save 20% on the Dermafirm Bakuchiol + Retinol Firming Serum at Amazon. Plant-based retinol alternative with bakuchiol and peptides for firmer, smoother skin with less irritation. Visit the page for the code."
+  }
+]

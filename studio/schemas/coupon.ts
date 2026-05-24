@@ -111,6 +111,8 @@ export default defineType({
           { title: 'Fashion', value: 'fashion' },
           { title: 'Amazon Deals', value: 'amazon' },
           { title: 'Gaming', value: 'gaming' },
+          { title: 'Korean Skincare', value: 'korean-skincare' },
+          { title: 'Automotive', value: 'automotive' },
         ],
       },
     }),

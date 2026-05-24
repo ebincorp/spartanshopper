@@ -16,6 +16,7 @@ const ALL_CATEGORIES = [
   { label: 'Travel',            value: 'travel' },
   { label: 'Fashion',           value: 'fashion' },
   { label: 'Amazon Deals',      value: 'amazon' },
+  { label: 'Automotive',        value: 'automotive' },
 ]
 
 interface Props {

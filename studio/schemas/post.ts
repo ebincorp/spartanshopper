@@ -38,6 +38,7 @@ export default defineType({
           { title: 'Deals', value: 'Deals' },
           { title: 'Coupons', value: 'Coupons' },
           { title: 'Sweepstakes', value: 'Sweepstakes' },
+          { title: 'Gut Health', value: 'Gut Health' },
           { title: 'Saving Tips', value: 'Saving Tips' },
           { title: 'News', value: 'News' },
           { title: 'Reviews', value: 'Reviews' },
