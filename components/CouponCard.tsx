@@ -151,7 +151,7 @@ export default function CouponCard({
           href={shopUrl}
           target="_blank"
           rel="noopener noreferrer nofollow"
-          className={`block w-full text-center font-bold py-2.5 rounded-xl text-sm transition ${
+          className={`mt-auto block w-full text-center font-bold py-2.5 rounded-xl text-sm transition ${
             expired
               ? 'bg-gray-200 text-gray-400 pointer-events-none'
               : 'text-white hover:opacity-90 active:scale-95'
