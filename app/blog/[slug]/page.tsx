@@ -152,9 +152,15 @@ const portableTextComponents: PortableTextComponents = {
       const imageUrl = value?.asset ? urlFor(value).width(800).url() : null
       if (!imageUrl) return null
       return (
-        <figure className="my-8">
+        <figure className="my-8 w-full">
           <div className="relative w-full rounded-xl overflow-hidden bg-gray-100" style={{ aspectRatio: '16/9' }}>
-            <Image src={imageUrl} alt={value.alt ?? ''} fill className="object-contain" />
+            <Image
+              src={imageUrl}
+              alt={value.alt ?? ''}
+              fill
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-contain"
+            />
           </div>
           {value.caption && (
             <figcaption className="text-center text-sm text-gray-400 mt-2">{value.caption}</figcaption>
