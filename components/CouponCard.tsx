@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -39,7 +39,11 @@ export default function CouponCard({
   const shopUrl = affiliateSlug ? `/go/${affiliateSlug}` : affiliateUrl
   const [revealed, setRevealed] = useState(false)
   const [copied, setCopied] = useState(false)
-  const expired = isExpired(expiryDate)
+  const [expired, setExpired] = useState(false)
+
+  useEffect(() => {
+    setExpired(isExpired(expiryDate))
+  }, [expiryDate])
 
   const handleReveal = () => {
     setRevealed(true)
@@ -138,7 +142,7 @@ export default function CouponCard({
         {/* Expiry */}
         {expiryDate && !expired && (
           <p className="text-xs text-gray-400 mb-3">
-            Expires: {new Date(expiryDate).toLocaleDateString()}
+            Expires: {new Date(expiryDate).toLocaleDateString('en-US')}
           </p>
         )}
 
