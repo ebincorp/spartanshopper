@@ -141,7 +141,7 @@ export default function CouponCard({
 
         {/* Expiry */}
         {expiryDate && !expired && (
-          <p className="text-xs text-gray-400 mb-3">
+          <p className="text-xs text-gray-400 mb-3" suppressHydrationWarning>
             Expires: {new Date(expiryDate).toLocaleDateString('en-US')}
           </p>
         )}
