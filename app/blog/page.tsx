@@ -47,11 +47,12 @@ export default async function BlogPage() {
               >
                 {/* Cover image */}
                 <div className="relative w-full h-44 bg-gray-100 overflow-hidden">
-                  {post.coverImage ? (
+                  {post.coverImage?.asset ? (
                     <Image
                       src={urlFor(post.coverImage).width(600).url()}
-                      alt={post.title}
+                      alt={post.coverImage.alt ?? post.title}
                       fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover"
                     />
                   ) : (
