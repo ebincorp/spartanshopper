@@ -133,14 +133,28 @@ const portableTextComponents: PortableTextComponents = {
             <tbody>
               {body.map((row, ri) => (
                 <tr key={row._key ?? ri} className={ri % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  {(row.cells ?? []).map((cell, ci) => (
-                    <td
-                      key={ci}
-                      className="px-4 py-2.5 text-gray-700 border-b border-gray-100"
-                    >
-                      {cell}
-                    </td>
-                  ))}
+                  {(row.cells ?? []).map((cell, ci) => {
+                    const sepIdx = cell.indexOf('||')
+                    const content = sepIdx === -1 ? cell : (
+                      <a
+                        href={cell.slice(sepIdx + 2)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:opacity-80 transition"
+                        style={{ color: '#E63946' }}
+                      >
+                        {cell.slice(0, sepIdx)}
+                      </a>
+                    )
+                    return (
+                      <td
+                        key={ci}
+                        className="px-4 py-2.5 text-gray-700 border-b border-gray-100"
+                      >
+                        {content}
+                      </td>
+                    )
+                  })}
                 </tr>
               ))}
             </tbody>
