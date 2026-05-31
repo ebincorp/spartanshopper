@@ -124,8 +124,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== LATEST DEALS ===== */}
-      <section className="py-14 px-4 bg-gray-50">
+      {/* ===== LATEST DEALS — hidden ===== */}
+      {/* <section className="py-14 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -161,7 +161,7 @@ export default async function HomePage() {
             <p className="text-gray-400 text-center py-10">No deals yet — check back soon.</p>
           )}
         </div>
-      </section>
+      </section> */}
 
       {/* ===== LATEST COUPONS ===== */}
       <section className="py-14 px-4 bg-white">
