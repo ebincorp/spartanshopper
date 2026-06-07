@@ -6,6 +6,7 @@ import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { client, urlFor } from '@/lib/sanity.client'
 import { getPostBySlugQuery, getAllPostSlugsQuery } from '@/lib/blogQueries'
 import type { Post } from '@/lib/types'
+import { generateJsonLd } from '@/lib/generateJsonLd'
 import InlineCouponCard from '@/components/InlineCouponCard'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import EmailSignup from '@/components/EmailSignup'
@@ -237,12 +238,10 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
-    {post.jsonLd && (
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: post.jsonLd }}
-      />
-    )}
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: generateJsonLd(post) }}
+    />
     <main className="min-h-screen bg-gray-50">
       {/* Cover image */}
       {post.coverImage && (
