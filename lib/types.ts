@@ -61,6 +61,16 @@ export interface Post {
     canonicalUrl?: string
   }
   jsonLd?: string
+  products?: Array<{
+    name: string
+    brand?: string
+    price?: number
+    affiliateUrl?: string
+    image?: string
+    ratingValue?: number
+    reviewCount?: number
+    description?: string
+  }>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any[]
 }

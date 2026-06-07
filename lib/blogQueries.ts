@@ -25,6 +25,10 @@ export const getPostBySlugQuery = `
     jsonLd,
     excerpt,
     coverImage,
+    products[] {
+      name, brand, price, affiliateUrl, image,
+      ratingValue, reviewCount, description
+    },
     body[] {
       ...,
       _type == "couponEmbed" => {

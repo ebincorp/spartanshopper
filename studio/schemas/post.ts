@@ -131,6 +131,32 @@ export default defineType({
       rows: 6,
       description: 'Paste a JSON-LD schema block here (e.g. Review, Product, FAQPage). Injected as <script type="application/ld+json"> in the page head.',
     }),
+    // ── PRODUCTS (Phase 2) ──────────────────────────────────────────────────
+    defineField({
+      name: 'products',
+      title: 'Products (Auto Schema)',
+      type: 'array',
+      description: 'Add products to auto-generate rich ItemList schema with star ratings. Overrides body table parsing.',
+      of: [
+        {
+          type: 'object',
+          name: 'productItem',
+          title: 'Product',
+          fields: [
+            { name: 'name', title: 'Product Name', type: 'string', validation: (Rule: any) => Rule.required() },
+            { name: 'brand', title: 'Brand', type: 'string' },
+            { name: 'price', title: 'Price (USD)', type: 'number', description: 'Current sale price as a number e.g. 161.00' },
+            { name: 'affiliateUrl', title: 'Affiliate URL', type: 'url' },
+            { name: 'image', title: 'Product Image URL', type: 'url', description: 'Amazon product image URL' },
+            { name: 'ratingValue', title: 'Rating (e.g. 4.6)', type: 'number', validation: (Rule: any) => Rule.min(1).max(5) },
+            { name: 'reviewCount', title: 'Review Count', type: 'number', description: 'Number of Amazon reviews e.g. 803' },
+            { name: 'description', title: 'Product Description', type: 'text', rows: 2 },
+          ],
+          preview: { select: { title: 'name', subtitle: 'brand' } },
+        },
+      ],
+    }),
+    // ── END PRODUCTS ────────────────────────────────────────────────────────
     defineField({
       name: 'body',
       title: 'Body',
