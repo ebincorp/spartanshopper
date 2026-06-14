@@ -5,20 +5,21 @@ import { urlFor } from '@/lib/sanity.client'
 import CouponCard from '@/components/CouponCard'
 import type { Coupon } from '@/lib/types'
 
-const ALL_CATEGORIES = [
-  { label: 'Health & Wellness', value: 'health' },
-  { label: 'Tech & Gadgets',    value: 'tech' },
-  { label: 'Home & Kitchen',    value: 'home' },
-  { label: 'Food & Grocery',    value: 'food' },
-  { label: 'Beauty',            value: 'beauty' },
-  { label: 'Fitness',           value: 'fitness' },
-  { label: 'Pets',              value: 'pets' },
-  { label: 'Travel',            value: 'travel' },
-  { label: 'Fashion',           value: 'fashion' },
-  { label: 'Amazon Deals',      value: 'amazon' },
-  { label: 'Automotive',        value: 'automotive' },
-  { label: 'Outdoor',           value: 'outdoor'       },
-  { label: 'Baby & Nursery',    value: 'baby-nursery'  },
+// Each label may match multiple stored category slugs (old short-form + new descriptive-form)
+const CATEGORY_GROUPS: { label: string; values: string[] }[] = [
+  { label: 'Health & Wellness', values: ['health', 'health-wellness'] },
+  { label: 'Tech & Gadgets',    values: ['tech', 'tech-gadgets']      },
+  { label: 'Home & Kitchen',    values: ['home', 'home-kitchen']      },
+  { label: 'Food & Grocery',    values: ['food']                      },
+  { label: 'Beauty',            values: ['beauty']                    },
+  { label: 'Fitness',           values: ['fitness']                   },
+  { label: 'Pets',              values: ['pets']                      },
+  { label: 'Travel',            values: ['travel']                    },
+  { label: 'Fashion',           values: ['fashion']                   },
+  { label: 'Amazon Deals',      values: ['amazon']                    },
+  { label: 'Automotive',        values: ['automotive']                },
+  { label: 'Outdoor',           values: ['outdoor']                   },
+  { label: 'Baby & Nursery',    values: ['baby-nursery']              },
 ]
 
 interface Props {
@@ -26,17 +27,20 @@ interface Props {
 }
 
 export default function CouponFilterBar({ coupons }: Props) {
-  const [activeCategory, setActiveCategory] = useState<string>('all')
+  const [activeLabel, setActiveLabel] = useState<string>('all')
 
-  // Only show pills for categories that have at least one coupon
-  const presentCategories = ALL_CATEGORIES.filter((cat) =>
-    coupons.some((c) => c.category === cat.value)
+  // Only show pills for groups that have at least one coupon
+  const presentGroups = CATEGORY_GROUPS.filter((group) =>
+    coupons.some((c) => group.values.includes(c.category ?? ''))
   )
 
   const filtered =
-    activeCategory === 'all'
+    activeLabel === 'all'
       ? coupons
-      : coupons.filter((c) => c.category === activeCategory)
+      : coupons.filter((c) => {
+          const group = CATEGORY_GROUPS.find((g) => g.label === activeLabel)
+          return group ? group.values.includes(c.category ?? '') : false
+        })
 
   const pillBase =
     'whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold transition-colors focus:outline-none'
@@ -44,29 +48,29 @@ export default function CouponFilterBar({ coupons }: Props) {
   return (
     <div>
       {/* Filter pills */}
-      {presentCategories.length > 0 && (
+      {presentGroups.length > 0 && (
         <div className="flex gap-2 overflow-x-auto pb-2 mb-8 scrollbar-none">
           {/* All pill */}
           <button
-            onClick={() => setActiveCategory('all')}
+            onClick={() => setActiveLabel('all')}
             className={`${pillBase} ${
-              activeCategory === 'all'
+              activeLabel === 'all'
                 ? 'text-white'
                 : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
             }`}
-            style={activeCategory === 'all' ? { backgroundColor: '#E63946' } : {}}
+            style={activeLabel === 'all' ? { backgroundColor: '#E63946' } : {}}
           >
             All
             <span className="ml-1.5 text-xs opacity-70">({coupons.length})</span>
           </button>
 
-          {presentCategories.map((cat) => {
-            const count = coupons.filter((c) => c.category === cat.value).length
-            const isActive = activeCategory === cat.value
+          {presentGroups.map((group) => {
+            const count = coupons.filter((c) => group.values.includes(c.category ?? '')).length
+            const isActive = activeLabel === group.label
             return (
               <button
-                key={cat.value}
-                onClick={() => setActiveCategory(cat.value)}
+                key={group.label}
+                onClick={() => setActiveLabel(group.label)}
                 className={`${pillBase} ${
                   isActive
                     ? 'text-white'
@@ -74,7 +78,7 @@ export default function CouponFilterBar({ coupons }: Props) {
                 }`}
                 style={isActive ? { backgroundColor: '#E63946' } : {}}
               >
-                {cat.label}
+                {group.label}
                 <span className="ml-1.5 text-xs opacity-70">({count})</span>
               </button>
             )
