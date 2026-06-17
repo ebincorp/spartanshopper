@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = coupon.seo?.metaTitle || `${coupon.title} — SpartanShopper`
   const description = coupon.seo?.metaDescription
     || coupon.description
-    || `Use code ${coupon.code} at ${coupon.store}${coupon.discount ? ` for ${coupon.discount}` : ''}. Verified coupon on SpartanShopper.`
+    || `${coupon.discount ? `Save ${coupon.discount} at ${coupon.store}` : `Save at ${coupon.store}`}. Verified coupon code — visit the page to reveal it. Updated daily on SpartanShopper.`
 
   return {
     title,
@@ -110,6 +110,7 @@ export default async function CouponPage({ params }: Props) {
                 fill
                 className="object-contain"
                 priority
+                unoptimized
               />
             </div>
           )}

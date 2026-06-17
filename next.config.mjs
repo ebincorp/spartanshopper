@@ -3,12 +3,6 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/:path*',
-        has: [{ type: 'host', value: 'spartanshopper.com' }],
-        destination: 'https://www.spartanshopper.com/:path*',
-        permanent: true,
-      },
-      {
         source: '/blog/magnesium-glycinate-for-sleep',
         destination: '/blog/magnesium-glycinate-for-sleep-the-natural-melatonin-alternative-you-ve-been-looking-for',
         permanent: true,
@@ -32,6 +26,9 @@ const nextConfig = {
         hostname: 'cdn.sanity.io',
       },
     ],
+    // Cache transformed images for 30 days to minimise repeat transformations on Vercel's free tier.
+    minimumCacheTTL: 2592000,
+    formats: ['image/avif', 'image/webp'],
   },
 }
 

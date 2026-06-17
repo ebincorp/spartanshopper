@@ -90,6 +90,7 @@ export default async function DealPage({ params }: Props) {
                 fill
                 className="object-contain"
                 priority
+                unoptimized
               />
               {savings && savings <= 75 && (
                 <div

@@ -50,6 +50,7 @@ export default function DealCard({
             src={image}
             alt={title}
             fill
+            unoptimized
             className="object-contain group-hover:scale-105 transition-transform duration-300"
           />
         ) : (

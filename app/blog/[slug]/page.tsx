@@ -168,13 +168,15 @@ const portableTextComponents: PortableTextComponents = {
       if (!imageUrl) return null
       return (
         <figure className="my-8 w-full">
-          <div className="relative w-full rounded-xl overflow-hidden bg-gray-100" style={{ aspectRatio: '16/9' }}>
-            <Image
+          <div className="w-full rounded-xl overflow-hidden bg-gray-100" style={{ aspectRatio: '16/9' }}>
+            {/* Plain <img> — Sanity CDN already resizes; no Vercel transformation needed. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={imageUrl}
               alt={value.alt ?? ''}
-              fill
-              sizes="(max-width: 768px) 100vw, 768px"
-              className="object-contain"
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-contain"
             />
           </div>
           {value.caption && (
@@ -256,6 +258,7 @@ export default async function BlogPostPage({ params }: Props) {
             fill
             className="object-cover object-top"
             priority
+            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         </div>

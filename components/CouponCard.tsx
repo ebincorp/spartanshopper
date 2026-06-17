@@ -63,6 +63,7 @@ export default function CouponCard({
             src={image}
             alt={title}
             fill
+            unoptimized
             className="object-contain"
           />
         </Link>
