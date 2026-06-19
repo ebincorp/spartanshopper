@@ -31,7 +31,6 @@ export function trackAffiliateClick(
           link_domain: safeHostname(destination),
           affiliate_slug: slug,
           outbound: true,
-          debug_mode: true, // TEMP: remove after DebugView verification
         },
       },
     ],
