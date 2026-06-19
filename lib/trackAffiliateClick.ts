@@ -38,7 +38,7 @@ export function trackAffiliateClick(
   };
 
   after(async () => {
-    fetch(
+    await fetch(
       `https://www.google-analytics.com/mp/collect?measurement_id=${GA4_MEASUREMENT_ID}&api_secret=${GA4_MP_API_SECRET}`,
       { method: 'POST', body: JSON.stringify(payload) }
     ).catch(() => {});
