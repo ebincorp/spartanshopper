@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Local coupon scanner — run this from your machine where you're already
  * logged into Amazon Associates, or provide AMAZON_EMAIL + AMAZON_PASSWORD.
  *
@@ -14,7 +14,7 @@
 
 import dotenv from 'dotenv'
 import path from 'path'
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local'), quiet: true })
 import { runCouponScan } from '../lib/coupon-scanner'
 
 // Detect a local Chrome installation on Windows/Mac/Linux

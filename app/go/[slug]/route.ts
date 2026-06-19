@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getRedirectBySlug } from '@/lib/redirects'
+import { trackAffiliateClick } from '@/lib/trackAffiliateClick'
 
 // Force dynamic — never cache redirect responses
 export const dynamic = 'force-dynamic'
@@ -23,6 +24,7 @@ export async function GET(
     }
 
     console.log(`[/go] Redirecting "${slug}" → ${redirect.url}`)
+    trackAffiliateClick(req, { slug, destination: redirect.url })
     return NextResponse.redirect(redirect.url, { status: 301 })
   } catch (err) {
     console.error(`[/go] Error looking up "${slug}":`, err)

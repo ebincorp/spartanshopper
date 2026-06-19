@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Manual coupon entry → Sanity draft creator
  *
  * 1. Fill in scripts/promotions.json with your promo codes
@@ -17,7 +17,7 @@ import path from 'path'
 import fs from 'fs'
 import { createClient } from '@sanity/client'
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local'), quiet: true })
 
 // ── Types ────────────────────────────────────────────────────────────────────
 

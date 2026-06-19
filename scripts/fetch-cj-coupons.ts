@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Fetch active coupon promotions from CJ (Commission Junction) for target advertisers.
  * Outputs JSON compatible with scripts/add-coupons.ts PromoInput format.
  *
@@ -24,7 +24,7 @@ import dotenv from 'dotenv'
 import path from 'path'
 import fs from 'fs'
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local'), quiet: true })
 
 // ── Config ────────────────────────────────────────────────────────────────────
 

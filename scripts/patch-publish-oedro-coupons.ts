@@ -1,9 +1,9 @@
-import dotenv from 'dotenv'
+﻿import dotenv from 'dotenv'
 import path from 'path'
 import fs from 'fs'
 import { createClient } from '@sanity/client'
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local'), quiet: true })
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
