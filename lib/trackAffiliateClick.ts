@@ -6,6 +6,8 @@
  * clicks, so both paths roll up into the same key event automatically.
  */
 
+import { after } from 'next/server';
+
 const GA4_MEASUREMENT_ID = process.env.GA4_MEASUREMENT_ID; // G-E99ZPSFNFS
 const GA4_MP_API_SECRET = process.env.GA4_MP_API_SECRET;
 
@@ -35,10 +37,12 @@ export function trackAffiliateClick(
     ],
   };
 
-  fetch(
-    `https://www.google-analytics.com/mp/collect?measurement_id=${GA4_MEASUREMENT_ID}&api_secret=${GA4_MP_API_SECRET}`,
-    { method: 'POST', body: JSON.stringify(payload) }
-  ).catch(() => {});
+  after(async () => {
+    fetch(
+      `https://www.google-analytics.com/mp/collect?measurement_id=${GA4_MEASUREMENT_ID}&api_secret=${GA4_MP_API_SECRET}`,
+      { method: 'POST', body: JSON.stringify(payload) }
+    ).catch(() => {});
+  });
 }
 
 function safeHostname(url: string): string {
