@@ -8,8 +8,8 @@ import type { Post } from '@/lib/types'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Blog — SpartanShopper',
-  description: 'Saving tips, deal guides, and news from the SpartanShopper team.',
+  title: 'Deal Tips, Coupon Guides & Money-Saving Strategies — SpartanShopper Blog',
+  description: 'Expert money-saving tips, coupon code guides, deal breakdowns, and shopping strategies — updated regularly by the SpartanShopper team.',
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -25,7 +25,35 @@ export default async function BlogPage() {
     .fetch<Post[]>(getAllPostsQuery)
     .catch(() => [] as Post[])
 
+  const blogJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'SpartanShopper Blog',
+    description: 'Expert money-saving tips, coupon code guides, deal breakdowns, and shopping strategies.',
+    url: 'https://www.spartanshopper.com/blog',
+    publisher: {
+      '@type': 'Organization',
+      name: 'SpartanShopper',
+      url: 'https://www.spartanshopper.com',
+    },
+    blogPost: posts.slice(0, 12).map((p) => ({
+      '@type': 'BlogPosting',
+      headline: p.title,
+      url: `https://www.spartanshopper.com/blog/${p.slug.current}`,
+      datePublished: p.publishedAt,
+      ...(p.excerpt && { description: p.excerpt }),
+      author: p.author
+        ? { '@type': 'Person', name: p.author }
+        : { '@type': 'Organization', name: 'SpartanShopper' },
+    })),
+  }
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+    />
     <main className="min-h-screen bg-gray-50">
       {/* Header */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4">
@@ -120,5 +148,6 @@ export default async function BlogPage() {
         )}
       </div>
     </main>
+    </>
   )
 }

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { client, urlFor } from '@/lib/sanity.client'
 import { dealsQuery, dealsByCategoryQuery, dealCategoriesQuery } from '@/lib/queries'
@@ -21,9 +22,15 @@ interface Props {
   searchParams: Promise<{ category?: string }>
 }
 
-export const metadata = {
-  title: 'Deals — SpartanShopper',
-  description: 'Browse the latest hand-picked deals and discounts updated daily.',
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { category } = await searchParams
+  return {
+    title: "Today's Best Deals — Discounts & Sales Updated Daily | SpartanShopper",
+    description: "Shop today's best deals and discounts — hand-picked across electronics, fashion, home, beauty, and more. Updated daily so you never miss a saving.",
+    ...(category && {
+      alternates: { canonical: 'https://www.spartanshopper.com/deals' },
+    }),
+  }
 }
 
 export default async function DealsPage({ searchParams }: Props) {
@@ -36,7 +43,40 @@ export default async function DealsPage({ searchParams }: Props) {
     client.fetch<string[]>(dealCategoriesQuery).catch(() => [] as string[]),
   ])
 
+  const dealsJsonLd = !category
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: "Today's Best Deals",
+        description: "Hand-picked deals and discounts updated daily.",
+        url: 'https://www.spartanshopper.com/deals',
+        numberOfItems: deals.length,
+        itemListElement: deals.slice(0, 15).map((d, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          item: {
+            '@type': 'Product',
+            name: d.title,
+            url: `https://www.spartanshopper.com/deals/${d.slug.current}`,
+            offers: {
+              '@type': 'Offer',
+              price: d.salePrice,
+              priceCurrency: 'USD',
+              availability: 'https://schema.org/InStock',
+            },
+          },
+        })),
+      }
+    : null
+
   return (
+    <>
+    {dealsJsonLd && (
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(dealsJsonLd) }}
+      />
+    )}
     <main className="min-h-screen bg-gray-50">
       {/* Page Header */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4">
@@ -119,5 +159,6 @@ export default async function DealsPage({ searchParams }: Props) {
         )}
       </div>
     </main>
+    </>
   )
 }

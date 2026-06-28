@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   description: 'Find the best deals, verified coupon codes, and free sweepstakes — all in one place.',
   keywords: 'deals, coupons, coupon codes, sweepstakes, discounts, promo codes, free prizes',
-  metadataBase: new URL('https://spartanshopper.com'),
+  metadataBase: new URL('https://www.spartanshopper.com'),
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',

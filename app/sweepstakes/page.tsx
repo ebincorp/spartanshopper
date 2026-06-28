@@ -21,7 +21,34 @@ export default async function SweepstakesPage() {
   const active = sweepstakes.filter((s) => new Date(s.entryDeadline) >= now)
   const ended = sweepstakes.filter((s) => new Date(s.entryDeadline) < now)
 
+  const sweepstakesJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Free Sweepstakes — Enter to Win Prizes',
+    description: 'Active free sweepstakes you can enter to win prizes. No purchase necessary.',
+    url: 'https://www.spartanshopper.com/sweepstakes',
+    numberOfItems: active.length,
+    itemListElement: active.slice(0, 10).map((s, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'Offer',
+        name: s.title,
+        url: `https://www.spartanshopper.com/sweepstakes/${s.slug.current}`,
+        price: 0,
+        priceCurrency: 'USD',
+        validThrough: s.entryDeadline,
+        seller: { '@type': 'Organization', name: s.sponsor },
+      },
+    })),
+  }
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(sweepstakesJsonLd) }}
+    />
     <main className="min-h-screen bg-gray-50">
       {/* Page Header */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4">
@@ -106,5 +133,6 @@ export default async function SweepstakesPage() {
         )}
       </div>
     </main>
+    </>
   )
 }

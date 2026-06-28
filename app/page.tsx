@@ -48,18 +48,39 @@ async function getData() {
   }
 }
 
-const organizationSchema = {
+const siteJsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'SpartanShopper.com',
-  url: 'https://www.spartanshopper.com',
-  logo: {
-    '@type': 'ImageObject',
-    url: 'https://www.spartanshopper.com/android-chrome-512x512.png',
-    width: 512,
-    height: 512,
-  },
-  sameAs: ['https://www.instagram.com/spartanshopper'],
+  '@graph': [
+    {
+      '@type': 'Organization',
+      name: 'SpartanShopper.com',
+      url: 'https://www.spartanshopper.com',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.spartanshopper.com/android-chrome-512x512.png',
+        width: 512,
+        height: 512,
+      },
+      sameAs: [
+        'https://www.instagram.com/spartanshopper',
+        'https://www.tiktok.com/@spartanshopper',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      name: 'SpartanShopper',
+      url: 'https://www.spartanshopper.com',
+      description: 'Verified coupon codes, promo codes, daily deals, and free sweepstakes — updated every day.',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: 'https://www.spartanshopper.com/search?q={search_term_string}',
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ],
 }
 
 export default async function HomePage() {
@@ -69,7 +90,7 @@ export default async function HomePage() {
     <main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
       />
       {/* ===== HERO ===== */}
       <section

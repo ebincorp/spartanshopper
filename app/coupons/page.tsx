@@ -7,8 +7,8 @@ import Link from 'next/link'
 export const revalidate = 3600
 
 export const metadata = {
-  title: 'Coupon Codes — SpartanShopper',
-  description: 'Browse verified coupon codes and promo codes updated daily.',
+  title: 'Verified Coupon Codes & Promo Codes — Updated Daily | SpartanShopper',
+  description: 'Browse verified coupon codes and promo codes across beauty, health, home, pets, tech, and more. Every code is tested before it goes live.',
 }
 
 export default async function CouponsPage() {
@@ -20,7 +20,32 @@ export default async function CouponsPage() {
   const unverified = coupons.filter((c) => !c.verified)
   const sorted = [...verified, ...unverified]
 
+  const offerCatalogJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'OfferCatalog',
+    name: 'Verified Coupon Codes & Promo Codes',
+    description: 'Browse verified coupon codes and promo codes across beauty, health, home, pets, tech, and more.',
+    url: 'https://www.spartanshopper.com/coupons',
+    numberOfItems: coupons.length,
+    itemListElement: sorted.slice(0, 15).map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'Offer',
+        name: c.title,
+        url: `https://www.spartanshopper.com/coupons/${c.slug.current}`,
+        ...(c.expiryDate && { validThrough: `${c.expiryDate}T23:59:59` }),
+        seller: { '@type': 'Organization', name: c.store },
+      },
+    })),
+  }
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(offerCatalogJsonLd) }}
+    />
     <main className="min-h-screen bg-gray-50">
       {/* Page Header */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4">
@@ -62,5 +87,6 @@ export default async function CouponsPage() {
         )}
       </div>
     </main>
+    </>
   )
 }

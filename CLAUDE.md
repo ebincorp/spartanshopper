@@ -11,8 +11,8 @@ This file is read automatically by Claude Code at the start of every session. Fo
 - **Sanity project**: `eohdr7jw`
 - **Sanity Studio URL**: https://spartanshopper.sanity.studio
 - **Site URL**: SpartanShopper.com
-- **Amazon Store ID**: `spartan03-20`
-- **Amazon tag**: `sku18798384-20` — append as `?tag=sku18798384-20` to all Amazon affiliate URLs
+- **Amazon tag**: `sku18798384-20` — append as `?tag=sku18798384-20` to ALL Amazon affiliate URLs, always
+- **Amazon Store ID**: `spartan03-20` — this is the Creator Connections enrolled store ID only. It is NOT used in affiliate URLs. Never use `spartan03-20` as a tag in any URL.
 - **Primary red**: `#E63946` | **Dark navy**: `#1A1A2E`
 
 ---

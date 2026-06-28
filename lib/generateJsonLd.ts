@@ -1,22 +1,3 @@
-/**
- * lib/generateJsonLd.ts
- *
- * Automatically generates JSON-LD structured data for blog posts.
- *
- * Priority:
- *   1. If post.jsonLd is set → use it as-is (manual override)
- *   2. Otherwise → auto-generate based on post.category and body content
- *
- * Schema types generated:
- *   - "Reviews" category with table → ItemList (product roundup)
- *   - "Reviews" category without table → Review (single product)
- *   - Everything else → Article
- *
- * Phase 2: When post.products[] is added to the Sanity schema,
- *   this function will use structured product data (including
- *   aggregateRating) instead of parsing the body table.
- */
-
 import type { Post } from './types'
 
 const SITE_URL = 'https://www.spartanshopper.com'
@@ -43,6 +24,12 @@ function extractTableRows(body: any[]): Array<{ name: string; url: string | null
   })
 }
 
+function blockText(block: any): string {
+  return (block.children ?? [])
+    .map((s: any) => (s && typeof s === 'object' && 'text' in s ? String(s.text) : ''))
+    .join('')
+}
+
 function getCoverImageUrl(post: Post): string | undefined {
   if (!post.coverImage?.asset?._ref) return undefined
   const ref = post.coverImage.asset._ref
@@ -55,22 +42,69 @@ function getCoverImageUrl(post: Post): string | undefined {
   return `https://cdn.sanity.io/images/eohdr7jw/production/${hash}-${dimensions}.${format}`
 }
 
+function authorSchema(post: Post) {
+  return post.author
+    ? { '@type': 'Person', name: post.author }
+    : { '@type': 'Organization', name: 'SpartanShopper', url: SITE_URL }
+}
+
+// ── FAQ extraction ────────────────────────────────────────────────────────────
+
+const QUESTION_RE = /^(what|how|why|is|are|can|does|do|when|where|which|who|will|should)\b/i
+
+function extractFaqPairs(body: any[]): Array<{ question: string; answer: string }> {
+  const pairs: Array<{ question: string; answer: string }> = []
+  for (let i = 0; i < body.length; i++) {
+    const block = body[i]
+    if (block._type !== 'block') continue
+    if (block.style !== 'h2' && block.style !== 'h3') continue
+
+    const heading = blockText(block).trim()
+    if (!heading) continue
+    if (!QUESTION_RE.test(heading) && !heading.endsWith('?')) continue
+
+    // Collect following normal paragraphs as the answer (up to next heading or 4 blocks)
+    const answerParts: string[] = []
+    for (let j = i + 1; j < body.length && j <= i + 4; j++) {
+      const next = body[j]
+      if (next._type === 'block' && (next.style === 'h2' || next.style === 'h3')) break
+      if (next._type === 'block' && next.style === 'normal') {
+        const text = blockText(next).trim()
+        if (text) answerParts.push(text)
+      }
+    }
+    if (answerParts.length === 0) continue
+
+    pairs.push({
+      question: heading.endsWith('?') ? heading : `${heading}?`,
+      answer: answerParts.join(' '),
+    })
+  }
+  return pairs
+}
+
+function generateFaqSchema(pairs: Array<{ question: string; answer: string }>): object {
+  return {
+    '@type': 'FAQPage',
+    mainEntity: pairs.map((p) => ({
+      '@type': 'Question',
+      name: p.question,
+      acceptedAnswer: { '@type': 'Answer', text: p.answer },
+    })),
+  }
+}
+
 // ── Schema generators ─────────────────────────────────────────────────────────
 
 function generateArticleSchema(post: Post): object {
   return {
-    '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
     description: post.excerpt ?? '',
     url: `${SITE_URL}/blog/${post.slug.current}`,
     datePublished: post.publishedAt,
-    dateModified: post.publishedAt,
-    author: {
-      '@type': 'Organization',
-      name: 'SpartanShopper',
-      url: SITE_URL,
-    },
+    dateModified: post._updatedAt ?? post.publishedAt,
+    author: authorSchema(post),
     publisher: {
       '@type': 'Organization',
       name: 'SpartanShopper',
@@ -83,7 +117,6 @@ function generateArticleSchema(post: Post): object {
 
 function generateItemListSchema(post: Post, rows: ReturnType<typeof extractTableRows>): object {
   return {
-    '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: post.title,
     description: post.excerpt ?? '',
@@ -99,18 +132,23 @@ function generateItemListSchema(post: Post, rows: ReturnType<typeof extractTable
 }
 
 function generateReviewSchema(post: Post): object {
+  // Strip trailing "review/comparison" suffixes to get the product name
+  const productName = post.title
+    .replace(/\s+(review|reviewed|vs\.?|comparison|guide|test)\s*.*$/i, '')
+    .trim() || post.title
+
   return {
-    '@context': 'https://schema.org',
     '@type': 'Review',
     name: post.title,
     description: post.excerpt ?? '',
     url: `${SITE_URL}/blog/${post.slug.current}`,
     datePublished: post.publishedAt,
-    author: {
-      '@type': 'Organization',
-      name: 'SpartanShopper',
-      url: SITE_URL,
+    dateModified: post._updatedAt ?? post.publishedAt,
+    itemReviewed: {
+      '@type': 'Product',
+      name: productName,
     },
+    author: authorSchema(post),
     publisher: {
       '@type': 'Organization',
       name: 'SpartanShopper',
@@ -120,7 +158,24 @@ function generateReviewSchema(post: Post): object {
   }
 }
 
-// ── Main export ───────────────────────────────────────────────────────────────
+// ── Breadcrumb helper ─────────────────────────────────────────────────────────
+
+export function generateBreadcrumbJsonLd(
+  crumbs: Array<{ name: string; url: string }>
+): string {
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((crumb, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: crumb.name,
+      item: crumb.url,
+    })),
+  })
+}
+
+// ── Main exports ──────────────────────────────────────────────────────────────
 
 export function generateJsonLd(post: Post): string {
   if (post.jsonLd && post.jsonLd.trim().length > 0) {
@@ -129,31 +184,35 @@ export function generateJsonLd(post: Post): string {
 
   const isReview = post.category === 'Reviews'
   const body: any[] = post.body ?? []
-  let schema: object
 
+  let primary: object
   if (isReview) {
     const rows = extractTableRows(body)
-    schema = rows.length > 1
+    primary = rows.length > 1
       ? generateItemListSchema(post, rows)
       : generateReviewSchema(post)
   } else {
-    schema = generateArticleSchema(post)
+    primary = generateArticleSchema(post)
   }
 
-  return JSON.stringify(schema)
+  // Add FAQ schema when 2+ question headings are found in the body
+  const faqPairs = extractFaqPairs(body)
+  if (faqPairs.length >= 2) {
+    return JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [primary, generateFaqSchema(faqPairs)],
+    })
+  }
+
+  return JSON.stringify({ '@context': 'https://schema.org', ...primary })
 }
 
-/**
- * Phase 2 — use once post.products[] exists in the Sanity schema.
- * Enables aggregateRating and richer ItemList entries.
- */
 export function generateJsonLdFromProducts(post: Post, products: any[]): string {
   if (post.jsonLd && post.jsonLd.trim().length > 0) {
     return post.jsonLd
   }
 
-  const schema = {
-    '@context': 'https://schema.org',
+  const primary = {
     '@type': 'ItemList',
     name: post.title,
     description: post.excerpt ?? '',
@@ -188,5 +247,13 @@ export function generateJsonLdFromProducts(post: Post, products: any[]): string 
     })),
   }
 
-  return JSON.stringify(schema)
+  const faqPairs = extractFaqPairs(post.body ?? [])
+  if (faqPairs.length >= 2) {
+    return JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [primary, generateFaqSchema(faqPairs)],
+    })
+  }
+
+  return JSON.stringify({ '@context': 'https://schema.org', ...primary })
 }

@@ -6,7 +6,7 @@ import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { client, urlFor } from '@/lib/sanity.client'
 import { getPostBySlugQuery, getAllPostSlugsQuery } from '@/lib/blogQueries'
 import type { Post } from '@/lib/types'
-import { generateJsonLd, generateJsonLdFromProducts } from '@/lib/generateJsonLd'
+import { generateJsonLd, generateJsonLdFromProducts, generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import InlineCouponCard from '@/components/InlineCouponCard'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import EmailSignup from '@/components/EmailSignup'
@@ -246,6 +246,16 @@ export default async function BlogPostPage({ params }: Props) {
         __html: post.products?.length
           ? generateJsonLdFromProducts(post, post.products)
           : generateJsonLd(post)
+      }}
+    />
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: generateBreadcrumbJsonLd([
+          { name: 'Home', url: 'https://www.spartanshopper.com' },
+          { name: 'Blog', url: 'https://www.spartanshopper.com/blog' },
+          { name: post.title, url: `https://www.spartanshopper.com/blog/${post.slug.current}` },
+        ])
       }}
     />
     <main className="min-h-screen bg-gray-50">

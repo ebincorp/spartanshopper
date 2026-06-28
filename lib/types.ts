@@ -47,6 +47,7 @@ export interface Coupon {
 
 export interface Post {
   _id: string
+  _updatedAt?: string
   title: string
   slug: { current: string }
   publishedAt: string

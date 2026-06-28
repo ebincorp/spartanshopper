@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 
 export const revalidate = 3600
 
@@ -65,7 +66,39 @@ export default async function SweepstakePage({ params }: Props) {
   const deadline = new Date(sweep.entryDeadline)
   const expired = deadline < new Date()
 
+  const sweepJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Offer',
+    name: sweep.title,
+    description: `Enter to win ${sweep.prize} from ${sweep.sponsor}. Free sweepstakes entry — no purchase necessary.`,
+    price: 0,
+    priceCurrency: 'USD',
+    availability: expired
+      ? 'https://schema.org/OutOfStock'
+      : 'https://schema.org/InStock',
+    validThrough: sweep.entryDeadline,
+    url: `https://www.spartanshopper.com/sweepstakes/${slug}`,
+    seller: { '@type': 'Organization', name: sweep.sponsor },
+    itemOffered: { '@type': 'Thing', name: sweep.prize },
+    ...(imageUrl && { image: imageUrl }),
+  }
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(sweepJsonLd) }}
+    />
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: generateBreadcrumbJsonLd([
+          { name: 'Home', url: 'https://www.spartanshopper.com' },
+          { name: 'Sweepstakes', url: 'https://www.spartanshopper.com/sweepstakes' },
+          { name: sweep.title, url: `https://www.spartanshopper.com/sweepstakes/${slug}` },
+        ])
+      }}
+    />
     <main className="min-h-screen bg-gray-50 py-10 px-4">
       <div className="max-w-3xl mx-auto">
 
@@ -166,5 +199,6 @@ export default async function SweepstakePage({ params }: Props) {
         </div>
       </div>
     </main>
+    </>
   )
 }

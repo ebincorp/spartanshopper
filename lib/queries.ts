@@ -68,7 +68,7 @@ export const featuredCouponsQuery = `
 export const couponBySlugQuery = `
   *[_type == "coupon" && slug.current == $slug && ${COUPON_DATE_FILTER}][0] {
     _id, title, slug, store, code, discount, description, whyWeLikeThis, seo,
-    image, affiliateUrl, affiliateSlug, startDate, expiryDate, verified, active, category, tags
+    image, affiliateUrl, "affiliateSlug": affiliateSlug.current, startDate, expiryDate, verified, active, category, tags
   }
 `
 
@@ -131,7 +131,7 @@ export const dealSlugsQuery = `
 `
 
 export const couponSlugsQuery = `
-  *[_type == "coupon" && active == true && defined(slug.current)] {
+  *[_type == "coupon" && active == true && defined(slug.current) && (!defined(expiryDate) || expiryDate > now())] {
     "slug": slug.current, _updatedAt
   }
 `

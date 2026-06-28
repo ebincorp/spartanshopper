@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 
 export const revalidate = 3600
 
@@ -68,7 +69,42 @@ export default async function DealPage({ params }: Props) {
       ? Math.round(((deal.originalPrice - deal.salePrice) / deal.originalPrice) * 100)
       : null
 
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: deal.title,
+    ...(deal.description && { description: deal.description }),
+    ...(imageUrl && { image: imageUrl }),
+    brand: { '@type': 'Brand', name: deal.store },
+    offers: {
+      '@type': 'Offer',
+      price: deal.salePrice,
+      priceCurrency: 'USD',
+      availability: expired
+        ? 'https://schema.org/OutOfStock'
+        : 'https://schema.org/InStock',
+      url: deal.affiliateUrl,
+      seller: { '@type': 'Organization', name: deal.store },
+      ...(deal.expiryDate && { priceValidUntil: deal.expiryDate }),
+    },
+  }
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+    />
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: generateBreadcrumbJsonLd([
+          { name: 'Home', url: 'https://www.spartanshopper.com' },
+          { name: 'Deals', url: 'https://www.spartanshopper.com/deals' },
+          { name: deal.title, url: `https://www.spartanshopper.com/deals/${slug}` },
+        ])
+      }}
+    />
     <main className="min-h-screen bg-gray-50 py-10 px-4">
       <div className="max-w-3xl mx-auto">
 
@@ -181,5 +217,6 @@ export default async function DealPage({ params }: Props) {
         </div>
       </div>
     </main>
+    </>
   )
 }

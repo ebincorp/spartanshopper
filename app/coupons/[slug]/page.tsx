@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { notFound, permanentRedirect } from 'next/navigation'
 import CopyButton from '@/components/CopyButton'
 import RelatedCoupons from '@/components/RelatedCoupons'
+import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 
 export const revalidate = 3600
 
@@ -34,6 +35,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     || coupon.description
     || `${coupon.discount ? `Save ${coupon.discount} at ${coupon.store}` : `Save at ${coupon.store}`}. Verified coupon code — visit the page to reveal it. Updated daily on SpartanShopper.`
 
+  const ogImage = coupon.image
+    ? urlFor(coupon.image).width(1200).height(630).url()
+    : 'https://www.spartanshopper.com/og-default.png'
+
   return {
     title,
     description,
@@ -46,11 +51,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://www.spartanshopper.com/coupons/${slug}`,
       siteName: 'SpartanShopper',
       type: 'article',
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
+      images: [ogImage],
     },
   }
 }
@@ -74,7 +81,6 @@ export default async function CouponPage({ params }: Props) {
     '@type': 'Offer',
     name: coupon.title,
     ...(coupon.description && { description: coupon.description }),
-    ...(coupon.discount && { discount: coupon.discount }),
     url: coupon.affiliateUrl,
     ...(coupon.expiryDate && { validThrough: `${coupon.expiryDate}T23:59:59` }),
     seller: {
@@ -83,11 +89,25 @@ export default async function CouponPage({ params }: Props) {
     },
   }
 
+  const shopUrl = coupon.affiliateSlug
+    ? `/go/${coupon.affiliateSlug}`
+    : coupon.affiliateUrl
+
   return (
     <>
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: generateBreadcrumbJsonLd([
+          { name: 'Home', url: 'https://www.spartanshopper.com' },
+          { name: 'Coupons', url: 'https://www.spartanshopper.com/coupons' },
+          { name: coupon.title, url: `https://www.spartanshopper.com/coupons/${coupon.slug.current}` },
+        ])
+      }}
     />
     <main className="min-h-screen bg-gray-50 py-10 px-4">
       <div className="max-w-3xl mx-auto">
@@ -165,7 +185,7 @@ export default async function CouponPage({ params }: Props) {
             )}
 
             <a
-              href={coupon.affiliateUrl}
+              href={shopUrl}
               target="_blank"
               rel="noopener noreferrer nofollow"
               className="block w-full text-center font-extrabold py-4 rounded-xl text-lg tracking-wide transition text-white hover:opacity-90 active:scale-95"
