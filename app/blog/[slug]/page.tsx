@@ -83,6 +83,48 @@ function blockText(value: { children?: unknown[] }): string {
     .join('')
 }
 
+// Components used when rendering Portable Text inside table cells
+const cellPtComponents: PortableTextComponents = {
+  marks: {
+    strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+    em: ({ children }) => <em className="italic">{children}</em>,
+    link: ({ value, children }) => (
+      <a
+        href={value?.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline hover:opacity-80 transition"
+        style={{ color: '#E63946' }}
+      >
+        {children}
+      </a>
+    ),
+  },
+  block: {
+    normal: ({ children }) => <>{children}</>,
+  },
+}
+
+function renderTableCell(cell: string | unknown[]) {
+  if (Array.isArray(cell)) {
+    return <PortableText value={cell as any} components={cellPtComponents} />
+  }
+  // Legacy plain-string format with optional "text||href" link separator
+  const sepIdx = cell.indexOf('||')
+  if (sepIdx === -1) return <>{cell}</>
+  return (
+    <a
+      href={cell.slice(sepIdx + 2)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="underline hover:opacity-80 transition"
+      style={{ color: '#E63946' }}
+    >
+      {cell.slice(0, sepIdx)}
+    </a>
+  )
+}
+
 const portableTextComponents: PortableTextComponents = {
   types: {
     couponEmbed: ({ value }) => {
@@ -109,7 +151,7 @@ const portableTextComponents: PortableTextComponents = {
       return <InlineCouponCard coupon={coupon} />
     },
     table: ({ value }) => {
-      const rows: { _key: string; cells: string[] }[] = value?.rows ?? []
+      const rows: { _key: string; cells: (string | unknown[])[] }[] = value?.rows ?? []
       if (!rows.length) return null
       const [header, ...body] = rows
       return (
@@ -126,7 +168,7 @@ const portableTextComponents: PortableTextComponents = {
                     className="px-4 py-2.5 text-left text-white font-bold text-xs uppercase tracking-wide"
                     style={{ backgroundColor: '#1A1A2E' }}
                   >
-                    {cell}
+                    {renderTableCell(cell)}
                   </th>
                 ))}
               </tr>
@@ -134,28 +176,14 @@ const portableTextComponents: PortableTextComponents = {
             <tbody>
               {body.map((row, ri) => (
                 <tr key={row._key ?? ri} className={ri % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  {(row.cells ?? []).map((cell, ci) => {
-                    const sepIdx = cell.indexOf('||')
-                    const content = sepIdx === -1 ? cell : (
-                      <a
-                        href={cell.slice(sepIdx + 2)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline hover:opacity-80 transition"
-                        style={{ color: '#E63946' }}
-                      >
-                        {cell.slice(0, sepIdx)}
-                      </a>
-                    )
-                    return (
-                      <td
-                        key={ci}
-                        className="px-4 py-2.5 text-gray-700 border-b border-gray-100"
-                      >
-                        {content}
-                      </td>
-                    )
-                  })}
+                  {(row.cells ?? []).map((cell, ci) => (
+                    <td
+                      key={ci}
+                      className="px-4 py-2.5 text-gray-700 border-b border-gray-100"
+                    >
+                      {renderTableCell(cell)}
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
