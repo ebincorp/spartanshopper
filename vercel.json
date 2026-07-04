@@ -23,7 +23,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.tiktok.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io https://images.unsplash.com https://www.google-analytics.com https://www.googletagmanager.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://*.tiktokcdn-eu.com https://p16-sign-va.tiktokcdn.com; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://*.sanity.io https://www.tiktok.com; frame-src https://www.tiktok.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; trusted-types default 'allow-duplicates'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.tiktok.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://*.tiktokcdn-eu.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io https://images.unsplash.com https://www.google-analytics.com https://www.googletagmanager.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://*.tiktokcdn-eu.com https://p16-sign-va.tiktokcdn.com; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://*.sanity.io https://www.tiktok.com; frame-src https://www.tiktok.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; trusted-types default 'allow-duplicates'"
         }
       ]
     }
