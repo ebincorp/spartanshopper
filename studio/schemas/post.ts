@@ -197,6 +197,33 @@ export default defineType({
         },
         {
           type: 'object',
+          name: 'tiktokEmbed',
+          title: 'TikTok Embed',
+          fields: [
+            {
+              name: 'videoUrl',
+              title: 'TikTok Video URL',
+              type: 'url',
+              description: 'Full TikTok video URL, e.g. https://www.tiktok.com/@spartanshopper/video/1234567890',
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: 'videoId',
+              title: 'Video ID',
+              type: 'string',
+              description: 'Numeric video ID from the URL (used for the embed data-video-id attribute)',
+              validation: (Rule: any) => Rule.required(),
+            },
+          ],
+          preview: {
+            select: { videoUrl: 'videoUrl' },
+            prepare({ videoUrl }: { videoUrl?: string }) {
+              return { title: `TikTok Embed: ${videoUrl ?? 'Untitled'}` }
+            },
+          },
+        },
+        {
+          type: 'object',
           name: 'couponEmbed',
           title: 'Coupon Card',
           fields: [

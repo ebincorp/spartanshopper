@@ -10,6 +10,7 @@ import { generateJsonLd, generateJsonLdFromProducts, generateBreadcrumbJsonLd } 
 import InlineCouponCard from '@/components/InlineCouponCard'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import EmailSignup from '@/components/EmailSignup'
+import TikTokEmbed from '@/components/TikTokEmbed'
 
 export const revalidate = 3600
 export const dynamicParams = true
@@ -127,6 +128,10 @@ function renderTableCell(cell: string | unknown[]) {
 
 const portableTextComponents: PortableTextComponents = {
   types: {
+    tiktokEmbed: ({ value }) => {
+      if (!value?.videoUrl || !value?.videoId) return null
+      return <TikTokEmbed videoUrl={value.videoUrl} videoId={value.videoId} />
+    },
     couponEmbed: ({ value }) => {
       const coupon = value?.coupon
       if (!coupon) return null
