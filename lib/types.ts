@@ -14,8 +14,10 @@ export interface Deal {
   originalPrice?: number
   description?: string
   image?: SanityImage
+  imageUrl?: string
   affiliateUrl: string
   category?: string
+  asin?: string
   expiryDate?: string
   active: boolean
 }
@@ -31,6 +33,7 @@ export interface Coupon {
   description?: string
   image?: SanityImage
   affiliateUrl: string
+  asin?: string
   startDate?: string
   expiryDate?: string
   verified?: boolean

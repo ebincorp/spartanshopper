@@ -72,6 +72,12 @@ export default defineType({
       options: { source: 'title', maxLength: 96 },
     }),
     defineField({
+      name: 'asin',
+      title: 'ASIN',
+      type: 'string',
+      description: 'Amazon Standard Identification Number — used by the Creators API price/image verification.',
+    }),
+    defineField({
       name: 'startDate',
       title: 'Start Date',
       type: 'datetime',

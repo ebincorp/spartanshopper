@@ -57,6 +57,12 @@ export default defineType({
       ],
     }),
     defineField({
+      name: 'imageUrl',
+      title: 'Image URL (Amazon-compliant)',
+      type: 'string',
+      description: 'Optional. Amazon Creators API primary image URL. When set, this is used in preference to the uploaded Image asset.',
+    }),
+    defineField({
       name: 'affiliateUrl',
       title: 'Affiliate URL',
       type: 'url',
@@ -68,6 +74,12 @@ export default defineType({
       type: 'slug',
       description: 'Used for cloaked links e.g. spartanshopper.com/go/nike-deal',
       options: { source: 'title', maxLength: 96 },
+    }),
+    defineField({
+      name: 'asin',
+      title: 'ASIN',
+      type: 'string',
+      description: 'Amazon Standard Identification Number — used by the Creators API price/image verification.',
     }),
     defineField({
       name: 'category',
@@ -82,6 +94,7 @@ export default defineType({
           { title: 'Travel', value: 'travel' },
           { title: 'Health & Beauty', value: 'health-beauty' },
           { title: 'Sports & Outdoors', value: 'sports-outdoors' },
+          { title: 'Automotive', value: 'automotive' },
           { title: 'Other', value: 'other' },
         ],
       },

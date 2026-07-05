@@ -9,6 +9,7 @@ interface DealCardProps {
   slug: string
   affiliateSlug?: string
   image?: string
+  imageUrl?: string
   expiryDate?: string
 }
 
@@ -31,9 +32,12 @@ export default function DealCard({
   slug,
   affiliateSlug,
   image,
+  imageUrl,
   expiryDate,
 }: DealCardProps) {
   const shopUrl = affiliateSlug ? `/go/${affiliateSlug}` : affiliateUrl
+  // Prefer the Amazon-compliant API image URL over the uploaded Sanity asset.
+  const imgSrc = imageUrl || image
   const expiryStatus = getExpiryStatus(expiryDate)
   const savings =
     originalPrice && originalPrice > salePrice
@@ -45,9 +49,9 @@ export default function DealCard({
 
       {/* Image */}
       <div className="relative w-full h-44 bg-white overflow-hidden">
-        {image ? (
+        {imgSrc ? (
           <Image
-            src={image}
+            src={imgSrc}
             alt={title}
             fill
             unoptimized

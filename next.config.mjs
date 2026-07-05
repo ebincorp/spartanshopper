@@ -14,7 +14,7 @@ const nextConfig = {
       },
     ]
   },
-  serverExternalPackages: ['@sanity/client', 'sanity'],
+  serverExternalPackages: ['@sanity/client', 'sanity', 'superagent'],
   images: {
     remotePatterns: [
       {
@@ -24,6 +24,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'cdn.sanity.io',
+      },
+      {
+        protocol: 'https',
+        hostname: 'm.media-amazon.com',
       },
     ],
     // Cache transformed images for 30 days to minimise repeat transformations on Vercel's free tier.

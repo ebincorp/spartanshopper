@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = `Enter to win ${sweep.prize} from ${sweep.sponsor}. Free sweepstakes on SpartanShopper.`
   const imageUrl = sweep.image
     ? urlFor(sweep.image).width(1200).height(630).url()
-    : 'https://spartanshopper.com/og-default.png'
+    : 'https://www.spartanshopper.com/og-default.png'
 
   return {
     title,
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      url: `https://spartanshopper.com/sweepstakes/${slug}`,
+      url: `https://www.spartanshopper.com/sweepstakes/${slug}`,
       siteName: 'SpartanShopper',
       images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
       type: 'article',

@@ -26,6 +26,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
 
 # vercel
@@ -40,3 +41,7 @@ next-env.d.ts
 /.sanity
 /.claude/worktrees
 /stealth
+
+# vendored Amazon Creators API SDK — commit src + built dist, ignore archive + build deps
+/vendor/creatorsapi-nodejs-sdk.zip
+/vendor/creatorsapi-sdk/node_modules

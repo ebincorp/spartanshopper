@@ -5,7 +5,7 @@ import { trackAffiliateClick } from '@/lib/trackAffiliateClick'
 // Force dynamic — never cache redirect responses
 export const dynamic = 'force-dynamic'
 
-const FALLBACK_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://spartanshopper.com'
+const FALLBACK_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.spartanshopper.com'
 
 export async function GET(
   req: NextRequest,

@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   description: 'Find the best deals, verified coupon codes, and free sweepstakes — all in one place.',
   keywords: 'deals, coupons, coupon codes, sweepstakes, discounts, promo codes, free prizes',
   metadataBase: new URL('https://www.spartanshopper.com'),
+  alternates: {
+    canonical: './',
+  },
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
@@ -27,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'SpartanShopper — Deals, Coupons & Sweepstakes',
     description: 'Find the best deals, verified coupon codes, and free sweepstakes — all in one place.',
-    url: 'https://spartanshopper.com',
+    url: 'https://www.spartanshopper.com',
     siteName: 'SpartanShopper',
     type: 'website',
     images: [

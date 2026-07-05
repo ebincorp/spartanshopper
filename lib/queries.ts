@@ -19,28 +19,28 @@ export type CouponCategoryValue = typeof COUPON_CATEGORIES[number]['value']
 export const dealsQuery = `
   *[_type == "deal" && active == true] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, affiliateUrl, category, expiryDate, active
+    description, image, imageUrl, affiliateUrl, category, asin, expiryDate, active
   }
 `
 
 export const featuredDealsQuery = `
   *[_type == "deal" && active == true] | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    image, affiliateUrl, category, expiryDate, active
+    image, imageUrl, affiliateUrl, category, asin, expiryDate, active
   }
 `
 
 export const dealsByCategoryQuery = `
   *[_type == "deal" && active == true && category == $category] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, affiliateUrl, category, expiryDate, active
+    description, image, imageUrl, affiliateUrl, category, asin, expiryDate, active
   }
 `
 
 export const dealBySlugQuery = `
   *[_type == "deal" && slug.current == $slug][0] {
     _id, title, slug, store, salePrice, originalPrice,
-    description, image, affiliateUrl, category, expiryDate, active
+    description, image, imageUrl, affiliateUrl, category, asin, expiryDate, active
   }
 `
 

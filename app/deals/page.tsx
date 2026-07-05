@@ -15,6 +15,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   travel: 'Travel',
   'health-beauty': 'Health & Beauty',
   'sports-outdoors': 'Sports & Outdoors',
+  automotive: 'Automotive',
   other: 'Other',
 }
 
@@ -135,6 +136,7 @@ export default async function DealsPage({ searchParams }: Props) {
                 slug={deal.slug.current}
                 affiliateSlug={deal.affiliateSlug}
                 image={deal.image ? urlFor(deal.image).width(400).url() : undefined}
+                imageUrl={deal.imageUrl}
                 expiryDate={deal.expiryDate}
               />
             ))}
