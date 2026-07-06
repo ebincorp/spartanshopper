@@ -11,11 +11,51 @@ import { after } from 'next/server';
 const GA4_MEASUREMENT_ID = process.env.GA4_MEASUREMENT_ID; // G-E99ZPSFNFS
 const GA4_MP_API_SECRET = process.env.GA4_MP_API_SECRET;
 
+/**
+ * Bot / automation user-agent filter for the GA4 send.
+ *
+ * Why this exists: crawlers hammer /go/ affiliate URLs and each hit was firing
+ * a server-side outbound_affiliate_click. GA4 showed ~685 click events against
+ * only 65 pageviews over 4 days (Jul 3–6 2026) — vs Amazon's own count of 618
+ * clicks in 30 days — i.e. bots inflated the metric ~10x over real traffic.
+ * We NEVER skip the 302 redirect (bots still get redirected); we only skip the
+ * analytics event so the GA4 number tracks humans. Do not delete this.
+ */
+const BOT_UA_RE =
+  /bot|crawl|spider|slurp|scrape|curl|wget|python-requests|httpx|node-fetch|axios|headless|lighthouse|pingdom|uptime|monitor|preview|facebookexternalhit|whatsapp|telegram|discord|skype|embed|vkshare|ahrefs|semrush|mj12|dotbot|petalbot|bytespider|gptbot|ccbot|claudebot|perplexity|amazonbot|applebot|bingpreview/i;
+
+/**
+ * Returns true only for requests we believe are real humans worth tracking.
+ * Skips (returns false) for known bots, missing UAs, and HEAD link-checkers.
+ */
+function shouldTrack(request: Request): boolean {
+  // HEAD requests are almost always link checkers / uptime monitors.
+  if (request.method === 'HEAD') return false;
+
+  const ua = request.headers.get('user-agent');
+
+  // Empty / missing UA is almost always automation.
+  if (!ua || ua.trim() === '') return false;
+
+  if (BOT_UA_RE.test(ua)) return false;
+
+  return true;
+}
+
 export function trackAffiliateClick(
   request: Request,
   { slug, destination }: { slug: string; destination: string }
 ) {
   if (!GA4_MEASUREMENT_ID || !GA4_MP_API_SECRET) return;
+
+  if (!shouldTrack(request)) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(
+        `[trackAffiliateClick] skipped GA4 send (bot/automation) for slug="${slug}" ua="${request.headers.get('user-agent') ?? ''}" method=${request.method}`
+      );
+    }
+    return;
+  }
 
   const cookieHeader = request.headers.get('cookie') ?? '';
   const match = cookieHeader.match(/_ga=GA\d\.\d\.(\d+\.\d+)/);
@@ -35,6 +75,10 @@ export function trackAffiliateClick(
       },
     ],
   };
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[trackAffiliateClick] sending GA4 event for slug="${slug}" (human)`);
+  }
 
   after(async () => {
     await fetch(
