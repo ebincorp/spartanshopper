@@ -200,6 +200,14 @@ Requires `SANITY_API_TOKEN` in `.env.local`.
 
 ---
 
+## Publishing & Unpublishing (Sanity perspective)
+
+- The public read clients (`lib/sanity.client.ts`, `lib/redirects.ts`) use **`perspective: 'published'`** — drafts are **never** served publicly. Do not remove it. Without it the client reads `raw` and exposes unpublished drafts on the live site (this caused a ~7-week draft leak in Jul 2026: two never-published DoorDash draft posts were live and in the sitemap).
+- **To unpublish** a post/deal/coupon, use the normal Sanity workflow — Studio "Unpublish", or delete the published doc while keeping a draft. With `published` perspective this hides it from the site immediately (reads are live, `useCdn: false`).
+- The `archivedPost` **retype workaround is no longer required** — it only existed because the client previously read `raw` (so moving a post to a draft didn't hide it). A few docs were archived that way in Jul 2026 (2 stale "deals this week" posts + 2 DoorDash drafts); they're fully reversible via `scripts/unpublish-stale-deal-posts.ts --restore` and `scripts/archive-doordash-drafts.ts --restore`, and can be migrated to the normal draft workflow whenever convenient.
+
+---
+
 ## Deploy Workflow
 
 ```bash

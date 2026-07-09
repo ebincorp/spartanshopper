@@ -7,6 +7,8 @@ const redirectClient = createClient({
   apiVersion: '2024-01-01',
   useCdn: false,
   token: process.env.SANITY_API_TOKEN,
+  // Published-only: never resolve a /go/ slug from a draft affiliateLink/deal/coupon.
+  perspective: 'published',
 })
 
 // Priority order: dedicated affiliateLink → sweepstake entryUrl → content affiliateUrl.
