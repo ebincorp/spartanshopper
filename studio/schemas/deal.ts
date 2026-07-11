@@ -95,6 +95,7 @@ export default defineType({
           { title: 'Health & Beauty', value: 'health-beauty' },
           { title: 'Sports & Outdoors', value: 'sports-outdoors' },
           { title: 'Automotive', value: 'automotive' },
+          { title: 'Baby & Nursery', value: 'baby' },
           { title: 'Other', value: 'other' },
         ],
       },
