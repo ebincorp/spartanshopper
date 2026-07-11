@@ -12,6 +12,12 @@ const nextConfig = {
         destination: '/blog/magnesium-glycinate-for-sleep-the-natural-melatonin-alternative-you-ve-been-looking-for',
         permanent: true,
       },
+      {
+        // Keyword-cannibalization consolidation: duplicate psyllium pillar → canonical pillar.
+        source: '/blog/psyllium-husk-fiber-supplement',
+        destination: '/blog/psyllium-husk-supplement-benefits',
+        permanent: true,
+      },
     ]
   },
   serverExternalPackages: ['@sanity/client', 'sanity', 'superagent'],
