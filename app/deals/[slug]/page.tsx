@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = `Get ${deal.title} at ${deal.store} for $${deal.salePrice.toFixed(2)}. Shop now on SpartanShopper.`
   const imageUrl = deal.image
     ? urlFor(deal.image).width(1200).height(630).url()
-    : 'https://www.spartanshopper.com/og-default.png'
+    : deal.imageUrl || 'https://www.spartanshopper.com/og-default.png'
 
   return {
     title,
@@ -62,7 +62,11 @@ export default async function DealPage({ params }: Props) {
 
   if (!deal) notFound()
 
-  const imageUrl = deal.image ? urlFor(deal.image).width(800).url() : null
+  // Prefer the Sanity asset; fall back to the Amazon-compliant imageUrl string so the
+  // Product schema `image` (and visible image) is never omitted — mirrors DealCard's
+  // `imageUrl || image`. This was the root cause of the GSC "Missing field image" errors
+  // when older deals carried only the imageUrl string and no Sanity asset.
+  const imageUrl = deal.image ? urlFor(deal.image).width(800).url() : deal.imageUrl || null
   const expired = deal.expiryDate ? new Date(deal.expiryDate) < new Date() : false
   const savings =
     deal.originalPrice && deal.originalPrice > deal.salePrice
