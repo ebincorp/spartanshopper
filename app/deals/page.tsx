@@ -17,6 +17,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   'sports-outdoors': 'Sports & Outdoors',
   automotive: 'Automotive',
   baby: 'Baby & Nursery',
+  luxury: 'Luxury',
   other: 'Other',
 }
 
