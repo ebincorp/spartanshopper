@@ -19,6 +19,15 @@ import { getItems, type CreatorItem } from './creators-api'
 const PRICE_TOLERANCE = 1 // dollars
 const MIN_SAVINGS = 15 // percent
 
+// Safety guard against a bad-but-200 Amazon response. If the API has a partial
+// outage or returns malformed/empty items, every un-returned ASIN maps to
+// available=false → DEACTIVATED. Committing that would silently blank the whole
+// deals page while reporting success. When more than this fraction of a
+// large-enough batch comes back "unavailable", we treat it as a suspected API
+// fault, mutate NOTHING, and surface SUSPECTED_FAULT so callers can alert.
+const FAULT_UNAVAILABLE_RATIO = 0.5
+const FAULT_MIN_SAMPLE = 5 // don't trip the guard on tiny batches
+
 export type Action = 'OK' | 'UPDATED' | 'DEACTIVATED'
 
 export interface VerifyRow {
@@ -36,6 +45,7 @@ export interface VerifyRow {
 export type VerifyResult =
   | { status: 'NOT_YET_ELIGIBLE'; message: string; rows: [] }
   | { status: 'NO_RECORDS'; rows: [] }
+  | { status: 'SUSPECTED_FAULT'; rows: VerifyRow[]; checked: number; unavailable: number }
   | { status: 'DONE'; executed: boolean; rows: VerifyRow[] }
 
 interface Record {
@@ -118,6 +128,14 @@ export async function runVerifyDeals(opts: { execute: boolean }): Promise<Verify
 
   const byAsin = new Map(result.items.map((it) => [it.asin, it]))
   const rows = records.map((rec) => decide(rec, byAsin.get(rec.asin)))
+
+  // Guard: an implausible share of "unavailable" results signals an API fault
+  // (empty/partial response), not that every product genuinely went dead. Never
+  // commit that — it would blank the deals page. Surface it for alerting instead.
+  const unavailable = rows.filter((r) => r.reason === 'unavailable on Amazon').length
+  if (rows.length >= FAULT_MIN_SAMPLE && unavailable / rows.length > FAULT_UNAVAILABLE_RATIO) {
+    return { status: 'SUSPECTED_FAULT', rows, checked: rows.length, unavailable }
+  }
 
   if (opts.execute) {
     let tx = client.transaction()

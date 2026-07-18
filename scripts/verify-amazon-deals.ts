@@ -58,6 +58,21 @@ async function main() {
     process.exit(0)
   }
 
+  if (result.status === 'SUSPECTED_FAULT') {
+    printTable(result.rows)
+    console.log(
+      `\n🚨 SUSPECTED_FAULT — ${result.unavailable}/${result.checked} came back "unavailable" ` +
+        `(> ${'50'}% threshold).`
+    )
+    console.log(
+      '   This looks like an Amazon API fault, not a real mass-expiry. NOTHING was mutated.'
+    )
+    console.log(
+      '   Re-run manually once the API is confirmed healthy if these deactivations are genuine.'
+    )
+    process.exit(1)
+  }
+
   printTable(result.rows)
 
   const counts = result.rows.reduce<Record<string, number>>((acc, r) => {
