@@ -1,5 +1,6 @@
 import { revalidatePath } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
+import { pingIndexNow } from '@/lib/indexnow'
 
 export async function POST(req: NextRequest) {
   const secret = req.nextUrl.searchParams.get('secret')
@@ -15,15 +16,21 @@ export async function POST(req: NextRequest) {
   revalidatePath('/sweepstakes')
   revalidatePath('/sitemap.xml')
 
+  let slug: string | undefined
   try {
     const body = await req.json()
-    const slug = body?.slug?.current ?? body?.slug
+    slug = body?.slug?.current ?? body?.slug
     if (slug) {
       revalidatePath(`/blog/${slug}`)
     }
   } catch {
     // body absent or not JSON — skip slug revalidation
   }
+
+  // Notify IndexNow (Bing/Yahoo/DuckDuckGo) of the changed content so it gets
+  // crawled instantly. Best-effort — pingIndexNow never throws. The changed
+  // post URL is the priority signal; /blog is its updated listing.
+  await pingIndexNow(slug ? [`/blog/${slug}`, '/blog'] : ['/', '/blog'])
 
   return NextResponse.json({ revalidated: true, now: Date.now() })
 }
