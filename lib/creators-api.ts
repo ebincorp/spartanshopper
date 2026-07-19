@@ -24,6 +24,9 @@ const RESOURCES = [
   'images.primary.medium',
   'offersV2.listings.price',
   'offersV2.listings.availability',
+  // Live rating/review count, so content never has to hardcode them.
+  'customerReviews.starRating',
+  'customerReviews.count',
 ]
 
 export interface CreatorItem {
@@ -35,6 +38,10 @@ export interface CreatorItem {
   primaryImageUrl?: string
   detailPageUrl?: string
   available: boolean
+  /** Live star rating, e.g. 4.6. Undefined when Amazon returns no review data. */
+  rating?: number
+  /** Live review count. Undefined when Amazon returns no review data. */
+  reviewCount?: number
 }
 
 export type GetItemsResult =
@@ -78,6 +85,10 @@ function mapItem(item: any): CreatorItem {
   const available =
     currentPrice != null && (availType == null || !/unavailable|outofstock/i.test(availType))
 
+  // customerReviews.starRating is a Rating object ({ value }), count is a plain Number.
+  const rating: number | undefined = item?.customerReviews?.starRating?.value
+  const reviewCount: number | undefined = item?.customerReviews?.count
+
   return {
     asin: item?.asin,
     title: item?.itemInfo?.title?.displayValue,
@@ -87,6 +98,8 @@ function mapItem(item: any): CreatorItem {
     primaryImageUrl,
     detailPageUrl: item?.detailPageURL,
     available,
+    rating: typeof rating === 'number' ? rating : undefined,
+    reviewCount: typeof reviewCount === 'number' ? reviewCount : undefined,
   }
 }
 
