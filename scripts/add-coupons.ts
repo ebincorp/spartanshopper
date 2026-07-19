@@ -242,6 +242,19 @@ async function main() {
     createdTitles.forEach((t) => console.log(`  • ${t}`))
     console.log()
     console.log('  Review at: https://spartanshopper.sanity.studio')
+
+    // This script cannot set an image — PromoInput has no image field, and the schema
+    // does not require one. Coupons published from here render as blank cards on
+    // /coupons, sitting next to cards that do have photos, which reads as broken
+    // rather than plain. Warn loudly instead of failing silently.
+    console.log()
+    console.log('  ⚠  IMAGE REQUIRED BEFORE PUBLISHING  ⚠')
+    console.log(`  These ${createdTitles.length} draft(s) have NO image. The coupon schema does not`)
+    console.log('  enforce one, so they will publish successfully and render as blank cards.')
+    console.log('  Fix before publishing:')
+    console.log('    1. Put product images in public/ named to match each affiliate link slug')
+    console.log('    2. npx tsx scripts/upload-coupon-images.ts')
+    console.log('    3. Confirm with: npx tsx scripts/audit-validity.ts  (see "LIVE coupons missing an image")')
   }
 
   if (skippedEntries.length > 0) {
