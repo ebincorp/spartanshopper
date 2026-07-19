@@ -145,7 +145,17 @@ export default defineType({
           fields: [
             { name: 'name', title: 'Product Name', type: 'string', validation: (Rule: any) => Rule.required() },
             { name: 'brand', title: 'Brand', type: 'string' },
-            { name: 'price', title: 'Price (USD)', type: 'number', description: 'Current sale price as a number e.g. 161.00' },
+            {
+              name: 'asin',
+              title: 'ASIN',
+              type: 'string',
+              description:
+                'Amazon product ID, e.g. B0C33CHG99. Used by the Creators API to fill price / rating / review count live, so those never have to be typed into content. Kept separate from Affiliate URL deliberately: a product can be identified here without being linked.',
+              validation: (Rule: any) =>
+                Rule.regex(/^(B[A-Z0-9]{9}|\d{9}[\dX])$/, { name: 'ASIN' })
+                  .warning('Expected a 10-character ASIN (B######### or a 10-digit ISBN).'),
+            },
+            { name: 'price', title: 'Price (USD)', type: 'number', description: 'Current sale price as a number e.g. 161.00 — leave blank if the Creators API supplies it.' },
             { name: 'affiliateUrl', title: 'Affiliate URL', type: 'url' },
             { name: 'image', title: 'Product Image URL', type: 'url', description: 'Amazon product image URL' },
             { name: 'ratingValue', title: 'Rating (e.g. 4.6)', type: 'number', validation: (Rule: any) => Rule.min(1).max(5) },
