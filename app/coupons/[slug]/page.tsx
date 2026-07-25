@@ -8,6 +8,7 @@ import { notFound, permanentRedirect } from 'next/navigation'
 import CopyButton from '@/components/CopyButton'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
+import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
 
@@ -30,36 +31,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!coupon) return {}
 
-  const title = coupon.seo?.metaTitle || `${coupon.title} — SpartanShopper`
   const description = coupon.seo?.metaDescription
     || coupon.description
     || `${coupon.discount ? `Save ${coupon.discount} at ${coupon.store}` : `Save at ${coupon.store}`}. Verified coupon code — visit the page to reveal it. Updated daily on SpartanShopper.`
 
   const ogImage = coupon.image
     ? urlFor(coupon.image).width(1200).height(630).url()
-    : 'https://www.spartanshopper.com/og-default.png'
+    : undefined
 
-  return {
-    title,
+  return pageMetadata({
+    // A CMS metaTitle is authored complete, so it bypasses brand appending.
+    ...(coupon.seo?.metaTitle ? { absoluteTitle: coupon.seo.metaTitle } : {}),
+    title: coupon.title,
     description,
-    ...(coupon.seo?.canonicalUrl && {
-      alternates: { canonical: coupon.seo.canonicalUrl },
-    }),
-    openGraph: {
-      title,
-      description,
-      url: `https://www.spartanshopper.com/coupons/${slug}`,
-      siteName: 'SpartanShopper',
-      type: 'article',
-      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [ogImage],
-    },
-  }
+    path: `/coupons/${slug}`,
+    image: ogImage,
+    type: 'article',
+    ...(coupon.seo?.canonicalUrl ? { canonicalPath: coupon.seo.canonicalUrl } : {}),
+  })
 }
 
 export default async function CouponPage({ params }: Props) {

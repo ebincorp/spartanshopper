@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
+import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
 
@@ -28,30 +29,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!deal) return {}
 
-  const title = `${deal.title} — SpartanShopper`
   const description = `Get ${deal.title} at ${deal.store} for $${deal.salePrice.toFixed(2)}. Shop now on SpartanShopper.`
   const imageUrl = deal.image
     ? urlFor(deal.image).width(1200).height(630).url()
-    : deal.imageUrl || 'https://www.spartanshopper.com/og-default.png'
+    : deal.imageUrl || undefined
 
-  return {
-    title,
+  return pageMetadata({
+    title: deal.title,
     description,
-    openGraph: {
-      title,
-      description,
-      url: `https://www.spartanshopper.com/deals/${slug}`,
-      siteName: 'SpartanShopper',
-      images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
-      type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [imageUrl],
-    },
-  }
+    path: `/deals/${slug}`,
+    image: imageUrl,
+    type: 'article',
+  })
 }
 
 export default async function DealPage({ params }: Props) {

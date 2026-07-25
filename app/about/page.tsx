@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 
-export const metadata: Metadata = {
-  title: 'About — SpartanShopper',
+export const metadata: Metadata = pageMetadata({
+  title: 'About',
   description: 'Learn about SpartanShopper — our mission to help you save money and win prizes through curated deals, coupons, and sweepstakes.',
-}
+  path: '/about',
+})
 
 export default function AboutPage() {
   return (

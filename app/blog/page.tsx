@@ -4,13 +4,15 @@ import Link from 'next/link'
 import { client, urlFor } from '@/lib/sanity.client'
 import { getAllPostsQuery } from '@/lib/blogQueries'
 import type { Post } from '@/lib/types'
+import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
 
-export const metadata: Metadata = {
-  title: 'Deal Tips, Coupon Guides & Money-Saving Strategies — SpartanShopper Blog',
+export const metadata: Metadata = pageMetadata({
+  title: 'Deal Tips, Coupon Guides & Money-Saving Strategies',
   description: 'Expert money-saving tips, coupon code guides, deal breakdowns, and shopping strategies — updated regularly by the SpartanShopper team.',
-}
+  path: '/blog',
+})
 
 const CATEGORY_COLORS: Record<string, string> = {
   Deals: '#E63946',

@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Terms of Service — SpartanShopper',
+export const metadata: Metadata = pageMetadata({
+  title: 'Terms of Service',
   description: 'Terms of service for SpartanShopper.com.',
-}
+  path: '/terms-of-service',
+})
 
 export default function TermsOfServicePage() {
   return (

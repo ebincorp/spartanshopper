@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Affiliate Disclosure — SpartanShopper',
+export const metadata: Metadata = pageMetadata({
+  title: 'Affiliate Disclosure',
   description: 'FTC-compliant affiliate disclosure for SpartanShopper.com.',
-}
+  path: '/affiliate-disclosure',
+})
 
 export default function AffiliateDisclosurePage() {
   return (

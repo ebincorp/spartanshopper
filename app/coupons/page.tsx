@@ -3,13 +3,15 @@ import { couponsQuery } from '@/lib/queries'
 import type { Coupon } from '@/lib/types'
 import CouponFilterBar from '@/components/CouponFilterBar'
 import Link from 'next/link'
+import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
 
-export const metadata = {
-  title: 'Verified Coupon Codes & Promo Codes — Updated Daily | SpartanShopper',
+export const metadata = pageMetadata({
+  title: 'Verified Coupon Codes & Promo Codes — Updated Daily',
   description: 'Browse verified coupon codes and promo codes across beauty, health, home, pets, tech, and more. Every code is tested before it goes live.',
-}
+  path: '/coupons',
+})
 
 export default async function CouponsPage() {
   const coupons = await client

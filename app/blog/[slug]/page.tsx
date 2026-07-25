@@ -11,6 +11,7 @@ import InlineCouponCard from '@/components/InlineCouponCard'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import EmailSignup from '@/components/EmailSignup'
 import TikTokEmbed from '@/components/TikTokEmbed'
+import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
 export const dynamicParams = true
@@ -40,33 +41,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .fetch<Post | null>(getPostBySlugQuery, { slug })
     .catch(() => null)
 
-  if (!post) return { title: 'Post Not Found — SpartanShopper' }
+  if (!post) return { title: { absolute: 'Post Not Found — SpartanShopper' } }
 
+  // metaTitle overrides the post title but is still brand-suffixed, matching
+  // the behaviour these posts already shipped with under the layout template.
   const metaTitle = post.seo?.metaTitle || post.title
   const metaDescription = post.seo?.metaDescription || post.excerpt
 
-  return {
+  return pageMetadata({
     title: metaTitle,
-    description: metaDescription,
-    ...(post.seo?.canonicalUrl && {
-      alternates: { canonical: post.seo.canonicalUrl },
-    }),
-    openGraph: {
-      title: metaTitle,
-      description: metaDescription,
-      images: post.coverImage
-        ? [{ url: urlFor(post.coverImage).width(1200).url() }]
-        : [],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: metaTitle,
-      description: metaDescription,
-      images: post.coverImage
-        ? [urlFor(post.coverImage).width(1200).url()]
-        : [],
-    },
-  }
+    description: metaDescription ?? '',
+    path: `/blog/${slug}`,
+    image: post.coverImage ? urlFor(post.coverImage).width(1200).height(630).url() : undefined,
+    type: 'article',
+    ...(post.seo?.canonicalUrl ? { canonicalPath: post.seo.canonicalUrl } : {}),
+  })
 }
 
 function slugify(text: string): string {

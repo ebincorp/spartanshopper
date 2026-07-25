@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
+import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
 
@@ -28,30 +29,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!sweep) return {}
 
-  const title = `${sweep.title} — SpartanShopper`
   const description = `Enter to win ${sweep.prize} from ${sweep.sponsor}. Free sweepstakes on SpartanShopper.`
   const imageUrl = sweep.image
     ? urlFor(sweep.image).width(1200).height(630).url()
-    : 'https://www.spartanshopper.com/og-default.png'
+    : undefined
 
-  return {
-    title,
+  return pageMetadata({
+    title: sweep.title,
     description,
-    openGraph: {
-      title,
-      description,
-      url: `https://www.spartanshopper.com/sweepstakes/${slug}`,
-      siteName: 'SpartanShopper',
-      images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
-      type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [imageUrl],
-    },
-  }
+    path: `/sweepstakes/${slug}`,
+    image: imageUrl,
+    type: 'article',
+  })
 }
 
 export default async function SweepstakePage({ params }: Props) {

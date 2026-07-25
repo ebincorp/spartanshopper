@@ -18,6 +18,21 @@ const nextConfig = {
         destination: '/blog/psyllium-husk-supplement-benefits',
         permanent: true,
       },
+      {
+        // Third psyllium duplicate — near-identical title to the pillar and the
+        // same head-term intent. Unique material (gut-microbiome section,
+        // BulkSupplements, FDA/onset facts) was folded into the pillar first.
+        source: '/blog/psyllium-husk-supplement',
+        destination: '/blog/psyllium-husk-supplement-benefits',
+        permanent: true,
+      },
+      {
+        // Near-duplicate Korean eye-patch roundups. The evergreen slug survives;
+        // the month-stamped one redirects into it.
+        source: '/blog/best-korean-eye-patches-july-2026',
+        destination: '/blog/best-korean-eye-patches-2026',
+        permanent: true,
+      },
     ]
   },
   serverExternalPackages: ['@sanity/client', 'sanity', 'superagent'],

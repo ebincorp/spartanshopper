@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { client, urlFor } from '@/lib/sanity.client'
 import {
@@ -14,23 +15,14 @@ import DealCard from '@/components/DealCard'
 import CouponCard from '@/components/CouponCard'
 import SweepstakesCard from '@/components/SweepstakesCard'
 
-export const metadata: Metadata = {
-  title: {
-    absolute: 'SpartanShopper — Coupon Codes, Promo Codes & Daily Deals',
-  },
+export const metadata: Metadata = pageMetadata({
+  // Leads with the brand, so the suffix is not appended.
+  absoluteTitle: 'SpartanShopper — Coupon Codes, Promo Codes & Daily Deals',
+  title: 'Coupon Codes, Promo Codes & Daily Deals',
   description:
     'Find verified coupon codes, promo codes, and daily deals — plus free sweepstakes you can enter to win. SpartanShopper updates deals every day so you never miss a saving.',
-  openGraph: {
-    title: 'SpartanShopper — Coupon Codes, Promo Codes & Daily Deals',
-    description:
-      'Find verified coupon codes, promo codes, and daily deals — plus free sweepstakes you can enter to win. SpartanShopper updates deals every day so you never miss a saving.',
-  },
-  twitter: {
-    title: 'SpartanShopper — Coupon Codes, Promo Codes & Daily Deals',
-    description:
-      'Find verified coupon codes, promo codes, and daily deals — plus free sweepstakes you can enter to win. SpartanShopper updates deals every day so you never miss a saving.',
-  },
-}
+  path: '/',
+})
 
 async function getData() {
   try {

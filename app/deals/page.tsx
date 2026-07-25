@@ -4,6 +4,7 @@ import { client, urlFor } from '@/lib/sanity.client'
 import { dealsQuery, dealsByCategoryQuery, dealCategoriesQuery } from '@/lib/queries'
 import type { Deal } from '@/lib/types'
 import DealCard from '@/components/DealCard'
+import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
 
@@ -27,13 +28,13 @@ interface Props {
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const { category } = await searchParams
-  return {
-    title: "Today's Best Deals — Discounts & Sales Updated Daily | SpartanShopper",
+  return pageMetadata({
+    title: "Today's Best Deals — Discounts & Sales Updated Daily",
     description: "Shop today's best deals and discounts — hand-picked across electronics, fashion, home, beauty, and more. Updated daily so you never miss a saving.",
-    ...(category && {
-      alternates: { canonical: 'https://www.spartanshopper.com/deals' },
-    }),
-  }
+    path: '/deals',
+    // Category-filtered views canonicalise to the unfiltered listing.
+    ...(category ? { canonicalPath: '/deals' } : {}),
+  })
 }
 
 export default async function DealsPage({ searchParams }: Props) {

@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy — SpartanShopper',
+export const metadata: Metadata = pageMetadata({
+  title: 'Privacy Policy',
   description: 'Privacy policy for SpartanShopper.com — how we collect and use your data.',
-}
+  path: '/privacy-policy',
+})
 
 export default function PrivacyPolicyPage() {
   return (

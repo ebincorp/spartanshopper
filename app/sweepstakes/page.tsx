@@ -3,13 +3,15 @@ import { sweepstakesQuery } from '@/lib/queries'
 import type { Sweepstake } from '@/lib/types'
 import SweepstakesCard from '@/components/SweepstakesCard'
 import Link from 'next/link'
+import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
 
-export const metadata = {
-  title: 'Sweepstakes — SpartanShopper',
-  description: 'Enter free sweepstakes and win big prizes. Updated daily.',
-}
+export const metadata = pageMetadata({
+  title: 'Free Sweepstakes & Giveaways',
+  description: 'Enter free sweepstakes and giveaways for a chance to win real prizes — no purchase necessary. New entries added regularly.',
+  path: '/sweepstakes',
+})
 
 export default async function SweepstakesPage() {
   const sweepstakes = await client
