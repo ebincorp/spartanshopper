@@ -11,6 +11,7 @@
  * throwing, so callers can no-op cleanly during the up-to-48h review window.
  */
 import { ApiClient, DefaultApi, GetItemsRequestContent } from '../vendor/creatorsapi-sdk/dist/index.js'
+import { formatError } from './format-error'
 
 const MARKETPLACE = 'www.amazon.com'
 const PARTNER_TAG = 'sku18798384-20'
@@ -24,6 +25,9 @@ const RESOURCES = [
   'images.primary.medium',
   'offersV2.listings.price',
   'offersV2.listings.availability',
+  // Live rating/review count, so content never has to hardcode them.
+  'customerReviews.starRating',
+  'customerReviews.count',
 ]
 
 export interface CreatorItem {
@@ -35,6 +39,10 @@ export interface CreatorItem {
   primaryImageUrl?: string
   detailPageUrl?: string
   available: boolean
+  /** Live star rating, e.g. 4.6. Undefined when Amazon returns no review data. */
+  rating?: number
+  /** Live review count. Undefined when Amazon returns no review data. */
+  reviewCount?: number
 }
 
 export type GetItemsResult =
@@ -78,6 +86,10 @@ function mapItem(item: any): CreatorItem {
   const available =
     currentPrice != null && (availType == null || !/unavailable|outofstock/i.test(availType))
 
+  // customerReviews.starRating is a Rating object ({ value }), count is a plain Number.
+  const rating: number | undefined = item?.customerReviews?.starRating?.value
+  const reviewCount: number | undefined = item?.customerReviews?.count
+
   return {
     asin: item?.asin,
     title: item?.itemInfo?.title?.displayValue,
@@ -87,6 +99,8 @@ function mapItem(item: any): CreatorItem {
     primaryImageUrl,
     detailPageUrl: item?.detailPageURL,
     available,
+    rating: typeof rating === 'number' ? rating : undefined,
+    reviewCount: typeof reviewCount === 'number' ? reviewCount : undefined,
   }
 }
 
@@ -138,7 +152,13 @@ export async function getItems(asins: string[]): Promise<GetItemsResult> {
           message: 'Creators API returned AssociateNotEligible — credential still in review window.',
         }
       }
-      throw err
+      // The SDK's callApi rejects with a plain object, not an Error — rethrowing
+      // it bare makes `err instanceof Error` false upstream, so the message
+      // collapses to "[object Object]" / "Unknown error". Normalize to a real
+      // Error carrying the actual status/body so the crash alert is diagnosable.
+      throw err instanceof Error
+        ? err
+        : new Error(`Creators API GetItems failed for [${batch.join(', ')}]: ${formatError(err)}`)
     }
 
     if (i + BATCH_SIZE < unique.length) await sleep(THROTTLE_MS)

@@ -6,6 +6,15 @@ export const maxDuration = 300
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * DEPRECATED as a cron entry — no longer listed in vercel.json. The scrape now
+ * runs inside /api/cron/daily-maintenance, gated to Mondays so its original
+ * weekly cadence is preserved, and ordered last so a failure cannot take the
+ * daily price verification down with it.
+ *
+ * Kept working for manual invocation.
+ */
+
 export async function GET(req: NextRequest) {
   // Verify cron secret
   const auth = req.headers.get('authorization')
