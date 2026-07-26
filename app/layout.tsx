@@ -15,6 +15,12 @@ export const metadata: Metadata = {
   description: 'Find the best deals, verified coupon codes, and free sweepstakes — all in one place.',
   keywords: 'deals, coupons, coupon codes, sweepstakes, discounts, promo codes, free prizes',
   metadataBase: new URL('https://www.spartanshopper.com'),
+  // Site-wide verification tags. `other` emits arbitrary <meta name=... content=...>
+  // and is NOT set by pageMetadata(), so every route inherits it from here —
+  // Pinterest's verifier may fetch any URL, not just the homepage.
+  other: {
+    'p:domain_verify': '3e3e0a4a3225d8b101f6ed3621119e5e',
+  },
   // NO inherited `alternates.canonical` here. A relative './' default resolved
   // to /index on the home route (confirmed live 2026-07-25). Every route sets
   // its own absolute canonical via `pageMetadata()` in lib/seo.ts; a route that
