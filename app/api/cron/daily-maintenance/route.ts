@@ -6,33 +6,30 @@ import { sendVerifyAlert } from '@/lib/verify-deals-notify'
 import { formatError } from '@/lib/format-error'
 
 export const dynamic = 'force-dynamic'
-// The coupon scrape needs minutes, not seconds. Vercel Pro honours this; Hobby
-// clamps to 60s — which is precisely why the scrape runs LAST (see below).
-export const maxDuration = 300
+// Both steps are fast Sanity/Creators-API calls — no browser, no scraping — so
+// this fits comfortably inside the 60s ceiling every Vercel plan tier allows.
+export const maxDuration = 60
 
 /**
- * Combined daily maintenance — replaces three separate cron entries.
+ * Combined daily maintenance — the site's single cron entry.
  *
- * WHY: vercel.json declared three crons (coupon-scan, expire-coupons,
- * verify-deals). Vercel's Hobby plan allows two per project, so one was likely
- * never scheduled — the probable reason /deals pricing sat 7–21 days stale
- * while the verify-deals logic worked perfectly on manual invocation.
+ * WHY IT EXISTS: vercel.json previously declared three crons (coupon-scan,
+ * expire-coupons, verify-deals). Vercel's Hobby plan allows two per project, so
+ * one was likely never scheduled — the probable reason /deals pricing sat 7–21
+ * days stale while the verify-deals logic worked perfectly when invoked by hand.
+ * Collapsing to one entry removes the capacity question entirely.
  *
- * ORDER IS DELIBERATE AND LOad-BEARING. The two fast Sanity/API tasks run first
- * and commit their writes before the long headless-Chromium scrape starts. If
- * the function is killed mid-scrape (Hobby's 60s ceiling, a Chromium hang, an
- * Amazon login wall), the daily price verification has already been committed.
- * Running the scrape first would risk losing it every single day.
+ * Steps run in order, each committing before the next begins:
+ *   1. Expiry sweep  — deactivate anything past its expiryDate.
+ *   2. Verification  — reprice against the Creators API, deactivate dead deals.
  *
- * The scrape is additionally:
- *   - gated to Mondays, preserving its original weekly cadence rather than
- *     multiplying a browser scrape by seven;
- *   - wrapped so any failure is reported but never fails the run or masks the
- *     two operations that already succeeded.
- *
- * Schedule: daily 08:00 UTC — the tightest of the three originals
- * (expire-coupons 08:00 daily, verify-deals 09:00 daily, coupon-scan 09:00 Mon),
- * so nothing runs less often, or later, than it did before.
+ * The former third step (an Amazon Associates promotions scraper) was removed
+ * on 2026-07-26. It had never run successfully in production: @sparticuz/chromium
+ * was not in serverExternalPackages, so the Chromium binary was absent from the
+ * bundle and every weekly run died before launching a browser. It also targeted
+ * a dashboard page that has since changed, and threw unconditionally on any 2FA
+ * challenge. Rebuilding coupon discovery should start from whatever Amazon's
+ * current tooling actually offers, not from that scraper.
  */
 export async function GET(req: NextRequest) {
   const auth = req.headers.get('authorization')
@@ -40,23 +37,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const url = new URL(req.url)
-  // ?scan=1 forces the scrape off-schedule; ?scan=0 suppresses it entirely.
-  const scanParam = url.searchParams.get('scan')
-  const isMonday = new Date().getUTCDay() === 1
-  const shouldScan = scanParam === '1' || (scanParam !== '0' && isMonday)
-
   const summary: Record<string, unknown> = { success: true }
 
   try {
-    // ── 1. Expiry sweep (fast, commits immediately) ─────────────────────────
+    // ── 1. Expiry sweep ─────────────────────────────────────────────────────
     const expire = await runExpireCoupons()
     summary.expired = expire
     console.log(
       `[daily-maintenance] expire: deactivated ${expire.deactivated} (deals ${expire.deals}, coupons ${expire.coupons})`
     )
 
-    // ── 2. Price/availability verification (fast, commits immediately) ──────
+    // ── 2. Price/availability verification ──────────────────────────────────
     const result = await runVerifyDeals({ execute: true })
 
     if (result.status === 'NOT_YET_ELIGIBLE') {
@@ -141,31 +132,9 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // Revalidate once, after both mutating steps.
     revalidatePath('/deals')
     revalidatePath('/coupons')
     revalidatePath('/')
-
-    // ── 3. Coupon scrape — LAST, weekly, best-effort ────────────────────────
-    // Everything above is already committed. A failure here is reported but
-    // never fails the run.
-    if (!shouldScan) {
-      summary.scan = { ran: false, reason: scanParam === '0' ? 'suppressed via ?scan=0' : 'not Monday' }
-    } else {
-      try {
-        const chromium = await import('@sparticuz/chromium')
-        const executablePath = await chromium.default.executablePath()
-        const scan = await runCouponScanSafely(executablePath)
-        summary.scan = { ran: true, ...scan }
-        console.log(
-          `[daily-maintenance] scan: found ${scan.found}, added ${scan.added}, skipped ${scan.skipped}`
-        )
-      } catch (err) {
-        const message = formatError(err)
-        console.error('[daily-maintenance] scan failed (non-fatal):', message)
-        summary.scan = { ran: true, failed: true, error: message }
-      }
-    }
 
     return NextResponse.json(summary)
   } catch (err) {
@@ -182,17 +151,5 @@ export async function GET(req: NextRequest) {
       ],
     }).catch((e) => console.error('[daily-maintenance] alert failed:', formatError(e)))
     return NextResponse.json({ error: message, partial: summary }, { status: 500 })
-  }
-}
-
-/** Thin wrapper so the scrape's shape is flattened for the summary. */
-async function runCouponScanSafely(executablePath: string) {
-  const { runCouponScan } = await import('@/lib/coupon-scanner')
-  const result = await runCouponScan({ executablePath, headless: true })
-  return {
-    found: result.found.length,
-    added: result.added.length,
-    skipped: result.skipped.length,
-    errors: result.errors,
   }
 }

@@ -155,8 +155,10 @@ Located in `scripts/`. Key utilities:
 |---|---|
 | `add-coupons.ts` | Create coupon draft records in Sanity from a JSON input file |
 | `upload-coupon-images.ts` | Upload images from `public/` to Sanity and patch coupon records |
-| `scan-coupons.ts` | Scan for expired or upcoming coupons |
+| `verify-amazon-deals.ts` | Verify deal/coupon prices against the Creators API (dry-run default, `--execute` to write) |
 | `fetch-cj-coupons.ts` | Fetch active coupon promotions from CJ affiliate network |
+
+> `scan-coupons.ts` and the `lib/coupon-scanner` Associates-dashboard scraper were **removed 2026-07-26**. They had never worked in production: `@sparticuz/chromium` was missing from `serverExternalPackages`, so the Chromium binary was absent from the deployed bundle and every run failed before launching a browser. The scraper also targeted an Associates dashboard page that has since changed and threw unconditionally on any 2FA challenge. If coupon discovery is needed again, build it against Amazon's current tooling rather than restoring that scraper.
 
 **CJ coupon fetching — always use `--rest`:**
 ```bash
