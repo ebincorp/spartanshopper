@@ -12,34 +12,6 @@ const GA4_MEASUREMENT_ID = process.env.GA4_MEASUREMENT_ID; // G-E99ZPSFNFS
 const GA4_MP_API_SECRET = process.env.GA4_MP_API_SECRET;
 
 /**
- * TEMPORARY — diagnostic only. Added 2026-07-31 to root-cause a click-tracking
- * anomaly (94 GA4 outbound_affiliate_click events vs 73 real Amazon Associates
- * clicks same day, ~13 events/session, repeated same-slug hits within seconds,
- * missing geo on ~93/94 events). Vercel's runtime logs don't expose request
- * IP/UA at all, and GA4 has no BigQuery export configured, so there is
- * currently no way to see who/what is hitting /go/ repeatedly. This logs
- * method + UA + best-effort IP for every /go/ hit, tracked or not, so a
- * `vercel logs` pull during the observation window shows the real traffic
- * shape. REMOVE this flag and the logDiagnostic() call+function once the
- * source is identified — do not leave this permanently enabled.
- */
-const TEMP_DIAGNOSTIC_LOGGING = true;
-
-function logDiagnostic(request: Request, slug: string, tracked: boolean) {
-  if (!TEMP_DIAGNOSTIC_LOGGING) return;
-  const ua = request.headers.get('user-agent') ?? '(none)';
-  // Vercel forwards the real client IP via x-forwarded-for (first hop = client).
-  const ip =
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    request.headers.get('x-real-ip') ??
-    '(unknown)';
-  const referer = request.headers.get('referer') ?? '(none)';
-  console.log(
-    `[DIAG /go] slug="${slug}" method=${request.method} tracked=${tracked} ip=${ip} referer="${referer}" ua="${ua}"`
-  );
-}
-
-/**
  * Bot / automation user-agent filter for the GA4 send.
  *
  * Why this exists: crawlers hammer /go/ affiliate URLs and each hit was firing
@@ -76,10 +48,7 @@ export function trackAffiliateClick(
 ) {
   if (!GA4_MEASUREMENT_ID || !GA4_MP_API_SECRET) return;
 
-  const tracked = shouldTrack(request);
-  logDiagnostic(request, slug, tracked);
-
-  if (!tracked) {
+  if (!shouldTrack(request)) {
     if (process.env.NODE_ENV === 'development') {
       console.log(
         `[trackAffiliateClick] skipped GA4 send (bot/automation) for slug="${slug}" ua="${request.headers.get('user-agent') ?? ''}" method=${request.method}`
