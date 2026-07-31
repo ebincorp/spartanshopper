@@ -288,7 +288,15 @@ export default async function BlogPostPage({ params }: Props) {
             src={urlFor(post.coverImage).width(1200).url()}
             alt={post.title}
             fill
-            className="object-cover object-center"
+            className={`object-cover ${
+              // is-amazon-luxury-authentic: the GZ94 sneaker sits in the
+              // bottom ~45% of its 500x500 source frame — lower than the
+              // other cover photos on this template — so object-center
+              // still crops out most of the shoe. Targeted override rather
+              // than a new schema field, since this is a one-off outlier,
+              // not a pattern (see the object-center/max-w-3xl commits).
+              post.slug.current === 'is-amazon-luxury-authentic' ? 'object-bottom' : 'object-center'
+            }`}
             priority
             unoptimized
           />
