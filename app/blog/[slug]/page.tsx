@@ -288,7 +288,7 @@ export default async function BlogPostPage({ params }: Props) {
             src={urlFor(post.coverImage).width(1200).url()}
             alt={post.title}
             fill
-            className="object-cover object-top"
+            className="object-cover object-center"
             priority
             unoptimized
           />
