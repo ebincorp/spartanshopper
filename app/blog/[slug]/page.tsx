@@ -283,7 +283,7 @@ export default async function BlogPostPage({ params }: Props) {
     <main className="min-h-screen bg-gray-50">
       {/* Cover image */}
       {post.coverImage && (
-        <div className="relative w-full h-64 sm:h-80 bg-gray-200 overflow-hidden">
+        <div className="relative w-full h-80 sm:h-96 bg-gray-200 overflow-hidden">
           <Image
             src={urlFor(post.coverImage).width(1200).url()}
             alt={post.title}
