@@ -33,6 +33,14 @@ const nextConfig = {
         destination: '/blog/best-korean-eye-patches-2026',
         permanent: true,
       },
+      {
+        // Standalone gummies roundup duplicated the sea-moss-supplement pillar's
+        // own built-in gummies section (GSC: crawled, not indexed). The
+        // 5-brand comparison table was folded into the pillar first.
+        source: '/blog/sea-moss-gummies',
+        destination: '/blog/sea-moss-supplement',
+        permanent: true,
+      },
     ]
   },
   serverExternalPackages: ['@sanity/client', 'sanity', 'superagent'],
