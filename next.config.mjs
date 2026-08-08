@@ -41,6 +41,30 @@ const nextConfig = {
         destination: '/blog/sea-moss-supplement',
         permanent: true,
       },
+      {
+        // Stale promo-code roundup — all 4 codes carry expiry dates (Jun 6-30
+        // 2026) that have passed. No evergreen pillar for this term; the
+        // closest live equivalent is the coupons hub.
+        source: '/blog/amazon-promo-codes-beauty-grooming-june-2026',
+        destination: '/coupons',
+        permanent: true,
+      },
+      {
+        // Pre-Prime-Day beauty markdown roundup — entire premise ("Prime Day
+        // starts Tuesday") is ~7 weeks stale, no per-item Sanity doc to
+        // re-verify against. Closest live equivalent is the deals hub.
+        source: '/blog/beauty-deals-before-prime-day-june-2026',
+        destination: '/deals',
+        permanent: true,
+      },
+      {
+        // Clippable-coupon roundup — audited 2026-08-07: 2/9 ASINs unavailable,
+        // 4/9 no longer at the advertised coupon price, majority dead.
+        // Closest live equivalent is the coupons hub.
+        source: '/blog/amazon-clippable-coupon-deals-july-2026',
+        destination: '/coupons',
+        permanent: true,
+      },
     ]
   },
   serverExternalPackages: ['@sanity/client', 'sanity', 'superagent'],
