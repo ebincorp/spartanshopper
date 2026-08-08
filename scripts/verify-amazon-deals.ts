@@ -7,20 +7,14 @@
  *
  * Exit codes: 0 on success (including NOT_YET_ELIGIBLE / no records), 1 on error.
  */
-import fs from 'fs'
 import path from 'path'
+import dotenv from 'dotenv'
 import { runVerifyDeals, type VerifyRow } from '../lib/verify-deals'
 
 // Load env for standalone runs. SANITY_API_TOKEN lives in .env.local, the
 // CREATORS_API_* credentials in .env — load both, .env.local taking precedence.
-for (const file of ['.env.local', '.env']) {
-  const envPath = path.join(process.cwd(), file)
-  if (!fs.existsSync(envPath)) continue
-  for (const line of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
-    const m = line.match(/^([A-Z0-9_]+)=(.*)$/)
-    if (m && !process.env[m[1]]) process.env[m[1]] = m[2]
-  }
-}
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local'), quiet: true })
+dotenv.config({ path: path.resolve(process.cwd(), '.env'), quiet: true })
 
 const execute = process.argv.includes('--execute')
 
