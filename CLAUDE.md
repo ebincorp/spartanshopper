@@ -13,6 +13,7 @@ This file is read automatically by Claude Code at the start of every session. Fo
 - **Site URL**: SpartanShopper.com
 - **Amazon tag**: `sku18798384-20` — append as `?tag=sku18798384-20` to ALL Amazon affiliate URLs, always
 - **Amazon Store ID**: `spartan03-20` — this is the Creator Connections enrolled store ID only. It is NOT used in affiliate URLs. Never use `spartan03-20` as a tag in any URL.
+  - **Exception — genuine Creator Connections (Affiliate+) campaign links**: this rule exists to catch someone hand-appending `spartan03-20` onto an arbitrary Amazon product URL, which doesn't attribute correctly. It does NOT apply to links Amazon itself generates via "Get associate link" on an *accepted* Creator Connections campaign page. Those always take the form `https://www.amazon.com/dp/{ASIN}?ref=t_ac_view_request_product_image&campaignId=amzn1.campaign.{ID}&linkCode=tr1&tag=spartan03-20&linkId=amzn1.campaign.{ID}_{timestamp}`. There, `tag=spartan03-20` is required and correct — it only attributes because it's paired with the matching `campaignId` and `linkId` Amazon issued for that specific campaign. Use these exactly as issued: do not strip, rewrite, or shorten the tag, campaignId, or linkId — changing any one of the three breaks attribution back to the campaign. This exception is narrow: it applies only when a link actually contains both `campaignId=amzn1.campaign.…` and a matching `linkId=amzn1.campaign.…_…` — not to any other use of the `spartan03-20` tag.
 - **Primary red**: `#E63946` | **Dark navy**: `#1A1A2E`
 
 ---
@@ -25,19 +26,23 @@ SpartanShopper is building an all-encompassing deals destination. The coupons pa
 
 ## Amazon Commission Tiers — Prioritize Higher Commission Categories
 
-When evaluating or adding coupons, note the commission tier. Higher commission = higher priority.
+When evaluating or adding coupons, note the commission tier. Higher commission = higher priority. Table confirmed by James 2026-08-08 from the current Amazon Associates commission schedule — supersedes any earlier version.
 
 | Priority | Category | Commission |
 |---|---|---|
-| 🔥 Highest | Luxury Beauty | 10% |
 | 🔥 Highest | Amazon Games | 20% |
-| ✅ High | Furniture, Home, Home Improvement, Lawn & Garden, Pets, Pantry | 3% |
-| ✅ High | Headphones, Beauty, Musical Instruments, Business & Industrial | 3% |
-| ✅ High | Outdoors, Tools | 3% |
-| ⚠️ Low | Grocery, Health & Personal Care, Sports, Baby | 1% |
-| ⚠️ Low | Electronics, Toys, Video Games, Computers | 1% |
+| 🔥 Highest | Luxury Stores Beauty, Premium Beauty | 10% |
+| ✅ High | Amazon Essentials: Fashion & Accessories | 7% |
+| ✅ High | CDs & Vinyl, Digital Music, Handmade, Video On Demand (Rent/Buy) | 5% |
+| ✅ High | Amazon Basics: Home & Tech | 5% |
+| ✅ High | Automotive, Books & Textbooks, Kitchen & Dining | 4.5% |
+| 🔹 Medium | Amazon Fashion Private Brands, Blink Devices, Clothing & Accessories, Echo Devices, Echo Look, Fire TV Devices, Fire TV Edition Smart TVs, Fire Tablets, Jewelry, Kindle E-readers, Luggage, Luxury Stores Fashion, Ring Accessories, Ring Devices, Shoes/Handbags/Wallets/Sunglasses, Watches | 4% |
+| 🔹 Medium | Fine Art | 4% |
+| 🔸 Standard | Amazon Coins, Baby & Nursery, Beauty & Grooming, Business & Industrial Supplies, Furniture, Headphones, Home, Home Improvement, Musical Instruments, Outdoor Recreation, Patio/Lawn & Garden, Pet Food & Supplies, Power & Hand Tools, Sports & Fitness, Toys & Games | 3% |
 
-A 50% off deal in Luxury Beauty (10%) is worth far more than a 50% off deal in Electronics (1%). When two deals are otherwise equal, always pick the higher commission category. Low-commission deals are still worth adding if the discount is exceptional (50%+) and the product has strong reviews.
+Categories not covered by the table above (e.g. Grocery, Health & Personal Care, Electronics, Video Games, Computers) have unconfirmed commission rates — treat as lower priority than everything listed until confirmed, and don't assume a specific percentage for them.
+
+A 50% off deal in Amazon Games (20%) or Luxury Beauty (10%) is worth far more than a 50% off deal in an unconfirmed-rate category. When two deals are otherwise equal, always pick the higher commission category. Lower-tier deals are still worth adding if the discount is exceptional (50%+) and the product has strong reviews.
 
 ---
 
@@ -59,6 +64,8 @@ Before adding any coupon, verify all of the following:
 - Expires within 7 days
 - Brand new product with no sales history
 - 5% or 10% discount on a low-commission category
+
+**Luxury category exemption:** Amazon Luxury Stores listings (boutique/designer ASINs) structurally do not accumulate visible review counts the way standard marketplace listings do — confirmed 2026-07-31 across all 8 then-active `category: 'luxury'` deals (Giuseppe Zanotti, Sergio Hudson, Oscar de la Renta, Clé de Peau, Perfect Moment) returning zero rating/review data via both the site and the Creators API. The review-count and star-rating thresholds above do **not** apply to `category: 'luxury'`. For luxury deals, use brand reputation and official-boutique ASIN sourcing as the trust signal instead. All other criteria (discount depth, expiry runway, brand legitimacy, live price/availability verification) still apply normally.
 
 ---
 
