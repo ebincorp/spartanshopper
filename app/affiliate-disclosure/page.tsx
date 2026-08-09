@@ -39,16 +39,10 @@ export default function AffiliateDisclosurePage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-gray-900 mb-3">2. Our Affiliate Network</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-3">2. Our Affiliate Networks</h2>
           <p className="text-gray-600 leading-relaxed mb-3">
-            SpartanShopper participates in affiliate programs through:
+            SpartanShopper participates in affiliate programs through the Amazon Associates Program and additional affiliate networks, including MaxBounty. Affiliate links on this site may route through <code className="bg-gray-100 px-1 rounded text-sm">spartanshopper.com/go/[slug]</code> before redirecting to the advertiser&apos;s site.
           </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 leading-relaxed">
-            <li>
-              <strong>MaxBounty</strong> — a performance-based affiliate marketing network. Affiliate links on this site may route through <code className="bg-gray-100 px-1 rounded text-sm">spartanshopper.com/go/[slug]</code> before redirecting to the advertiser&apos;s site.
-            </li>
-            <li>Other affiliate networks and direct partnerships as they are added.</li>
-          </ul>
         </section>
 
         <section>

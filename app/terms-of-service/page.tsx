@@ -72,7 +72,7 @@ export default function TermsOfServicePage() {
         <section>
           <h2 className="text-xl font-bold text-gray-900 mb-3">7. Affiliate Relationships</h2>
           <p className="text-gray-600 leading-relaxed">
-            Some links on this Site are affiliate links through the MaxBounty network and other affiliate programs. See our{' '}
+            Some links on this Site are affiliate links through Amazon Associates and other affiliate programs, including MaxBounty. See our{' '}
             <a href="/affiliate-disclosure" className="font-semibold underline" style={{ color: '#E63946' }}>
               Affiliate Disclosure
             </a>{' '}
