@@ -136,11 +136,6 @@ export const couponSlugsQuery = `
   }
 `
 
-// Used to distinguish "expired/inactive" from "never existed" on the detail page
-export const couponExistsBySlugQuery = `
-  defined(*[_type == "coupon" && slug.current == $slug][0]._id)
-`
-
 export const sweepstakeSlugsQuery = `
   *[_type == "sweepstake" && active == true && defined(slug.current)] {
     "slug": slug.current, _updatedAt

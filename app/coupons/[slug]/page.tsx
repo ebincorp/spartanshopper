@@ -1,10 +1,10 @@
 import { client, urlFor } from '@/lib/sanity.client'
-import { couponBySlugQuery, couponSlugsQuery, couponExistsBySlugQuery } from '@/lib/queries'
+import { couponBySlugQuery, couponSlugsQuery } from '@/lib/queries'
 import type { Coupon } from '@/lib/types'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound, permanentRedirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import CopyButton from '@/components/CopyButton'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
@@ -57,13 +57,12 @@ export default async function CouponPage({ params }: Props) {
     .fetch<Coupon | null>(couponBySlugQuery, { slug })
     .catch(() => null)
 
-  if (!coupon) {
-    const exists = await client
-      .fetch<boolean>(couponExistsBySlugQuery, { slug })
-      .catch(() => false)
-    if (exists) permanentRedirect('/coupons')
-    notFound()
-  }
+  // Expired/inactive coupons and never-existed slugs both 404 — a permanent
+  // redirect to the generic /coupons index was generating a growing GSC
+  // "Page with redirect" report as more coupons expired over time (143 coupon
+  // docs were inactive as of 2026-08 vs. 61 live). 404 matches the deals page
+  // pattern and lets Google drop dead coupon URLs from the index normally.
+  if (!coupon) notFound()
 
   const jsonLd = {
     '@context': 'https://schema.org',
