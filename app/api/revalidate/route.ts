@@ -21,7 +21,16 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     slug = body?.slug?.current ?? body?.slug
     if (slug) {
+      // The webhook payload's _type isn't reliably present across every
+      // trigger source, and revalidatePath on a route that doesn't exist for
+      // this slug is a harmless no-op — so revalidate all four detail-page
+      // shapes rather than guessing the type. Previously only /blog/{slug}
+      // was covered here, so edits to deals/coupons/sweepstakes docs (e.g.
+      // unpublishing one) sat stale in ISR cache for up to an hour.
       revalidatePath(`/blog/${slug}`)
+      revalidatePath(`/deals/${slug}`)
+      revalidatePath(`/coupons/${slug}`)
+      revalidatePath(`/sweepstakes/${slug}`)
     }
   } catch {
     // body absent or not JSON — skip slug revalidation
