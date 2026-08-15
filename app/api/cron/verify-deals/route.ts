@@ -2,12 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { runVerifyDeals } from '@/lib/verify-deals'
 import { sendVerifyAlert } from '@/lib/verify-deals-notify'
+import { formatError } from '@/lib/format-error'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
-// Daily price/availability verification against the Amazon Creators API.
-// Runs in execute mode: repriced deals are patched, dead deals deactivated.
+/**
+ * DEPRECATED as a cron entry — no longer listed in vercel.json. This logic now
+ * runs inside /api/cron/daily-maintenance, which combines all three jobs into
+ * the single cron entry the plan tier can guarantee.
+ *
+ * Kept working for manual invocation (it shares lib/verify-deals.ts with the
+ * combined route, so behaviour is identical).
+ *
+ * Daily price/availability verification against the Amazon Creators API.
+ * Runs in execute mode: repriced deals are patched, dead deals deactivated.
+ */
 export async function GET(req: NextRequest) {
   const auth = req.headers.get('authorization')
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -114,7 +124,8 @@ export async function GET(req: NextRequest) {
       deactivated,
     })
   } catch (err) {
-    console.error('[/api/cron/verify-deals]', err)
+    const message = formatError(err)
+    console.error('[/api/cron/verify-deals]', message, err)
     // Hard crash — network, Sanity write, throttle-after-retries. Already 500s
     // (Vercel flags it), but email too so it doesn't depend on dashboard alerts.
     await sendVerifyAlert({
@@ -123,13 +134,10 @@ export async function GET(req: NextRequest) {
       heading: 'verify-deals cron threw an exception',
       lines: [
         'The daily verification run failed with an error:',
-        `<code>${err instanceof Error ? err.message : String(err)}</code>`,
+        `<code>${message}</code>`,
         'No guarantee any deals were verified today. Check Vercel logs.',
       ],
-    }).catch((e) => console.error('[/api/cron/verify-deals] alert failed:', e))
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Unknown error' },
-      { status: 500 }
-    )
+    }).catch((e) => console.error('[/api/cron/verify-deals] alert failed:', formatError(e)))
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

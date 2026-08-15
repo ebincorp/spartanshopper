@@ -1,20 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@sanity/client'
+import { runExpireCoupons } from '@/lib/expire-coupons'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
-// Write client — useCdn:false so the freshest data is patched.
-const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'eohdr7jw',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: '2024-01-01',
-  useCdn: false,
-  token: process.env.SANITY_API_TOKEN,
-})
-
-// Daily sweep: deactivate any active deal OR coupon whose expiryDate has passed.
+/**
+ * DEPRECATED as a cron entry — no longer listed in vercel.json. The expiry
+ * sweep now runs inside /api/cron/daily-maintenance, which combines all three
+ * jobs into the single cron the plan tier can guarantee.
+ *
+ * The route is kept working (sharing lib/expire-coupons.ts with the combined
+ * route) so it remains available for manual invocation and so nothing calling
+ * it directly breaks.
+ */
 export async function GET(req: NextRequest) {
   const auth = req.headers.get('authorization')
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -22,25 +21,24 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const expired = await client.fetch<{ _id: string; _type: string }[]>(
-      `*[_type in ["deal", "coupon"] && active == true && defined(expiryDate) && dateTime(expiryDate) < dateTime(now())]{ _id, _type }`
-    )
+    const expired = await runExpireCoupons()
 
-    if (expired.length > 0) {
-      let tx = client.transaction()
-      for (const doc of expired) tx = tx.patch(doc._id, (p) => p.set({ active: false }))
-      await tx.commit()
-
+    if (expired.deactivated > 0) {
       revalidatePath('/deals')
       revalidatePath('/coupons')
       revalidatePath('/')
     }
 
-    const deals = expired.filter((d) => d._type === 'deal').length
-    const coupons = expired.filter((d) => d._type === 'coupon').length
-    console.log(`[/api/cron/expire-coupons] deactivated ${expired.length} (deals: ${deals}, coupons: ${coupons})`)
+    console.log(
+      `[/api/cron/expire-coupons] deactivated ${expired.deactivated} (deals: ${expired.deals}, coupons: ${expired.coupons})`
+    )
 
-    return NextResponse.json({ success: true, deactivated: expired.length, deals, coupons })
+    return NextResponse.json({
+      success: true,
+      deactivated: expired.deactivated,
+      deals: expired.deals,
+      coupons: expired.coupons,
+    })
   } catch (err) {
     console.error('[/api/cron/expire-coupons]', err)
     return NextResponse.json(
