@@ -26,8 +26,14 @@ function makeClient() {
 export async function runExpireCoupons(): Promise<ExpireResult> {
   const client = makeClient()
 
+  // Plain string comparison, not dateTime(expiryDate) < dateTime(now()) — GROQ's
+  // dateTime() can't parse bare "YYYY-MM-DD" values (no time component) and
+  // silently returns null, which drops those docs out of the filter forever.
+  // ISO date/datetime strings compare correctly as strings as long as both sides
+  // are zero-padded, so this matches the same approach lib/queries.ts already
+  // uses for the public coupons query.
   const expired = await client.fetch<{ _id: string; _type: string }[]>(
-    `*[_type in ["deal", "coupon"] && active == true && defined(expiryDate) && dateTime(expiryDate) < dateTime(now())]{ _id, _type }`
+    `*[_type in ["deal", "coupon"] && active == true && defined(expiryDate) && expiryDate < now()]{ _id, _type }`
   )
 
   if (expired.length > 0) {
