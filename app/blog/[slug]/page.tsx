@@ -9,6 +9,7 @@ import type { Post } from '@/lib/types'
 import { generateJsonLd, generateJsonLdFromProducts, generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import InlineCouponCard from '@/components/InlineCouponCard'
 import RelatedCoupons from '@/components/RelatedCoupons'
+import DealsPromoWidget from '@/components/DealsPromoWidget'
 import EmailSignup from '@/components/EmailSignup'
 import TikTokEmbed from '@/components/TikTokEmbed'
 
@@ -350,6 +351,10 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         <EmailSignup />
+
+        <div className="mt-8 flex justify-center">
+          <DealsPromoWidget />
+        </div>
 
         {/* Related coupons */}
         <RelatedCoupons currentId={post!._id} category={post!.relatedCategory} />
