@@ -83,7 +83,7 @@ export default function DealCard({
 
       {/* Body */}
       <div className="p-4 flex flex-col flex-1">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">{store}</p>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{store}</p>
         <h3 className="text-gray-900 font-bold text-sm leading-snug mb-3 flex-1">{title}</h3>
 
         {/* Pricing */}
@@ -92,13 +92,13 @@ export default function DealCard({
             ${salePrice.toFixed(2)}
           </span>
           {originalPrice && originalPrice > salePrice && (
-            <span className="text-sm text-gray-400 line-through">${originalPrice.toFixed(2)}</span>
+            <span className="text-sm text-gray-500 line-through">${originalPrice.toFixed(2)}</span>
           )}
         </div>
 
         {/* Expiry */}
         {expiryDate && expiryStatus !== 'expired' && (
-          <p className={`text-xs mb-3 font-medium ${expiryStatus === 'soon' ? 'text-[#E63946]' : 'text-gray-400'}`}>
+          <p className={`text-xs mb-3 font-medium ${expiryStatus === 'soon' ? 'text-[#E63946]' : 'text-gray-500'}`}>
             {expiryStatus === 'soon' ? '⚠ Expires soon: ' : 'Expires: '}
             {new Date(expiryDate).toLocaleDateString()}
           </p>

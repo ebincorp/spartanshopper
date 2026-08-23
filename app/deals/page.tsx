@@ -4,6 +4,7 @@ import { client, urlFor } from '@/lib/sanity.client'
 import { dealsQuery, dealsByCategoryQuery, dealCategoriesQuery } from '@/lib/queries'
 import type { Deal } from '@/lib/types'
 import DealCard from '@/components/DealCard'
+import DealsCategoryFilterBar from '@/components/DealsCategoryFilterBar'
 
 export const revalidate = 3600
 
@@ -95,33 +96,7 @@ export default async function DealsPage({ searchParams }: Props) {
       <div className="max-w-7xl mx-auto px-4 py-10">
         {/* Category Filters */}
         {categories.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-8">
-            <Link
-              href="/deals"
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
-                !category
-                  ? 'text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-              }`}
-              style={!category ? { backgroundColor: '#E63946' } : {}}
-            >
-              All
-            </Link>
-            {categories.map((cat) => (
-              <Link
-                key={cat}
-                href={`/deals?category=${cat}`}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
-                  category === cat
-                    ? 'text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                }`}
-                style={category === cat ? { backgroundColor: '#E63946' } : {}}
-              >
-                {CATEGORY_LABELS[cat] ?? cat}
-              </Link>
-            ))}
-          </div>
+          <DealsCategoryFilterBar categories={categories} activeCategory={category} />
         )}
 
         {/* Deals Grid */}
@@ -147,7 +122,7 @@ export default async function DealsPage({ searchParams }: Props) {
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🏷️</div>
             <h2 className="text-2xl font-bold text-gray-700 mb-2">No deals found</h2>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-500 mb-6">
               {category ? `No deals in this category yet.` : `No active deals right now — check back soon.`}
             </p>
             {category && (

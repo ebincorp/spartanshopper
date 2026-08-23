@@ -73,7 +73,7 @@ export default function DealsPromoWidget() {
               →
             </span>
           </a>
-          <p className="mt-3 text-center text-[11px] leading-tight text-gray-400">
+          <p className="mt-3 text-center text-[11px] leading-tight text-gray-500">
             Sponsored offer. No purchase necessary.
           </p>
         </div>

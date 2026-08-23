@@ -78,7 +78,7 @@ export default function InlineCouponCard({ coupon }: Props) {
         </div>
 
         {coupon.expiryDate && !expired && (
-          <p className="text-xs text-gray-400 mt-3">
+          <p className="text-xs text-gray-500 mt-3">
             Expires{' '}
             {new Date(coupon.expiryDate).toLocaleDateString('en-US', {
               month: 'long', day: 'numeric', year: 'numeric',
