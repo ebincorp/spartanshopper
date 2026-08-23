@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import CopyButton from '@/components/CopyButton'
 import RelatedCoupons from '@/components/RelatedCoupons'
+import DealsPromoWidget from '@/components/DealsPromoWidget'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import { pageMetadata } from '@/lib/seo'
 
@@ -193,6 +194,10 @@ export default async function CouponPage({ params }: Props) {
             </p>
           </div>
         )}
+
+        <div className="mt-8 flex justify-center">
+          <DealsPromoWidget />
+        </div>
 
         <RelatedCoupons currentId={coupon._id} category={coupon.category} />
       </div>

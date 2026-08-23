@@ -107,7 +107,7 @@ export default async function BlogPage() {
 
                 {/* Body */}
                 <div className="p-5 flex flex-col flex-1">
-                  <p className="text-xs text-gray-400 mb-2">
+                  <p className="text-xs text-gray-500 mb-2">
                     {post.author && <span>{post.author} · </span>}
                     {new Date(post.publishedAt).toLocaleDateString('en-US', {
                       month: 'short',
@@ -138,7 +138,7 @@ export default async function BlogPage() {
           <div className="text-center py-20">
             <div className="text-6xl mb-4">📝</div>
             <h2 className="text-2xl font-bold text-gray-700 mb-2">No posts yet</h2>
-            <p className="text-gray-400 mb-6">Check back soon for saving tips and deal guides.</p>
+            <p className="text-gray-500 mb-6">Check back soon for saving tips and deal guides.</p>
             <Link
               href="/"
               style={{ backgroundColor: '#E63946' }}

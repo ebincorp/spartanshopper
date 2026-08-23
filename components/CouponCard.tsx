@@ -57,8 +57,8 @@ export default function CouponCard({
     <div className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-200">
 
       {/* Image */}
-      {image && (
-        <Link href={`/coupons/${slug}`} className="block relative w-full h-36 bg-gray-100 overflow-hidden">
+      <Link href={`/coupons/${slug}`} className="block relative w-full h-36 bg-gray-100 overflow-hidden">
+        {image ? (
           <Image
             src={image}
             alt={title}
@@ -66,8 +66,14 @@ export default function CouponCard({
             unoptimized
             className="object-contain"
           />
-        </Link>
-      )}
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-300">
+            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        )}
+      </Link>
 
       {/* Top bar */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="px-4 py-3 flex items-center justify-between">
@@ -142,7 +148,7 @@ export default function CouponCard({
 
         {/* Expiry */}
         {expiryDate && !expired && (
-          <p className="text-xs text-gray-400 mb-3" suppressHydrationWarning>
+          <p className="text-xs text-gray-500 mb-3" suppressHydrationWarning>
             Expires: {new Date(expiryDate).toLocaleDateString('en-US')}
           </p>
         )}

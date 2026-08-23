@@ -77,7 +77,7 @@ export default async function CouponsPage() {
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🏷️</div>
             <h2 className="text-2xl font-bold text-gray-700 mb-2">No coupons found</h2>
-            <p className="text-gray-400 mb-6">No active coupon codes right now — check back soon.</p>
+            <p className="text-gray-500 mb-6">No active coupon codes right now — check back soon.</p>
             <Link
               href="/"
               style={{ backgroundColor: '#E63946' }}

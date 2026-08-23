@@ -123,7 +123,7 @@ export default async function SweepstakesPage() {
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🏆</div>
             <h2 className="text-2xl font-bold text-gray-700 mb-2">No sweepstakes found</h2>
-            <p className="text-gray-400 mb-6">No active sweepstakes right now — check back soon.</p>
+            <p className="text-gray-500 mb-6">No active sweepstakes right now — check back soon.</p>
             <Link
               href="/"
               style={{ backgroundColor: '#E63946' }}
