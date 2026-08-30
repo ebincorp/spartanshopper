@@ -40,6 +40,7 @@ export default function CouponCard({
   const [revealed, setRevealed] = useState(false)
   const [copied, setCopied] = useState(false)
   const [expired, setExpired] = useState(false)
+  const [imageFailed, setImageFailed] = useState(false)
 
   useEffect(() => {
     setExpired(isExpired(expiryDate))
@@ -58,13 +59,14 @@ export default function CouponCard({
 
       {/* Image */}
       <Link href={`/coupons/${slug}`} className="block relative w-full h-36 bg-gray-100 overflow-hidden">
-        {image ? (
+        {image && !imageFailed ? (
           <Image
             src={image}
             alt={title}
             fill
             unoptimized
             className="object-contain"
+            onError={() => setImageFailed(true)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-300">
