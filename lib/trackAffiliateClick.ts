@@ -95,6 +95,14 @@ export function trackAffiliateClick(
   const match = cookieHeader.match(/_ga=GA\d\.\d\.(\d+\.\d+)/);
   const clientId = match ? match[1] : `${Date.now()}.${Math.floor(Math.random() * 1e9)}`;
 
+  // GA4's Measurement Protocol has no browser page context to fall back on
+  // (this fires server-side, after the response is sent, via after()), so
+  // without an explicit page_location every event lands in the GA4 "(not set)"
+  // landing-page bucket instead of attributing to the article that sent the
+  // click. The referer header — captured here, before after() defers anything
+  // — is the page the visitor clicked the /go/ link from.
+  const referer = request.headers.get('referer') ?? '';
+
   const payload = {
     client_id: clientId,
     events: [
@@ -105,6 +113,7 @@ export function trackAffiliateClick(
           link_domain: safeHostname(destination),
           affiliate_slug: slug,
           outbound: true,
+          ...(referer && { page_location: referer, page_referrer: referer }),
         },
       },
     ],
