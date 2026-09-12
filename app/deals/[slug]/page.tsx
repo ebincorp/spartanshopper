@@ -267,7 +267,7 @@ export default async function DealPage({ params }: Props) {
             <Link
               href="/go/everydaywinner-500-gas-card"
               target="_blank"
-              rel="noopener noreferrer nofollow"
+              rel="sponsored noopener noreferrer"
               style={{ backgroundColor: '#E63946' }}
               className="inline-block rounded-xl px-5 py-3 text-sm font-extrabold text-white transition hover:opacity-90"
             >
