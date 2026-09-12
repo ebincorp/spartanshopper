@@ -74,6 +74,12 @@ function blockText(value: { children?: unknown[] }): string {
     .join('')
 }
 
+function linkRel(href?: string): string {
+  return href?.includes('/go/')
+    ? 'sponsored noopener noreferrer'
+    : 'noopener noreferrer'
+}
+
 // Components used when rendering Portable Text inside table cells
 const cellPtComponents: PortableTextComponents = {
   marks: {
@@ -83,7 +89,7 @@ const cellPtComponents: PortableTextComponents = {
       <a
         href={value?.href}
         target="_blank"
-        rel="noopener noreferrer"
+        rel={linkRel(value?.href)}
         className="underline hover:opacity-80 transition"
         style={{ color: '#E63946' }}
       >
@@ -107,7 +113,7 @@ function renderTableCell(cell: string | unknown[]) {
     <a
       href={cell.slice(sepIdx + 2)}
       target="_blank"
-      rel="noopener noreferrer"
+      rel={linkRel(cell.slice(sepIdx + 2))}
       className="underline hover:opacity-80 transition"
       style={{ color: '#E63946' }}
     >
@@ -243,7 +249,7 @@ const portableTextComponents: PortableTextComponents = {
       <a
         href={value?.href}
         target="_blank"
-        rel="noopener noreferrer"
+        rel={linkRel(value?.href)}
         className="underline hover:opacity-80 transition"
         style={{ color: '#E63946' }}
       >
