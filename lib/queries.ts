@@ -39,7 +39,7 @@ export const dealsByCategoryQuery = `
 
 export const dealBySlugQuery = `
   *[_type == "deal" && slug.current == $slug][0] {
-    _id, title, slug, store, salePrice, originalPrice,
+    _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
     description, image, imageUrl, affiliateUrl, category, asin, expiryDate, active
   }
 `

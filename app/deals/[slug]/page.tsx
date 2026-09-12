@@ -66,6 +66,7 @@ export default async function DealPage({ params }: Props) {
   // `imageUrl || image`. This was the root cause of the GSC "Missing field image" errors
   // when older deals carried only the imageUrl string and no Sanity asset.
   const imageUrl = deal.image ? urlFor(deal.image).width(800).url() : deal.imageUrl || null
+  const shopUrl = deal.affiliateSlug ? `/go/${deal.affiliateSlug}` : deal.affiliateUrl
 
   // A deal ends one of two ways, and BOTH must show the ended state:
   //  - its expiryDate passes, or
@@ -234,7 +235,7 @@ export default async function DealPage({ params }: Props) {
             )}
 
             <a
-              href={deal.affiliateUrl}
+              href={shopUrl}
               target="_blank"
               rel="noopener noreferrer nofollow"
               className={`block w-full text-center font-extrabold py-4 rounded-xl text-lg tracking-wide transition ${
