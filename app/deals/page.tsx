@@ -95,6 +95,37 @@ export default async function DealsPage({ searchParams }: Props) {
         {/* Deals Grid */}
         {deals.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {category === 'automotive' && (
+              <aside
+                className="sm:col-span-2 lg:col-span-3 rounded-2xl border border-amber-200 bg-amber-50 p-6 sm:p-7"
+                aria-label="Fuel card sweepstakes"
+              >
+                <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="max-w-3xl">
+                    <p className="mb-2 text-xs font-bold uppercase tracking-widest text-amber-800">
+                      Sweepstakes for drivers
+                    </p>
+                    <h2 className="mb-2 text-2xl font-extrabold text-gray-900">
+                      Enter for a chance to win a $500 fuel card
+                    </h2>
+                    <p className="text-sm leading-6 text-gray-700">
+                      Open to US residents 18+. No purchase is necessary. Entry requires the requested
+                      information and final confirmation, and the entry flow may include sales offers.
+                      SpartanShopper may earn a commission if you enter.
+                    </p>
+                  </div>
+                  <Link
+                    href="/go/everydaywinner-500-gas-card"
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    style={{ backgroundColor: '#E63946' }}
+                    className="shrink-0 rounded-xl px-5 py-3 text-center text-sm font-extrabold text-white transition hover:opacity-90"
+                  >
+                    Enter Now →
+                  </Link>
+                </div>
+              </aside>
+            )}
             {deals.map((deal) => (
               <DealCard
                 key={deal._id}
