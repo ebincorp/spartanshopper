@@ -19,7 +19,9 @@ interface PostSlugEntry extends SlugEntry {
   publishedAt?: string
 }
 
-export const revalidate = 3600
+// Sitemap discovery must reflect CMS publishes without waiting for a rebuild
+// or a webhook to invalidate a previously generated metadata route.
+export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
@@ -27,10 +29,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   const [deals, coupons, sweepstakes, posts] = await Promise.all([
-    client.fetch<SlugEntry[]>(dealSlugsQuery).catch(() => [] as SlugEntry[]),
-    client.fetch<SlugEntry[]>(couponSlugsQuery).catch(() => [] as SlugEntry[]),
-    client.fetch<SlugEntry[]>(sweepstakeSlugsQuery).catch(() => [] as SlugEntry[]),
-    client.fetch<PostSlugEntry[]>(postSlugsQuery).catch(() => [] as PostSlugEntry[]),
+    client.fetch<SlugEntry[]>(dealSlugsQuery, {}, { cache: 'no-store' }),
+    client.fetch<SlugEntry[]>(couponSlugsQuery, {}, { cache: 'no-store' }),
+    client.fetch<SlugEntry[]>(sweepstakeSlugsQuery, {}, { cache: 'no-store' }),
+    client.fetch<PostSlugEntry[]>(postSlugsQuery, {}, { cache: 'no-store' }),
   ])
 
   const staticPages: MetadataRoute.Sitemap = [
