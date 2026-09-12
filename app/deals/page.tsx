@@ -56,20 +56,12 @@ export default async function DealsPage({ searchParams }: Props) {
         description: "Hand-picked deals and discounts updated daily.",
         url: 'https://www.spartanshopper.com/deals',
         numberOfItems: deals.length,
-        itemListElement: deals.slice(0, 15).map((d, i) => ({
+        // Product rich results belong on individual deal pages, not this directory.
+        itemListElement: deals.map((d, i) => ({
           '@type': 'ListItem',
           position: i + 1,
-          item: {
-            '@type': 'Product',
-            name: d.title,
-            url: `https://www.spartanshopper.com/deals/${d.slug.current}`,
-            offers: {
-              '@type': 'Offer',
-              price: d.salePrice,
-              priceCurrency: 'USD',
-              availability: 'https://schema.org/InStock',
-            },
-          },
+          name: d.title,
+          url: `https://www.spartanshopper.com/deals/${d.slug.current}`,
         })),
       }
     : null
