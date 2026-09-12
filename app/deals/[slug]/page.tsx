@@ -250,6 +250,31 @@ export default async function DealPage({ params }: Props) {
 
           </div>
         </div>
+
+        {deal.category === 'automotive' && (
+          <section className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-6">
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-amber-800">
+              Sweepstakes for drivers
+            </p>
+            <h2 className="mb-2 text-xl font-extrabold text-gray-900">
+              Enter for a chance to win a $500 fuel card
+            </h2>
+            <p className="mb-4 text-sm leading-6 text-gray-700">
+              Open to US residents 18+. No purchase is necessary. Entry requires the requested
+              information and final confirmation, and the entry flow may include sales offers.
+              SpartanShopper may earn a commission if you enter.
+            </p>
+            <Link
+              href="/go/everydaywinner-500-gas-card"
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              style={{ backgroundColor: '#E63946' }}
+              className="inline-block rounded-xl px-5 py-3 text-sm font-extrabold text-white transition hover:opacity-90"
+            >
+              Enter Now →
+            </Link>
+          </section>
+        )}
       </div>
     </main>
     </>
