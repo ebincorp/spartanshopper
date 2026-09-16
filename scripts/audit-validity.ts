@@ -12,7 +12,9 @@ const client = createClient({
   useCdn:    false,
 })
 
-const TODAY = new Date('2026-07-15T00:00:00Z').getTime()
+// Use the actual run date so scheduled/manual audits do not silently treat
+// recently expired offers as current.
+const TODAY = Date.now()
 const isPast = (d?: string) => !!d && new Date(d).getTime() < TODAY
 
 async function main() {

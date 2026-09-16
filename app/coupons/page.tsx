@@ -4,6 +4,7 @@ import type { Coupon } from '@/lib/types'
 import CouponFilterBar from '@/components/CouponFilterBar'
 import Link from 'next/link'
 import { pageMetadata } from '@/lib/seo'
+import { offerExpiryLabel } from '@/lib/offerExpiry'
 
 export const revalidate = 3600
 
@@ -36,7 +37,10 @@ export default async function CouponsPage() {
         '@type': 'Offer',
         name: c.title,
         url: `https://www.spartanshopper.com/coupons/${c.slug.current}`,
-        ...(c.expiryDate && { validThrough: `${c.expiryDate}T23:59:59` }),
+        // Sanity stores some dates as full ISO timestamps and others as date-only
+        // values. Appending a time to both produces invalid values such as
+        // `2026-11-30T00:00:00.000ZT23:59:59` in structured data.
+        ...(c.expiryDate && offerExpiryLabel(c.expiryDate) && { validThrough: c.expiryDate }),
         seller: { '@type': 'Organization', name: c.store },
       },
     })),
