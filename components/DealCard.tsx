@@ -36,8 +36,9 @@ export default function DealCard({
   expiryDate,
 }: DealCardProps) {
   const shopUrl = affiliateSlug ? `/go/${affiliateSlug}` : affiliateUrl
-  // Prefer the Amazon-compliant API image URL over the uploaded Sanity asset.
-  const imgSrc = imageUrl || image
+  // Amazon's source URLs can reject browser hotlinks. Prefer the uploaded
+  // Sanity asset, which is stable and is available for the repaired deals.
+  const imgSrc = image || imageUrl
   const expiryStatus = getExpiryStatus(expiryDate)
   const savings =
     originalPrice && originalPrice > salePrice
