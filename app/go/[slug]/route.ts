@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getRedirectBySlug } from '@/lib/redirects'
-import { trackAffiliateClick } from '@/lib/trackAffiliateClick'
+import { affiliateRequestPolicy, AFFILIATE_RESPONSE_HEADERS } from '@/lib/affiliateRequest'
 
 // Force dynamic — never cache redirect responses
 export const dynamic = 'force-dynamic'
@@ -13,21 +13,32 @@ export async function GET(
 ) {
   const { slug } = await params
 
-  console.log(`[/go] GET request for slug: "${slug}"`)
+  const policy = affiliateRequestPolicy(req)
+  // Log only classification and slug, never cookies, IPs or destination tokens.
+  console.info(JSON.stringify({ event: 'affiliate_redirect', slug, decision: policy }))
+  if (policy !== 'navigate') {
+    return new NextResponse(null, {
+      status: policy === 'bot' ? 403 : 204,
+      headers: AFFILIATE_RESPONSE_HEADERS,
+    })
+  }
 
   try {
     const redirect = await getRedirectBySlug(slug)
 
     if (!redirect?.url) {
       console.log(`[/go] No redirect found for "${slug}", falling back to homepage`)
-      return NextResponse.redirect(new URL('/', req.url), { status: 302 })
+      return NextResponse.redirect(new URL('/', req.url), { status: 302, headers: AFFILIATE_RESPONSE_HEADERS })
     }
 
-    console.log(`[/go] Redirecting "${slug}" → ${redirect.url}`)
-    trackAffiliateClick(req, { slug, destination: redirect.url })
-    return NextResponse.redirect(redirect.url, { status: 301 })
+    return NextResponse.redirect(redirect.url, { status: 302, headers: AFFILIATE_RESPONSE_HEADERS })
   } catch (err) {
     console.error(`[/go] Error looking up "${slug}":`, err)
-    return NextResponse.redirect(FALLBACK_URL, { status: 302 })
+    return NextResponse.redirect(FALLBACK_URL, { status: 302, headers: AFFILIATE_RESPONSE_HEADERS })
   }
+}
+
+// Link checks must not resolve or visit the retailer, or generate click events.
+export function HEAD() {
+  return new NextResponse(null, { status: 204, headers: AFFILIATE_RESPONSE_HEADERS })
 }

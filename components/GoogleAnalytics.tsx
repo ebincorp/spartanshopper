@@ -1,12 +1,18 @@
+'use client'
+
 import Script from 'next/script'
+import { usePathname } from 'next/navigation'
+import AffiliateClickTracker from './AffiliateClickTracker'
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 export default function GoogleAnalytics() {
-  if (!GA_MEASUREMENT_ID) return null
+  const pathname = usePathname()
+  if (!GA_MEASUREMENT_ID || pathname === '/alerts/manage') return null
 
   return (
     <>
+      <AffiliateClickTracker />
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
         strategy="afterInteractive"
