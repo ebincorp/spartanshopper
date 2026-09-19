@@ -4,6 +4,7 @@ import { client, urlFor } from '@/lib/sanity.client'
 import { dealsQuery, dealsByCategoryQuery, dealCategoriesQuery } from '@/lib/queries'
 import type { Deal } from '@/lib/types'
 import DealCard from '@/components/DealCard'
+import DealShelf from '@/components/DealShelf'
 import DealsCategoryFilterBar from '@/components/DealsCategoryFilterBar'
 import { pageMetadata } from '@/lib/seo'
 
@@ -66,6 +67,15 @@ export default async function DealsPage({ searchParams }: Props) {
       }
     : null
 
+  const discount = (deal: Deal) =>
+    deal.originalPrice && deal.originalPrice > deal.salePrice
+      ? (deal.originalPrice - deal.salePrice) / deal.originalPrice
+      : 0
+  const byDiscount = (a: Deal, b: Deal) => discount(b) - discount(a)
+  const under = (amount: number) => deals.filter((deal) => deal.salePrice <= amount).sort(byDiscount).slice(0, 8)
+  const inCategories = (values: string[]) => deals.filter((deal) => values.includes(deal.category ?? '')).sort(byDiscount).slice(0, 8)
+  const premiumUnder100 = deals.filter((deal) => deal.salePrice <= 100 && ['luxury', 'health-beauty', 'fashion'].includes(deal.category ?? '')).sort(byDiscount).slice(0, 8)
+
   return (
     <>
     {dealsJsonLd && (
@@ -76,11 +86,12 @@ export default async function DealsPage({ searchParams }: Props) {
     )}
     <main className="min-h-screen bg-gray-50">
       {/* Page Header */}
-      <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4">
+      <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4 sm:py-14">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-white text-4xl font-extrabold mb-2">🔥 All Deals</h1>
-          <p className="text-white/60">
-            {deals.length} deal{deals.length !== 1 ? 's' : ''} found
+          <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-rose-300">SpartanShopper deals</p>
+          <h1 className="text-white text-4xl font-extrabold tracking-tight mb-2 sm:text-5xl">Find the deal worth buying.</h1>
+          <p className="max-w-2xl text-white/70">
+            Browse {deals.length} active deal{deals.length !== 1 ? 's' : ''} by budget, category, and what you actually need.
             {category ? ` in ${CATEGORY_LABELS[category] ?? category}` : ''}
           </p>
         </div>
@@ -90,6 +101,17 @@ export default async function DealsPage({ searchParams }: Props) {
         {/* Category Filters */}
         {categories.length > 0 && (
           <DealsCategoryFilterBar categories={categories} activeCategory={category} />
+        )}
+
+        {!category && deals.length > 0 && (
+          <div className="mb-2">
+            <DealShelf title="Best savings right now" description="Strong markdowns among the active listings. Check the product page for the final price and availability." deals={[...deals].sort(byDiscount).slice(0, 8)} />
+            <DealShelf title="Premium finds under $100" description="Beauty, fashion, and luxury picks within a clear budget." deals={premiumUnder100} />
+            <DealShelf title="Home, kitchen, and everyday upgrades" description="Useful items for the spaces and routines you already have." deals={inCategories(['home-garden', 'food-dining'])} />
+            <DealShelf title="Trending finds under $50" description="A lower-price shelf for practical purchases and gift ideas." deals={under(50)} />
+            <DealShelf title="Seasonal style and comfort" description="Fashion and home finds for fall routines, travel, and gifting." deals={inCategories(['fashion', 'home-garden', 'travel'])} />
+            <DealShelf title="Recently added deals" description="The newest additions to SpartanShopper’s active deal directory." deals={deals.slice(0, 8)} />
+          </div>
         )}
 
         {/* Deals Grid */}
