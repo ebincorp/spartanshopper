@@ -16,31 +16,36 @@ export const COUPON_CATEGORIES = [
 export type CouponCategoryValue = typeof COUPON_CATEGORIES[number]['value']
 
 // ── DEALS ──────────────────────────────────────────────────────────────────
+// Do not depend on the daily cleanup job to hide offers that have ended.
+// Date-only expiries remain valid through the end of that UTC calendar day.
+const DEAL_DATE_FILTER = `active == true
+  && (!defined(startDate) || startDate <= now())
+  && (!defined(expiryDate) || select(length(expiryDate) == 10 => expiryDate + "T23:59:59.999Z", expiryDate) > now())`
 export const dealsQuery = `
-  *[_type == "deal" && active == true] | order(_createdAt desc) {
+  *[_type == "deal" && ${DEAL_DATE_FILTER}] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, expiryDate, active
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active
   }
 `
 
 export const featuredDealsQuery = `
-  *[_type == "deal" && active == true] | order(_createdAt desc)[0...3] {
+  *[_type == "deal" && ${DEAL_DATE_FILTER} && defined(slug.current) && salePrice > 0] | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    image, imageUrl, affiliateUrl, category, asin, expiryDate, active
+    image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active
   }
 `
 
 export const dealsByCategoryQuery = `
-  *[_type == "deal" && active == true && category == $category] | order(_createdAt desc) {
+  *[_type == "deal" && ${DEAL_DATE_FILTER} && category == $category] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, expiryDate, active
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active
   }
 `
 
 export const dealBySlugQuery = `
   *[_type == "deal" && slug.current == $slug][0] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, expiryDate, active
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active
   }
 `
 
@@ -103,11 +108,11 @@ export const sweepstakeBySlugQuery = `
 
 // ── DEAL CATEGORIES (distinct) ───────────────────────────────────────────────
 export const dealCategoriesQuery = `
-  array::unique(*[_type == "deal" && active == true && defined(category)].category)
+  array::unique(*[_type == "deal" && ${DEAL_DATE_FILTER} && defined(category)].category)
 `
 
 // ── COUNTS ───────────────────────────────────────────────────────────────────
-export const dealCountQuery = `count(*[_type == "deal" && active == true])`
+export const dealCountQuery = `count(*[_type == "deal" && ${DEAL_DATE_FILTER}])`
 export const couponCountQuery = `count(*[_type == "coupon" && active == true])`
 export const sweepstakeCountQuery = `count(*[_type == "sweepstake" && active == true])`
 
@@ -125,7 +130,7 @@ export const affiliateUrlBySlugQuery = `
 
 // ── SITEMAP SLUGS ────────────────────────────────────────────────────────────
 export const dealSlugsQuery = `
-  *[_type == "deal" && active == true && defined(slug.current)] {
+  *[_type == "deal" && ${DEAL_DATE_FILTER} && defined(slug.current)] {
     "slug": slug.current, _updatedAt
   }
 `

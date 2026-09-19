@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import CopyButton from '@/components/CopyButton'
 import RelatedCoupons from '@/components/RelatedCoupons'
-import DealsPromoWidget from '@/components/DealsPromoWidget'
+import { offerExpiryLabel } from '@/lib/offerExpiry'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import { pageMetadata } from '@/lib/seo'
 
@@ -65,13 +65,14 @@ export default async function CouponPage({ params }: Props) {
   // pattern and lets Google drop dead coupon URLs from the index normally.
   if (!coupon) notFound()
 
+  const expiryLabel = offerExpiryLabel(coupon.expiryDate)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Offer',
     name: coupon.title,
     ...(coupon.description && { description: coupon.description }),
     url: coupon.affiliateUrl,
-    ...(coupon.expiryDate && { validThrough: `${coupon.expiryDate}T23:59:59` }),
+    ...(expiryLabel && { validThrough: coupon.expiryDate?.length === 10 ? `${coupon.expiryDate}T23:59:59.999Z` : coupon.expiryDate }),
     seller: {
       '@type': 'Organization',
       name: coupon.store,
@@ -153,9 +154,9 @@ export default async function CouponPage({ params }: Props) {
             )}
 
             {coupon.code && (
-              <div className="flex items-center gap-3 mb-6">
+              <div className="flex flex-wrap items-center gap-3 mb-6">
                 <div
-                  className="flex-1 border-2 border-dashed rounded-xl px-5 py-4 font-mono font-bold text-2xl tracking-widest"
+                  className="min-w-0 break-all flex-1 border-2 border-dashed rounded-xl px-5 py-4 font-mono font-bold text-2xl tracking-widest"
                   style={{ borderColor: '#E63946', color: '#E63946' }}
                 >
                   {coupon.code}
@@ -164,19 +165,18 @@ export default async function CouponPage({ params }: Props) {
               </div>
             )}
 
-            {coupon.expiryDate && (
-              <p className="text-sm text-gray-400 mb-6">
-                Expires:{' '}
-                {new Date(coupon.expiryDate).toLocaleDateString('en-US', {
-                  month: 'long', day: 'numeric', year: 'numeric',
-                })}
-              </p>
-            )}
+            <p className="text-sm text-gray-600 mb-6">{expiryLabel ? `Expires: ${expiryLabel}` : 'End date not supplied — confirm with the retailer.'}</p>
+            {coupon.description && <p className="text-gray-700 leading-relaxed mb-6">{coupon.description}</p>}
+            <div className="bg-slate-50 rounded-xl p-5 mb-6">
+              <h2 className="font-bold text-lg mb-2">How to use this offer</h2>
+              <p className="text-gray-700 leading-relaxed">{coupon.code ? 'Copy the code above, visit the retailer, and enter it at checkout.' : 'Visit the retailer and follow the offer instructions on its product or promotion page.'} Confirm that the discount applies to your selected item before paying. Availability and eligibility can change.</p>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">We may earn a commission from qualifying purchases through this link. <Link href="/affiliate-disclosure" className="underline">Affiliate disclosure</Link></p>
 
             <a
               href={shopUrl}
               target="_blank"
-              rel="noopener noreferrer nofollow"
+              rel="noopener noreferrer sponsored nofollow"
               className="block w-full text-center font-extrabold py-4 rounded-xl text-lg tracking-wide transition text-white hover:opacity-90 active:scale-95"
               style={{ backgroundColor: '#E63946' }}
             >
@@ -195,9 +195,6 @@ export default async function CouponPage({ params }: Props) {
           </div>
         )}
 
-        <div className="mt-8 flex justify-center">
-          <DealsPromoWidget />
-        </div>
 
         <RelatedCoupons currentId={coupon._id} category={coupon.category} />
       </div>

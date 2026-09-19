@@ -24,10 +24,12 @@ const CATEGORY_GROUPS: { label: string; values: string[] }[] = [
 
 interface Props {
   coupons: Coupon[]
+  initialLimit?: number
 }
 
-export default function CouponFilterBar({ coupons }: Props) {
+export default function CouponFilterBar({ coupons, initialLimit }: Props) {
   const [activeLabel, setActiveLabel] = useState<string>('all')
+  const [expanded, setExpanded] = useState(false)
 
   // Only show pills for groups that have at least one coupon
   const presentGroups = CATEGORY_GROUPS.filter((group) =>
@@ -43,7 +45,9 @@ export default function CouponFilterBar({ coupons }: Props) {
         })
 
   const pillBase =
-    'whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold transition-colors focus:outline-none'
+    'whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1A1A2E]'
+
+  const visible = initialLimit && !expanded ? filtered.slice(0, initialLimit) : filtered
 
   return (
     <div>
@@ -53,6 +57,7 @@ export default function CouponFilterBar({ coupons }: Props) {
           {/* All pill */}
           <button
             onClick={() => setActiveLabel('all')}
+            aria-pressed={activeLabel === 'all'}
             className={`${pillBase} ${
               activeLabel === 'all'
                 ? 'text-white'
@@ -71,6 +76,7 @@ export default function CouponFilterBar({ coupons }: Props) {
               <button
                 key={group.label}
                 onClick={() => setActiveLabel(group.label)}
+                aria-pressed={isActive}
                 className={`${pillBase} ${
                   isActive
                     ? 'text-white'
@@ -89,7 +95,7 @@ export default function CouponFilterBar({ coupons }: Props) {
       {/* Coupon grid */}
       {filtered.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((coupon) => (
+          {visible.map((coupon) => (
             <CouponCard
               key={coupon._id}
               title={coupon.title}
@@ -112,6 +118,11 @@ export default function CouponFilterBar({ coupons }: Props) {
             No coupons in this category yet — check back soon!
           </p>
         </div>
+      )}
+      {initialLimit && !expanded && filtered.length > initialLimit && (
+        <button onClick={() => setExpanded(true)} className="mt-6 border border-slate-300 rounded-lg px-6 py-3 font-semibold hover:bg-white">
+          Show all {filtered.length} offers
+        </button>
       )}
     </div>
   )

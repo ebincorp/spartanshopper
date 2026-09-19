@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { offerExpiryLabel } from '@/lib/offerExpiry'
 
 interface CouponCardProps {
   title: string
@@ -20,7 +21,7 @@ interface CouponCardProps {
 
 function isExpired(expiryDate?: string): boolean {
   if (!expiryDate) return false
-  return new Date(expiryDate) < new Date()
+  return new Date(expiryDate.length === 10 ? `${expiryDate}T23:59:59.999Z` : expiryDate) < new Date()
 }
 
 export default function CouponCard({
@@ -36,6 +37,7 @@ export default function CouponCard({
   expiryDate,
   verified,
 }: CouponCardProps) {
+  const expiryLabel = offerExpiryLabel(expiryDate)
   const shopUrl = affiliateSlug ? `/go/${affiliateSlug}` : affiliateUrl
   const [revealed, setRevealed] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -48,10 +50,10 @@ export default function CouponCard({
 
   const handleReveal = () => {
     setRevealed(true)
-    navigator.clipboard.writeText(code!).then(() => {
+    navigator.clipboard?.writeText(code!).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)
-    })
+    }).catch(() => { /* The revealed code remains available for manual copying. */ })
   }
 
   return (
@@ -80,14 +82,14 @@ export default function CouponCard({
       {/* Top bar */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="px-4 py-3 flex items-center justify-between">
         <div>
-          <p className="text-white/60 text-xs uppercase tracking-wide font-semibold">{store}</p>
+          <p className="text-white/60 text-sm uppercase tracking-wide font-semibold">{store}</p>
           {discount && (
             <p className="text-white font-extrabold text-lg leading-tight">{discount}</p>
           )}
         </div>
         <div className="flex flex-col items-end gap-1">
-          {verified && (
-            <span className="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+          {verified && !expired && (
+            <span className="bg-green-500 text-white text-sm font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
@@ -95,7 +97,7 @@ export default function CouponCard({
             </span>
           )}
           {expired && (
-            <span className="bg-gray-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-gray-500 text-white text-sm font-bold px-2 py-0.5 rounded-full">
               Expired
             </span>
           )}
@@ -105,10 +107,10 @@ export default function CouponCard({
       {/* Body */}
       <div className="p-4 flex flex-col flex-1">
         <Link href={`/coupons/${slug}`} className="hover:underline">
-          <h3 className="text-gray-900 font-bold text-sm leading-snug mb-1">{title}</h3>
+          <h3 className="text-gray-900 font-bold text-base leading-snug mb-1">{title}</h3>
         </Link>
         {description && (
-          <p className="text-gray-500 text-xs leading-relaxed mb-4">{description}</p>
+          <p className="text-gray-500 text-sm leading-relaxed mb-4">{description}</p>
         )}
         {!description && <div className="mb-4" />}
 
@@ -119,10 +121,10 @@ export default function CouponCard({
               onClick={handleReveal}
               className="w-full flex items-center justify-between border-2 border-dashed border-[#E63946] rounded-xl px-4 py-3 mb-4 transition hover:bg-[#E63946]/5 cursor-pointer group"
             >
-              <span className="font-mono font-bold text-lg tracking-widest text-gray-300 select-none">
-                {'•'.repeat(code.length)}
+              <span className="font-mono font-bold text-base tracking-wide break-all min-w-0 text-gray-300 select-none">
+                {'•'.repeat(Math.min(code.length, 10))}
               </span>
-              <span className="text-xs font-bold text-white px-3 py-1 rounded-lg" style={{ backgroundColor: '#E63946' }}>
+              <span className="text-sm font-bold text-white px-3 py-1 rounded-lg" style={{ backgroundColor: '#E63946' }}>
                 Reveal Code
               </span>
             </button>
@@ -133,14 +135,14 @@ export default function CouponCard({
               }`}
             >
               <span
-                className={`font-mono font-bold text-lg tracking-widest ${
+                className={`font-mono font-bold text-base tracking-wide break-all min-w-0 ${
                   expired ? 'text-gray-400' : 'text-[#E63946]'
                 }`}
               >
                 {code}
               </span>
               {!expired && (
-                <span className="text-xs font-semibold text-green-600">
+                <span className="text-sm font-semibold text-green-600">
                   {copied ? 'Copied! ✓' : '✓ Revealed'}
                 </span>
               )}
@@ -149,17 +151,19 @@ export default function CouponCard({
         )}
 
         {/* Expiry */}
-        {expiryDate && !expired && (
-          <p className="text-xs text-gray-500 mb-3" suppressHydrationWarning>
-            Expires: {new Date(expiryDate).toLocaleDateString('en-US')}
+        {!expired && (
+          <p className="text-sm text-gray-500 mb-3" suppressHydrationWarning>
+            {expiryLabel ? `Expires: ${expiryLabel}` : 'End date not supplied — check with retailer'}
           </p>
         )}
 
+        <p className="text-sm text-gray-600 mb-3">Confirm eligibility and the final price at checkout.</p>
         {/* CTA */}
         <a
-          href={shopUrl}
+          href={expired ? undefined : shopUrl}
+          aria-disabled={expired || undefined}
           target="_blank"
-          rel="noopener noreferrer nofollow"
+          rel="noopener noreferrer sponsored nofollow"
           className={`mt-auto block w-full text-center font-bold py-2.5 rounded-xl text-sm transition ${
             expired
               ? 'bg-gray-200 text-gray-400 pointer-events-none'
