@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { urlFor } from '@/lib/sanity.client'
 import type { Deal } from '@/lib/types'
+import SaveFindButton from './SaveFindButton'
 
 type Props = {
   title: string
@@ -56,6 +57,7 @@ export default function DealShelf({ title, description, deals }: Props) {
                   </div>
                 </div>
               </Link>
+              <SaveFindButton find={{ kind: 'deal', slug: deal.slug.current, title: deal.title }} />
             </article>
           )
         })}

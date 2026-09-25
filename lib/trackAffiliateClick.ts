@@ -27,6 +27,7 @@ export function installAffiliateClickTracking(doc: Document, win: Window) {
         page_title: doc.title,
         transport_type: 'beacon',
         tracking_version: 'browser_v2',
+        saved_find: anchor.hasAttribute('data-saved-find'),
       });
     } catch {
       // Analytics must never interfere with following a deal link.

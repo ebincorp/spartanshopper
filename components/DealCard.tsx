@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import SaveFindButton from './SaveFindButton'
 
 interface DealCardProps {
   title: string
@@ -119,6 +120,7 @@ export default function DealCard({
         >
           {expiryStatus === 'expired' ? 'Deal Expired' : 'Get Deal →'}
         </a>
+        <SaveFindButton find={{ kind: 'deal', slug, title }} />
       </div>
     </div>
   )

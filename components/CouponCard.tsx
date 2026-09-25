@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
+import SaveFindButton from './SaveFindButton'
 
 interface CouponCardProps {
   title: string
@@ -173,6 +174,7 @@ export default function CouponCard({
         >
           {expired ? 'Coupon Expired' : 'Shop Now →'}
         </a>
+        <SaveFindButton find={{ kind: 'coupon', slug, title }} />
       </div>
     </div>
   )

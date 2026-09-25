@@ -110,8 +110,8 @@ function decide(rec: Record, item: CreatorItem | undefined): VerifyRow {
   return { ...base, action: 'OK', newPrice: item.currentPrice, reason: 'available, savings ok' }
 }
 
-export async function runVerifyDeals(opts: { execute: boolean }): Promise<VerifyResult> {
-  const client = makeClient()
+export async function runVerifyDeals(opts: { execute: boolean; publishedOnly?: boolean }): Promise<VerifyResult> {
+  const client = opts.publishedOnly ? makeClient().withConfig({ perspective: 'published' }) : makeClient()
 
   const records = await client.fetch<Record[]>(
     `*[_type in ["deal","coupon"] && active == true && defined(asin)]{
