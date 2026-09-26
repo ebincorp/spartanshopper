@@ -218,7 +218,14 @@ export function generateJsonLdFromProducts(post: Post, products: any[]): string 
     description: post.excerpt ?? '',
     url: `${SITE_URL}/blog/${post.slug.current}`,
     numberOfItems: products.length,
-    itemListElement: products.map((product: any, i: number) => ({
+    // A Product needs an offer or a rating to be valid; items with neither are
+    // listed by name + link only.
+    itemListElement: products.map((product: any, i: number) => (typeof product.price !== 'number' && !(product.ratingValue && product.reviewCount) ? {
+      '@type': 'ListItem',
+      position: i + 1,
+      name: product.name,
+      ...(product.affiliateUrl ? { url: product.affiliateUrl } : {}),
+    } : {
       '@type': 'ListItem',
       position: i + 1,
       item: {
