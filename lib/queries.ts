@@ -21,24 +21,31 @@ export type CouponCategoryValue = typeof COUPON_CATEGORIES[number]['value']
 const DEAL_DATE_FILTER = `active == true
   && (!defined(startDate) || startDate <= now())
   && (!defined(expiryDate) || select(length(expiryDate) == 10 => expiryDate + "T23:59:59.999Z", expiryDate) > now())`
+// Card surfaces (homepage picks, /deals shelves) need a real uploaded image.
+// Bulk imports have saved 1x1 transparent placeholders as the image asset, and
+// raw Amazon imageUrls reject hotlinks, so only a Sanity asset wider than 1px counts.
+const DEAL_HAS_CARD_IMAGE = `image.asset->metadata.dimensions.width > 1`
 export const dealsQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER}] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active,
+    "hasCardImage": ${DEAL_HAS_CARD_IMAGE} == true
   }
 `
 
 export const featuredDealsQuery = `
-  *[_type == "deal" && ${DEAL_DATE_FILTER} && defined(slug.current) && salePrice > 0] | order(_createdAt desc)[0...3] {
+  *[_type == "deal" && ${DEAL_DATE_FILTER} && defined(slug.current) && salePrice > 0 && ${DEAL_HAS_CARD_IMAGE}] | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active
+    image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active,
+    "hasCardImage": ${DEAL_HAS_CARD_IMAGE} == true
   }
 `
 
 export const dealsByCategoryQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER} && category == $category] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active,
+    "hasCardImage": ${DEAL_HAS_CARD_IMAGE} == true
   }
 `
 

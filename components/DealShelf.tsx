@@ -34,7 +34,9 @@ export default function DealShelf({ title, description, deals }: Props) {
       <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-3 sm:mx-0 sm:px-0">
         {deals.map((deal) => {
           const discount = savings(deal)
-          const image = deal.imageUrl || (deal.image ? urlFor(deal.image).width(360).url() : undefined)
+          // Prefer the uploaded Sanity asset; raw Amazon imageUrls reject hotlinks.
+          const image = deal.image ? urlFor(deal.image).width(360).url() : deal.imageUrl
+          const shopUrl = deal.affiliateSlug ? `/go/${deal.affiliateSlug}` : deal.affiliateUrl
           return (
             <article key={deal._id} className="w-[186px] shrink-0 snap-start sm:w-[204px]">
               <Link href={`/deals/${deal.slug.current}`} className="group block" aria-label={`View ${deal.title} deal details`}>
@@ -57,6 +59,14 @@ export default function DealShelf({ title, description, deals }: Props) {
                   </div>
                 </div>
               </Link>
+              <a
+                href={shopUrl}
+                target="_blank"
+                rel="sponsored nofollow noopener noreferrer"
+                className="mt-3 block w-full rounded-lg bg-[#E63946] py-2 text-center text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
+              >
+                Get Deal →
+              </a>
               <SaveFindButton find={{ kind: 'deal', slug: deal.slug.current, title: deal.title }} />
             </article>
           )

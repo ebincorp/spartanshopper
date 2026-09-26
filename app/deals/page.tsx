@@ -72,9 +72,27 @@ export default async function DealsPage({ searchParams }: Props) {
       ? (deal.originalPrice - deal.salePrice) / deal.originalPrice
       : 0
   const byDiscount = (a: Deal, b: Deal) => discount(b) - discount(a)
-  const under = (amount: number) => deals.filter((deal) => deal.salePrice <= amount).sort(byDiscount).slice(0, 8)
-  const inCategories = (values: string[]) => deals.filter((deal) => values.includes(deal.category ?? '')).sort(byDiscount).slice(0, 8)
-  const premiumUnder100 = deals.filter((deal) => deal.salePrice <= 100 && ['luxury', 'health-beauty', 'fashion'].includes(deal.category ?? '')).sort(byDiscount).slice(0, 8)
+  const inCategories = (values: string[]) => (deal: Deal) => values.includes(deal.category ?? '')
+
+  // Shelves only show deals with a real product image, and each deal appears on
+  // at most one shelf (earlier shelves claim first). The full grid below still
+  // lists every active deal.
+  const shelfCandidates = deals.filter((deal) => deal.hasCardImage)
+  const claimed = new Set<string>()
+  const shelf = (pool: Deal[], limit = 8) => {
+    const picked = pool.filter((deal) => !claimed.has(deal._id)).slice(0, limit)
+    picked.forEach((deal) => claimed.add(deal._id))
+    return picked
+  }
+  const byDiscountPool = [...shelfCandidates].sort(byDiscount)
+  const shelves = [
+    { title: 'Best savings right now', description: 'Strong markdowns among the active listings. Check the product page for the final price and availability.', deals: shelf(byDiscountPool) },
+    { title: 'Premium picks', description: 'Beauty, fashion, and luxury finds worth a closer look.', deals: shelf(byDiscountPool.filter(inCategories(['luxury', 'health-beauty', 'fashion']))) },
+    { title: 'Home, kitchen, and everyday upgrades', description: 'Useful items for the spaces and routines you already have.', deals: shelf(byDiscountPool.filter(inCategories(['home-garden', 'food-dining']))) },
+    { title: 'Practical buys and easy gifts', description: 'Everyday essentials and gift ideas that are easy to say yes to.', deals: shelf(byDiscountPool.filter((deal) => deal.salePrice <= 50)) },
+    { title: 'Seasonal style and comfort', description: 'Fashion and home finds for fall routines, travel, and gifting.', deals: shelf(byDiscountPool.filter(inCategories(['fashion', 'home-garden', 'travel']))) },
+    { title: 'Recently added deals', description: 'The newest additions to SpartanShopper’s active deal directory.', deals: shelf(shelfCandidates) },
+  ]
 
   return (
     <>
@@ -105,12 +123,7 @@ export default async function DealsPage({ searchParams }: Props) {
 
         {!category && deals.length > 0 && (
           <div className="mb-2">
-            <DealShelf title="Best savings right now" description="Strong markdowns among the active listings. Check the product page for the final price and availability." deals={[...deals].sort(byDiscount).slice(0, 8)} />
-            <DealShelf title="Premium finds under $100" description="Beauty, fashion, and luxury picks within a clear budget." deals={premiumUnder100} />
-            <DealShelf title="Home, kitchen, and everyday upgrades" description="Useful items for the spaces and routines you already have." deals={inCategories(['home-garden', 'food-dining'])} />
-            <DealShelf title="Trending finds under $50" description="A lower-price shelf for practical purchases and gift ideas." deals={under(50)} />
-            <DealShelf title="Seasonal style and comfort" description="Fashion and home finds for fall routines, travel, and gifting." deals={inCategories(['fashion', 'home-garden', 'travel'])} />
-            <DealShelf title="Recently added deals" description="The newest additions to SpartanShopper’s active deal directory." deals={deals.slice(0, 8)} />
+            {shelves.map((s) => <DealShelf key={s.title} title={s.title} description={s.description} deals={s.deals} />)}
           </div>
         )}
 
@@ -158,8 +171,8 @@ export default async function DealsPage({ searchParams }: Props) {
                 affiliateUrl={deal.affiliateUrl}
                 slug={deal.slug.current}
                 affiliateSlug={deal.affiliateSlug}
-                image={deal.image ? urlFor(deal.image).width(400).url() : undefined}
-                imageUrl={deal.imageUrl}
+                image={deal.hasCardImage && deal.image ? urlFor(deal.image).width(400).url() : undefined}
+                imageUrl={deal.hasCardImage ? deal.imageUrl : undefined}
                 expiryDate={deal.expiryDate}
               />
             ))}

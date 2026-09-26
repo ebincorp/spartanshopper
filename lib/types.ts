@@ -20,6 +20,8 @@ export interface Deal {
   asin?: string
   expiryDate?: string
   active: boolean
+  /** Projected by deal queries: true when the image is a real (non-placeholder) Sanity asset. */
+  hasCardImage?: boolean
 }
 
 export interface Coupon {
