@@ -88,7 +88,9 @@ export const featuredCouponsQuery = `
 `
 
 export const couponBySlugQuery = `
-  *[_type == "coupon" && slug.current == $slug && ${COUPON_DATE_FILTER}][0] {
+  // Ended coupons are still served (as an "ended", noindexed page); only
+  // coupons whose start date hasn't arrived stay hidden.
+  *[_type == "coupon" && slug.current == $slug && (!defined(startDate) || startDate <= now())][0] {
     _id, title, slug, store, code, discount, description, whyWeLikeThis, seo,
     image, affiliateUrl, "affiliateSlug": affiliateSlug.current, startDate, expiryDate, verified, active, category, tags
   }
@@ -153,13 +155,16 @@ export const dealSlugsQuery = `
 `
 
 export const couponSlugsQuery = `
-  *[_type == "coupon" && active == true && defined(slug.current) && (!defined(expiryDate) || expiryDate > now())] {
+  *[_type == "coupon" && active == true && defined(slug.current)
+    && (!defined(startDate) || startDate <= now())
+    && (!defined(expiryDate) || select(length(expiryDate) == 10 => expiryDate + "T23:59:59.999Z", expiryDate) > now())] {
     "slug": slug.current, _updatedAt
   }
 `
 
 export const sweepstakeSlugsQuery = `
-  *[_type == "sweepstake" && active == true && defined(slug.current)] {
+  *[_type == "sweepstake" && active == true && defined(slug.current)
+    && (!defined(entryDeadline) || select(length(entryDeadline) == 10 => entryDeadline + "T23:59:59.999Z", entryDeadline) > now())] {
     "slug": slug.current, _updatedAt
   }
 `

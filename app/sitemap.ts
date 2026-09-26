@@ -5,7 +5,9 @@ import { dealSlugsQuery, couponSlugsQuery, sweepstakeSlugsQuery } from '@/lib/qu
 const BASE_URL = 'https://www.spartanshopper.com'
 
 const postSlugsQuery = `
-  *[_type == "post" && defined(slug.current)] {
+  *[_type == "post" && defined(slug.current)
+    // Time-bound posts drop out once past seo.noindexAfter (they send noindex too).
+    && !(defined(seo.noindexAfter) && seo.noindexAfter <= now())] {
     "slug": slug.current, _updatedAt, publishedAt
   }
 `

@@ -71,6 +71,7 @@ export interface Post {
     metaTitle?: string
     metaDescription?: string
     canonicalUrl?: string
+    noindexAfter?: string
   }
   jsonLd?: string
   products?: Array<{

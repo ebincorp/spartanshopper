@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { isSweepstakeEnded } from '@/lib/offer-status'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import { pageMetadata } from '@/lib/seo'
 
@@ -29,17 +30,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!sweep) return {}
 
-  const description = `Enter to win ${sweep.prize} from ${sweep.sponsor}. Free sweepstakes on SpartanShopper.`
+  const ended = isSweepstakeEnded(sweep)
+  const description = ended
+    ? `This ${sweep.sponsor} sweepstakes has ended. See the sweepstakes and deals that are live now on SpartanShopper.`
+    : `Enter to win ${sweep.prize} from ${sweep.sponsor}. Free sweepstakes on SpartanShopper.`
   const imageUrl = sweep.image
     ? urlFor(sweep.image).width(1200).height(630).url()
     : undefined
 
   return pageMetadata({
-    title: sweep.title,
+    title: ended ? `${sweep.title} — Ended` : sweep.title,
     description,
     path: `/sweepstakes/${slug}`,
     image: imageUrl,
     type: 'article',
+    // Ended sweepstakes keep their URL but stop being indexed.
+    noIndex: ended,
   })
 }
 
@@ -53,7 +59,7 @@ export default async function SweepstakePage({ params }: Props) {
 
   const imageUrl = sweep.image ? urlFor(sweep.image).width(800).url() : null
   const deadline = new Date(sweep.entryDeadline)
-  const expired = deadline < new Date()
+  const expired = isSweepstakeEnded(sweep)
 
   const sweepJsonLd = {
     '@context': 'https://schema.org',
@@ -98,6 +104,27 @@ export default async function SweepstakePage({ params }: Props) {
         >
           ← Back to Sweepstakes
         </Link>
+
+        {expired && (
+          <div className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-5">
+            <p className="font-extrabold text-amber-900 mb-1">This sweepstakes has ended</p>
+            <p className="text-sm text-amber-900/80 mb-4">
+              Entries are closed. See the sweepstakes that are open now, or browse today&apos;s deals.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/sweepstakes"
+                style={{ backgroundColor: '#E63946' }}
+                className="inline-block text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:opacity-90 transition"
+              >
+                See open sweepstakes →
+              </Link>
+              <Link href="/deals" className="inline-block rounded-xl border border-amber-400 px-5 py-2.5 text-sm font-bold text-amber-900 hover:bg-amber-100 transition">
+                Browse deals
+              </Link>
+            </div>
+          </div>
+        )}
 
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
 

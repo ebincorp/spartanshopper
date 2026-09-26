@@ -122,6 +122,12 @@ export default defineType({
           type: 'url',
           description: 'Set only if this content is syndicated from another URL.',
         }),
+        defineField({
+          name: 'noindexAfter',
+          title: 'No-index After (time-bound posts)',
+          type: 'datetime',
+          description: 'Optional. For posts tied to a date or event (e.g. a Prime Day guide). After this date the post stays published but sends noindex and drops out of the sitemap. Leave empty for evergreen posts.',
+        }),
       ],
     }),
     defineField({

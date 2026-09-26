@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { isPostPastNoindexDate } from '@/lib/offer-status'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -56,6 +57,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     image: post.coverImage ? urlFor(post.coverImage).width(1200).height(630).url() : undefined,
     type: 'article',
     ...(post.seo?.canonicalUrl ? { canonicalPath: post.seo.canonicalUrl } : {}),
+    // Time-bound posts stay published but stop being indexed after their date.
+    noIndex: isPostPastNoindexDate(post.seo?.noindexAfter),
   })
 }
 

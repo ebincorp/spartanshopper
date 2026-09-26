@@ -10,6 +10,7 @@ import RelatedCoupons from '@/components/RelatedCoupons'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import { pageMetadata } from '@/lib/seo'
+import { isCouponEnded } from '@/lib/offer-status'
 
 export const revalidate = 3600
 
@@ -31,6 +32,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .catch(() => null)
 
   if (!coupon) return {}
+
+  if (isCouponEnded(coupon)) {
+    return pageMetadata({
+      title: `${coupon.title} — Coupon Ended`,
+      description: `This ${coupon.store} coupon has ended. See today's active coupons on SpartanShopper.`,
+      path: `/coupons/${slug}`,
+      type: 'article',
+      noIndex: true,
+    })
+  }
 
   const description = coupon.seo?.metaDescription
     || coupon.description
@@ -58,12 +69,13 @@ export default async function CouponPage({ params }: Props) {
     .fetch<Coupon | null>(couponBySlugQuery, { slug })
     .catch(() => null)
 
-  // Expired/inactive coupons and never-existed slugs both 404 — a permanent
-  // redirect to the generic /coupons index was generating a growing GSC
-  // "Page with redirect" report as more coupons expired over time (143 coupon
-  // docs were inactive as of 2026-08 vs. 61 live). 404 matches the deals page
-  // pattern and lets Google drop dead coupon URLs from the index normally.
+  // Never-existed (or not-yet-started) slugs 404. Ended coupons — deactivated
+  // or past expiry — keep their URL (external links, /post/ legacy redirects)
+  // but render an ended state with `noindex, follow`, matching ended deals.
+  // (They previously 404'd; before that they redirected to /coupons, which
+  // filled GSC's "Page with redirect" report.)
   if (!coupon) notFound()
+  const ended = isCouponEnded(coupon)
 
   const expiryLabel = offerExpiryLabel(coupon.expiryDate)
   const jsonLd = {
@@ -85,10 +97,12 @@ export default async function CouponPage({ params }: Props) {
 
   return (
     <>
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
+    {!ended && (
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+    )}
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
@@ -109,6 +123,23 @@ export default async function CouponPage({ params }: Props) {
         >
           ← Back to Coupons
         </Link>
+
+        {ended && (
+          <div className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-5">
+            <p className="font-extrabold text-amber-900 mb-1">This coupon has ended</p>
+            <p className="text-sm text-amber-900/80 mb-4">
+              This {coupon.store} offer is no longer available, so we&apos;ve removed the code. See the
+              active coupons below or browse everything that&apos;s live right now.
+            </p>
+            <Link
+              href="/coupons"
+              style={{ backgroundColor: '#E63946' }}
+              className="inline-block text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:opacity-90 transition"
+            >
+              See today&apos;s active coupons →
+            </Link>
+          </div>
+        )}
 
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
 
@@ -134,7 +165,12 @@ export default async function CouponPage({ params }: Props) {
               >
                 Coupon
               </span>
-              {coupon.verified && (
+              {ended && (
+                <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                  Ended
+                </span>
+              )}
+              {coupon.verified && !ended && (
                 <span className="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full">
                   ✓ Verified
                 </span>
@@ -153,7 +189,7 @@ export default async function CouponPage({ params }: Props) {
               </p>
             )}
 
-            {coupon.code && (
+            {coupon.code && !ended && (
               <div className="flex flex-wrap items-center gap-3 mb-6">
                 <div
                   className="min-w-0 break-all flex-1 border-2 border-dashed rounded-xl px-5 py-4 font-mono font-bold text-2xl tracking-widest"
@@ -165,8 +201,9 @@ export default async function CouponPage({ params }: Props) {
               </div>
             )}
 
-            <p className="text-sm text-gray-600 mb-6">{expiryLabel ? `Expires: ${expiryLabel}` : 'End date not supplied — confirm with the retailer.'}</p>
+            {!ended && <p className="text-sm text-gray-600 mb-6">{expiryLabel ? `Expires: ${expiryLabel}` : 'End date not supplied — confirm with the retailer.'}</p>}
             {coupon.description && <p className="text-gray-700 leading-relaxed mb-6">{coupon.description}</p>}
+            {!ended && (<>
             <div className="bg-slate-50 rounded-xl p-5 mb-6">
               <h2 className="font-bold text-lg mb-2">How to use this offer</h2>
               <p className="text-gray-700 leading-relaxed">{coupon.code ? 'Copy the code above, visit the retailer, and enter it at checkout.' : 'Visit the retailer and follow the offer instructions on its product or promotion page.'} Confirm that the discount applies to your selected item before paying. Availability and eligibility can change.</p>
@@ -182,6 +219,12 @@ export default async function CouponPage({ params }: Props) {
             >
               🏷️ Shop Now →
             </a>
+            </>)}
+            {ended && (
+              <p className="block w-full text-center font-extrabold py-4 rounded-xl text-lg tracking-wide bg-gray-200 text-gray-500">
+                This Coupon Has Ended
+              </p>
+            )}
 
           </div>
         </div>
