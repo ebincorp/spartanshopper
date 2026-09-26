@@ -65,6 +65,26 @@ const nextConfig = {
         destination: '/coupons',
         permanent: true,
       },
+      // 2026-09-26 thin-page cleanup: unpublished dated roundups redirect only
+      // where a live page covers the same topic; the rest are left as 404s.
+      {
+        // Dated luxury-beauty roundup → evergreen luxury beauty guide.
+        source: '/blog/luxury-beauty-deals-august-23-2026',
+        destination: '/blog/luxury-beauty-products-worth-the-money',
+        permanent: true,
+      },
+      {
+        // Premium beauty deals roundup → evergreen luxury beauty guide.
+        source: '/blog/amazon-luxury-beauty-deals-2026',
+        destination: '/blog/luxury-beauty-products-worth-the-money',
+        permanent: true,
+      },
+      {
+        // Coupon-deals roundup → the live coupon directory (same intent).
+        source: '/blog/best-amazon-coupon-deals-2026',
+        destination: '/coupons',
+        permanent: true,
+      },
     ]
   },
   serverExternalPackages: ['@sanity/client', 'sanity', 'superagent'],
