@@ -1,0 +1,189 @@
+{
+ "post": {
+  "_createdAt": "2026-05-16T21:15:22Z",
+  "_id": "f63a810f-0248-44e5-a806-404aa14df583",
+  "_rev": "EUhIjJs3x5PNuDgmZ14XF7",
+  "_type": "post",
+  "_updatedAt": "2026-09-26T19:57:43Z",
+  "author": "SpartanShopper",
+  "body": [
+   {
+    "_key": "psy-31",
+    "_type": "block",
+    "children": [
+     {
+      "_key": "s31",
+      "_type": "span",
+      "marks": [],
+      "text": "ColonBroom Review 2026: What to Verify Before Buying: updated guidance"
+     }
+    ],
+    "markDefs": [],
+    "style": "h2"
+   },
+   {
+    "_key": "psy-32",
+    "_type": "block",
+    "children": [
+     {
+      "_key": "s32",
+      "_type": "span",
+      "marks": [],
+      "text": "This page has been updated to remove product-specific claims we could not independently verify. We do not recommend a particular branded psyllium product or claim it will treat a condition, cause weight loss, or work for a specific person."
+     }
+    ],
+    "markDefs": [],
+    "style": "normal"
+   },
+   {
+    "_key": "psy-33",
+    "_type": "block",
+    "children": [
+     {
+      "_key": "s33",
+      "_type": "span",
+      "marks": [],
+      "text": "Psyllium husk is a dietary fiber. Some labeled over-the-counter products use it as a bulk-forming laxative for occasional constipation, but the product label—not a general article—sets the appropriate directions, warnings, and dose."
+     }
+    ],
+    "markDefs": [],
+    "style": "normal"
+   },
+   {
+    "_key": "psy-34",
+    "_type": "block",
+    "children": [
+     {
+      "_key": "s34",
+      "_type": "span",
+      "marks": [
+       "l34"
+      ],
+      "text": "Psyllium must be taken with adequate liquid. A representative FDA-regulated psyllium label warns that insufficient fluid can cause choking, and that people with swallowing difficulty should not take it. It also advises separating it from oral prescription medicines."
+     }
+    ],
+    "markDefs": [
+     {
+      "_key": "l34",
+      "_type": "link",
+      "href": "https://www.dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=2d580965-2bef-46ee-8532-fbe34330a4b4&type=display"
+     }
+    ],
+    "style": "normal"
+   },
+   {
+    "_key": "psy-35",
+    "_type": "block",
+    "children": [
+     {
+      "_key": "s35",
+      "_type": "span",
+      "marks": [],
+      "text": "What to do instead"
+     }
+    ],
+    "markDefs": [],
+    "style": "h2"
+   },
+   {
+    "_key": "psy-36",
+    "_type": "block",
+    "children": [
+     {
+      "_key": "s36",
+      "_type": "span",
+      "marks": [],
+      "text": "Before buying a branded fiber supplement, independently check its current Supplement Facts panel, ingredients, return terms, subscriptions, and any third-party testing."
+     }
+    ],
+    "markDefs": [],
+    "style": "normal"
+   },
+   {
+    "_key": "psy-37",
+    "_type": "block",
+    "children": [
+     {
+      "_key": "s37",
+      "_type": "span",
+      "marks": [],
+      "text": "Check the current label, use only as directed, and ask a pharmacist or clinician before using it if you take medication, are pregnant, have trouble swallowing, or have persistent bowel changes, abdominal pain, nausea, vomiting, or rectal bleeding."
+     }
+    ],
+    "markDefs": [],
+    "style": "normal"
+   },
+   {
+    "_key": "psy-38",
+    "_type": "block",
+    "children": [
+     {
+      "_key": "s38",
+      "_type": "span",
+      "marks": [
+       "l38"
+      ],
+      "text": "FDA recognizes psyllium husk as dietary fiber, but that does not establish that every branded product is appropriate or effective for every claimed use."
+     }
+    ],
+    "markDefs": [
+     {
+      "_key": "l38",
+      "_type": "link",
+      "href": "https://www.fda.gov/food/nutrition-food-labeling-and-critical-foods/questions-and-answers-dietary-fiber"
+     }
+    ],
+    "style": "normal"
+   },
+   {
+    "_key": "psy-39",
+    "_type": "block",
+    "children": [
+     {
+      "_key": "s39",
+      "_type": "span",
+      "marks": [],
+      "text": "Disclosure"
+     }
+    ],
+    "markDefs": [],
+    "style": "h2"
+   },
+   {
+    "_key": "psy-40",
+    "_type": "block",
+    "children": [
+     {
+      "_key": "s40",
+      "_type": "span",
+      "marks": [],
+      "text": "SpartanShopper may earn commissions from some links on this site. This article is educational, not medical advice, and does not endorse a specific branded supplement."
+     }
+    ],
+    "markDefs": [],
+    "style": "normal"
+   }
+  ],
+  "category": "Health & Wellness",
+  "coverImage": {
+   "_type": "image",
+   "alt": "ColonBroom fiber supplement powder in strawberry flavor on white marble with a glass of water",
+   "asset": {
+    "_ref": "image-3b5de8c80ea5a453b628a7256190dd5e2486179e-1408x768-png",
+    "_type": "reference"
+   }
+  },
+  "excerpt": "A transparent buyer’s guide for checking a branded fiber supplement’s label, policies, and safety information.",
+  "publishedAt": "2026-05-16T21:15:20.729Z",
+  "relatedCategory": "health",
+  "seo": {
+   "metaDescription": "A practical guide to checking a branded fiber supplement’s label, ingredient amounts, subscription terms, return policy, and safety information.",
+   "metaTitle": "ColonBroom Review 2026: What to Verify Before Buying"
+  },
+  "slug": {
+   "_type": "slug",
+   "current": "colonbroom-review-2026"
+  },
+  "title": "ColonBroom Review 2026: What to Verify Before Buying"
+ }
+}
