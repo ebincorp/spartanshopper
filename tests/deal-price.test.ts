@@ -30,3 +30,12 @@ test('regular deals keep the existing rules', () => {
   assert.equal(decide(deal, { ...item(22), savingsPercent: 8 }).action, 'DEACTIVATED')
   assert.equal(decide(deal, { ...item(18), savingsPercent: 25 }).action, 'UPDATED')
 })
+
+test('broad deal categories get no automatic guides; specific ones map to close post categories', async () => {
+  const { autoGuideCategoriesForDeal } = await import('../lib/deal-categories')
+  assert.deepEqual(autoGuideCategoriesForDeal('health-beauty'), [])
+  assert.deepEqual(autoGuideCategoriesForDeal('fashion'), [])
+  assert.deepEqual(autoGuideCategoriesForDeal(undefined), [])
+  assert.deepEqual(autoGuideCategoriesForDeal('automotive'), ['automotive'])
+  assert.deepEqual(autoGuideCategoriesForDeal('home-garden'), ['home'])
+})

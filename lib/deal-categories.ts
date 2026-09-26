@@ -19,6 +19,17 @@ const DEAL_TO_POST_CATEGORIES: Record<string, string[]> = {
   'sports-outdoors': ['fitness'],
 }
 
+// Deal categories too broad for an automatic guide match to be a close fit:
+// "beauty" posts span men's grooming to peptide serums, "fashion" posts are
+// men's luxury roundups. Deals here only show hand-picked relatedGuides — no
+// guide beats the wrong guide.
+const BROAD_DEAL_CATEGORIES = new Set(['health-beauty', 'luxury', 'fashion', 'baby'])
+
+/** Post categories close enough to auto-suggest guides on a deal page ([] = hand-picked only). */
+export function autoGuideCategoriesForDeal(dealCategory: string | undefined): string[] {
+  return dealCategory && !BROAD_DEAL_CATEGORIES.has(dealCategory) ? postCategoriesForDeals([dealCategory]) : []
+}
+
 export function postCategoriesForDeals(dealCategories: (string | undefined)[]): string[] {
   return [...new Set(dealCategories.flatMap((c) => (c ? DEAL_TO_POST_CATEGORIES[c] ?? [] : [])))]
 }

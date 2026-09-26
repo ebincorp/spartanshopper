@@ -1,7 +1,7 @@
 import { isPriceFresh } from '@/lib/deal-price'
 import { client, urlFor } from '@/lib/sanity.client'
 import { dealBySlugQuery, dealSlugsQuery, relatedDealsQuery } from '@/lib/queries'
-import { postCategoriesForDeals } from '@/lib/deal-categories'
+import { autoGuideCategoriesForDeal } from '@/lib/deal-categories'
 import DealCard from '@/components/DealCard'
 import type { Deal, Post } from '@/lib/types'
 import type { Metadata } from 'next'
@@ -85,9 +85,10 @@ export default async function DealPage({ params }: Props) {
   // when older deals carried only the imageUrl string and no Sanity asset.
   // Keep shoppers who aren't ready to buy on the site: same-category deals
   // (with real images) and guides from the matching post categories.
-  // Hand-picked guides win; otherwise rank by the closest post category first
-  // (e.g. beauty before health), then newest.
-  const guideCategories = postCategoriesForDeals([deal.category])
+  // Hand-picked guides win; otherwise only auto-match for categories specific
+  // enough to be a close fit, closest post category first, then newest. With
+  // neither, the section is hidden and the page ends with related deals.
+  const guideCategories = autoGuideCategoriesForDeal(deal.category)
   const pickedGuides = (deal.relatedGuides ?? []).filter(Boolean)
   const [relatedDeals, matchedGuides] = await Promise.all([
     deal.category
