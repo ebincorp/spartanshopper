@@ -171,7 +171,8 @@ function buildBody(coverRef: string): BodyItem[] {
     p({ a: 'See how much it is right now', href: GO(LASH) }),
 
     h2('Fragrance Splurges'),
-    p('Fragrance is one of the best-value luxury categories when you pick well. A good eau de parfum lasts longer on skin than cheaper body sprays, and a 1 oz bottle worn a few sprays at a time lasts a long time.'),
+    // Baccarat sentence + link added in internal-links batch 1 (2026-09-26).
+    p('Fragrance is one of the best-value luxury categories when you pick well. A good eau de parfum lasts longer on skin than cheaper body sprays, and a 1 oz bottle worn a few sprays at a time lasts a long time. And when the scent you want is a niche bottle priced out of reach, a well-chosen dupe can get surprisingly close. See our ', { a: 'Baccarat Rouge 540 dupe guide', href: `${SITE}/blog/baccarat-rouge-540-dupe-dossier` }, '.'),
 
     h3('7. Lancôme La Vie Est Belle Eau de Parfum'),
     lead('Why it’s worth it:', 'With more than 30,000 ratings on Amazon, this is one of the most-reviewed prestige fragrances on the site. It’s a warm, sweet floral that’s easy to wear and recognizable without being overpowering.'),
@@ -205,7 +206,7 @@ function buildBody(coverRef: string): BodyItem[] {
     h3('Are travel-size beauty sets a good deal?'),
     p('Often. Sets like the Sol de Janeiro Jet Set bundle several products at a lower entry price than buying each full size. They’re a low-risk way to try a brand and make easy gifts.'),
     h3('Are luxury beauty products on Amazon authentic?'),
-    p('Buy from listings sold or shipped by Amazon or by the brand itself, and look for Amazon’s “Premium Brand Sourced” badge on premium beauty items. The products in this guide were chosen from listings with that badge.'),
+    p('Buy from listings ', { a: 'sold or shipped by Amazon', href: `${SITE}/blog/is-amazon-luxury-authentic` }, ' or by the brand itself, and look for Amazon’s “Premium Brand Sourced” badge on premium beauty items. The products in this guide were chosen from listings with that badge.'),
 
     h2('Final Verdict'),
     p('Luxury beauty products are worth the money when they solve a problem cheaper ones can’t, or when you use them long enough to bring the cost per use down. The ', { b: 'ELEMIS Pro-Collagen Cleansing Balm' }, ' is the strongest all-around splurge on this list because you’ll use it every day. For fragrance, a 1 oz bottle of ', { b: 'La Vie Est Belle' }, ' or ', { b: 'Acqua di Gioia' }, ' delivers months of wear. And if you want a luxury product that feels like a treat every day, the ', { b: 'Sol de Janeiro Bum Bum Cream' }, ' is hard to beat.'),
