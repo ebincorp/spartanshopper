@@ -227,13 +227,17 @@ export function generateJsonLdFromProducts(post: Post, products: any[]): string 
         description: product.description ?? '',
         image: product.image ?? '',
         brand: { '@type': 'Brand', name: product.brand ?? '' },
-        offers: {
-          '@type': 'Offer',
-          price: product.price,
-          priceCurrency: 'USD',
-          availability: 'https://schema.org/InStock',
-          url: product.affiliateUrl ?? '',
-        },
+        // An Offer without a price is invalid; price-free articles (prices kept
+        // general so they can't go stale) rely on aggregateRating instead.
+        ...(typeof product.price === 'number' ? {
+          offers: {
+            '@type': 'Offer',
+            price: product.price,
+            priceCurrency: 'USD',
+            availability: 'https://schema.org/InStock',
+            url: product.affiliateUrl ?? '',
+          },
+        } : {}),
         ...(product.ratingValue && product.reviewCount ? {
           aggregateRating: {
             '@type': 'AggregateRating',
