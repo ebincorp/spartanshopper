@@ -1,0 +1,956 @@
+{
+ "_createdAt": "2026-09-20T13:31:33Z",
+ "_id": "halloween-costumes-2026-roundup",
+ "_rev": "U1wyMypRJV2VhTVMGoK9W1",
+ "_type": "post",
+ "_updatedAt": "2026-09-20T13:45:19Z",
+ "author": "SpartanShopper Editorial",
+ "body": [
+  {
+   "_key": "hw2",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw1",
+     "_type": "span",
+     "marks": [],
+     "text": "A costume can cost $25 and still send you on a $40 accessory hunt. The wig is extra. So are the shoes. And apparently the tiny bag in the picture has its own financial ambitions."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "cover-illustration-note",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "cover-note-text",
+     "_type": "span",
+     "marks": [],
+     "text": "Cover: AI-generated illustration. Each product section below shows the actual listing photo."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw4",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw3",
+     "_type": "span",
+     "marks": [],
+     "text": "We picked three costumes from the girls’ listings and three from the boys’ listings, plus an adult dress as a bonus. Those shopping labels are a starting point, not a rule about who can wear what. The useful questions are what comes in the package, what you still need, and whether your child actually wants to wear it. There are cozy cats, a firefighter with an armful of props, a pirate captain, and a vampire ready for a dramatic entrance."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw6",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw5",
+     "_type": "span",
+     "marks": [],
+     "text": "Disclosure: As an Amazon Associate, SpartanShopper earns from qualifying purchases."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw8",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw7",
+     "_type": "span",
+     "marks": [],
+     "text": "We checked these listings on September 20, 2026. This is a listing-and-review buying guide, not a hands-on test. Prices below apply to the specific options checked and can change by size, color, seller, or membership. Check the final price and delivery estimate for your address before ordering."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw10",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw9",
+     "_type": "span",
+     "marks": [],
+     "text": "The quick comparison"
+    }
+   ],
+   "markDefs": [],
+   "style": "h2"
+  },
+  {
+   "_key": "hw19",
+   "_type": "table",
+   "caption": "Selected-variant prices checked September 20, 2026; prices and availability can change.",
+   "rows": [
+    {
+     "_key": "hw11",
+     "_type": "tableRow",
+     "cells": [
+      "Costume",
+      "Option checked",
+      "Price when checked",
+      "What else to plan for"
+     ]
+    },
+    {
+     "_key": "hw12",
+     "_type": "tableRow",
+     "cells": [
+      "GIFTINBOX leopard onesie||https://www.spartanshopper.com/go/giftinbox-leopard-onesie",
+      "Leopard, S (5–6 years)",
+      "$25.49",
+      "Footwear; check tail clearance and glove attachment"
+     ]
+    },
+    {
+     "_key": "hw13",
+     "_type": "tableRow",
+     "cells": [
+      "GIFTINBOX purple cat onesie||https://www.spartanshopper.com/go/giftinbox-purple-cat-onesie",
+      "Pink-purple, Medium (7–8 years)",
+      "$27.89",
+      "Footwear; check the delivered size promptly"
+     ]
+    },
+    {
+     "_key": "hw14",
+     "_type": "tableRow",
+     "cells": [
+      "GIFTINBOX light-up cat set||https://www.spartanshopper.com/go/giftinbox-light-up-cat-costume",
+      "Small (3–4 years)",
+      "$28.99",
+      "Footwear, light-string setup, battery details"
+     ]
+    },
+    {
+     "_key": "hw15",
+     "_type": "tableRow",
+     "cells": [
+      "GIFTINBOX firefighter set||https://www.spartanshopper.com/go/giftinbox-firefighter-costume",
+      "Yellow, 3T (3–4 years)",
+      "$29.98",
+      "Footwear and a way to carry the props"
+     ]
+    },
+    {
+     "_key": "hw16",
+     "_type": "tableRow",
+     "cells": [
+      "Spooktacular Creations pirate set||https://www.spartanshopper.com/go/spooktacular-boys-pirate-costume",
+      "Black, Medium (8–10 years)",
+      "$34.99",
+      "Footwear; check measurements because the listing flags a tight fit"
+     ]
+    },
+    {
+     "_key": "hw17",
+     "_type": "tableRow",
+     "cells": [
+      "Bosvin vampire set||https://www.spartanshopper.com/go/bosvin-boys-vampire-costume",
+      "Black & Red, 10–12 years",
+      "$28.50",
+      "Footwear; check that the cane and teeth arrive"
+     ]
+    },
+    {
+     "_key": "hw18",
+     "_type": "tableRow",
+     "cells": [
+      "Scarlet Darkness split-sleeve dress||https://www.spartanshopper.com/go/scarlet-darkness-split-sleeve-dress",
+      "Olive Green, Large",
+      "$39.99",
+      "Shoes and any character-specific accessories"
+     ]
+    }
+   ]
+  },
+  {
+   "_key": "hw21",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw20",
+     "_type": "span",
+     "marks": [],
+     "text": "These are outfit starting prices, not guaranteed all-in totals. Tax, shipping, and optional accessories are not included. The observed markdowns are price deals, not verified clip coupons or promo codes."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw23",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw22",
+     "_type": "span",
+     "marks": [],
+     "text": "Leopard onesie: fewer pieces to keep track of"
+    }
+   ],
+   "markDefs": [],
+   "style": "h2"
+  },
+  {
+   "_key": "costume-photo-0",
+   "_type": "image",
+   "alt": "GIFTINBOX leopard onesie — Leopard S(5-6y)",
+   "asset": {
+    "_ref": "image-c1498806263f1fdfff22251351b0d3c407f0d855-771x1500-jpg",
+    "_type": "reference"
+   },
+   "caption": "GIFTINBOX leopard onesie. Product listing photo; see the included-pieces notes below."
+  },
+  {
+   "_key": "hw25",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw24",
+     "_type": "span",
+     "marks": [],
+     "text": "The GIFTINBOX leopard outfit puts most of the costume into one zip-up piece: hood, ears, tail, and claw gloves. That is an appealing arrangement when the alternative involves locating six accessories while someone announces that they no longer want to be a leopard."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw27",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw26",
+     "_type": "span",
+     "marks": [],
+     "text": "The listing describes polyester microfleece. It is worth considering for a cool evening; a warm indoor party may call for something lighter. Footwear is not listed as included. Size options span 3T through Large, but use the measurements rather than treating the age labels as a promise."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw29",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw28",
+     "_type": "span",
+     "marks": [],
+     "text": "Customer feedback is generally positive about softness, but fit and durability are mixed. One verified review for the leopard version reports a seam coming unstitched and a glove detaching. Try it on while there is still time to address a problem, and check that the tail does not drag."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw32",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw31",
+     "_type": "span",
+     "marks": [
+      "hw30"
+     ],
+     "text": "Shop the leopard costume"
+    }
+   ],
+   "markDefs": [
+    {
+     "_key": "hw30",
+     "_type": "link",
+     "href": "https://www.spartanshopper.com/go/giftinbox-leopard-onesie"
+    }
+   ],
+   "style": "normal"
+  },
+  {
+   "_key": "hw34",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw33",
+     "_type": "span",
+     "marks": [],
+     "text": "Purple cat: the treat bag is already handled"
+    }
+   ],
+   "markDefs": [],
+   "style": "h2"
+  },
+  {
+   "_key": "costume-photo-1",
+   "_type": "image",
+   "alt": "GIFTINBOX purple cat onesie — Pink-purple Medium(7-8y)",
+   "asset": {
+    "_ref": "image-922a5a83ff075d4c002ab0aa414d9613fcc7b6ac-1483x1500-jpg",
+    "_type": "reference"
+   },
+   "caption": "GIFTINBOX purple cat onesie. Product listing photo; see the included-pieces notes below."
+  },
+  {
+   "_key": "hw36",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw35",
+     "_type": "span",
+     "marks": [],
+     "text": "This GIFTINBOX set includes a hooded cat onesie and matching candy bag. The checked option was Pink-purple, Medium; the listing also offers Black-purple, which had a different price. The front zipper and coordinated bag make this a straightforward choice for a child who wants a colorful animal outfit without a separate accessory search."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw38",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw37",
+     "_type": "span",
+     "marks": [],
+     "text": "The listing describes soft flannel fabric, with Small, Medium, and Large age labels covering roughly 5–10 years. Check its height and chest guidance against your child, especially if you plan to add clothes underneath."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw40",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw39",
+     "_type": "span",
+     "marks": [],
+     "text": "This is a newer option with only 17 ratings when checked. That does not automatically rule out a one-night costume, but it gives us less feedback to work with. One verified buyer reported receiving a larger size than ordered. Open the package and check the label when it arrives, rather than saving the surprise for Halloween afternoon."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw43",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw42",
+     "_type": "span",
+     "marks": [
+      "hw41"
+     ],
+     "text": "Shop the purple cat costume"
+    }
+   ],
+   "markDefs": [
+    {
+     "_key": "hw41",
+     "_type": "link",
+     "href": "https://www.spartanshopper.com/go/giftinbox-purple-cat-onesie"
+    }
+   ],
+   "style": "normal"
+  },
+  {
+   "_key": "hw45",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw44",
+     "_type": "span",
+     "marks": [],
+     "text": "Light-up cat: cute, with a little assembly required"
+    }
+   ],
+   "markDefs": [],
+   "style": "h2"
+  },
+  {
+   "_key": "costume-photo-2",
+   "_type": "image",
+   "alt": "GIFTINBOX light-up cat set — S(3-4y)",
+   "asset": {
+    "_ref": "image-96525fffc9bf83ef884ebad880de4371cc57e4e1-1452x1500-jpg",
+    "_type": "reference"
+   },
+   "caption": "GIFTINBOX light-up cat set. Product listing photo; see the included-pieces notes below."
+  },
+  {
+   "_key": "hw47",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw46",
+     "_type": "span",
+     "marks": [],
+     "text": "The GIFTINBOX light-up set lists a bodysuit, tights, purple tutu, detachable tail, ears headband, and light string. That covers several pieces you might otherwise buy separately. Shoes are still your department."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw49",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw48",
+     "_type": "span",
+     "marks": [],
+     "text": "The important detail is the separate light string. A verified reviewer describes threading it through, and another reports that the lights and tail did not stay attached well. Feedback on lighting reliability is mixed. This is the choice for someone happy to do a quick setup check—not someone hoping to open the parcel five minutes before leaving."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw51",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw50",
+     "_type": "span",
+     "marks": [],
+     "text": "The checked Small was $28.99. Several sizes shared that offer, but a separately labeled Large option cost more. Battery requirements and whether batteries are included were not established in our check; confirm them before relying on the light-up feature."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw54",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw53",
+     "_type": "span",
+     "marks": [
+      "hw52"
+     ],
+     "text": "Shop the light-up cat set"
+    }
+   ],
+   "markDefs": [
+    {
+     "_key": "hw52",
+     "_type": "link",
+     "href": "https://www.spartanshopper.com/go/giftinbox-light-up-cat-costume"
+    }
+   ],
+   "style": "normal"
+  },
+  {
+   "_key": "hw56",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw55",
+     "_type": "span",
+     "marks": [],
+     "text": "Firefighter: plenty of props, modest expectations for the toys"
+    }
+   ],
+   "markDefs": [],
+   "style": "h2"
+  },
+  {
+   "_key": "costume-photo-3",
+   "_type": "image",
+   "alt": "GIFTINBOX firefighter set — Yellow 3T(3-4Y)",
+   "asset": {
+    "_ref": "image-d687a26a4cc156cb22110dd04efab3bfd5b0f4e6-1500x1486-jpg",
+    "_type": "reference"
+   },
+   "caption": "GIFTINBOX firefighter set. Product listing photo; see the included-pieces notes below."
+  },
+  {
+   "_key": "hw58",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw57",
+     "_type": "span",
+     "marks": [],
+     "text": "The GIFTINBOX firefighter set lists the outfit, hat, toy extinguisher, pry bar, name tag, toy axe, watch, badge, and walkie-talkie. It is a useful option for a child who wants things to carry and do, not just something to wear."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw60",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw59",
+     "_type": "span",
+     "marks": [],
+     "text": "The costume itself gets encouraging feedback, while some buyers describe fragile accessories. One verified review reports a broken watch band and difficulty carrying the tools on the belt. A small backpack you already own may solve the carrying problem without another purchase. Footwear is not listed as included."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw62",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw61",
+     "_type": "span",
+     "marks": [],
+     "text": "Sizes run from 3T through Large in the listing. Check the size chart before ordering. These are pretend-play clothes and props, not protective equipment."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw65",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw64",
+     "_type": "span",
+     "marks": [
+      "hw63"
+     ],
+     "text": "Shop the firefighter costume"
+    }
+   ],
+   "markDefs": [
+    {
+     "_key": "hw63",
+     "_type": "link",
+     "href": "https://www.spartanshopper.com/go/giftinbox-firefighter-costume"
+    }
+   ],
+   "style": "normal"
+  },
+  {
+   "_key": "hw67",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw66",
+     "_type": "span",
+     "marks": [],
+     "text": "Pirate captain: the treasure is mostly in the box"
+    }
+   ],
+   "markDefs": [],
+   "style": "h2"
+  },
+  {
+   "_key": "costume-photo-5",
+   "_type": "image",
+   "alt": "Spooktacular Creations pirate set — Black Medium (8-10yr)",
+   "asset": {
+    "_ref": "image-2f07bcf811d1f55e45345a850e62e625f696f199-1404x1500-jpg",
+    "_type": "reference"
+   },
+   "caption": "Spooktacular Creations pirate set. Product listing photo; see the included-pieces notes below."
+  },
+  {
+   "_key": "hw69",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw68",
+     "_type": "span",
+     "marks": [],
+     "text": "The Spooktacular Creations set lists a hat, jacket, vest, ruffled collar, pants, two belts, eye patch, necklace, compass, map, coin bag with coins, and a toy pirate accessory. That is quite a lot of pirate administration handled in one order. Footwear is not listed as included; use a pair your child can comfortably walk in."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw71",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw70",
+     "_type": "span",
+     "marks": [],
+     "text": "The checked Black, Medium (8–10 years) was $34.99. The listing flags frequent returns due to a tight fit. Some verified buyers liked the fit, while another said it ran small, so compare the chart with actual measurements and allow room for any layers. The age label alone is not enough."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw73",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw72",
+     "_type": "span",
+     "marks": [],
+     "text": "This is a polyester costume with hand-wash instructions. A verified buyer also reported wear at the bottoms of the pants. Try it on early and check the hem before your captain sets sail down the sidewalk. Keep track of the little props: nobody wants a treasure hunt for the treasure-hunt accessories."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw76",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw75",
+     "_type": "span",
+     "marks": [
+      "hw74"
+     ],
+     "text": "Shop the pirate costume"
+    }
+   ],
+   "markDefs": [
+    {
+     "_key": "hw74",
+     "_type": "link",
+     "href": "https://www.spartanshopper.com/go/spooktacular-boys-pirate-costume"
+    }
+   ],
+   "style": "normal"
+  },
+  {
+   "_key": "hw78",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw77",
+     "_type": "span",
+     "marks": [],
+     "text": "Vampire: maximum entrance, no extra cape hunt"
+    }
+   ],
+   "markDefs": [],
+   "style": "h2"
+  },
+  {
+   "_key": "costume-photo-6",
+   "_type": "image",
+   "alt": "Bosvin vampire set — Black & Red 10-12 Years",
+   "asset": {
+    "_ref": "image-69abca98a4467755f3c748e6f65f739e7f2a310a-1349x1500-jpg",
+    "_type": "reference"
+   },
+   "caption": "Bosvin vampire set. Product listing photo; see the included-pieces notes below."
+  },
+  {
+   "_key": "hw80",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw79",
+     "_type": "span",
+     "marks": [],
+     "text": "The Bosvin set lists a shirt with vest, pants, a collared cape, a cane, and vampire teeth. It gives a child the classic black-and-red vampire look without building the outfit piece by piece. Shoes and any makeup are not listed as included, and the costume does not need face paint to make its point."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw82",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw81",
+     "_type": "span",
+     "marks": [],
+     "text": "We checked Black & Red in 10–12 Years at $28.50. The 5–7 Years option displayed a higher price, so do not assume every size costs the same. Sizes offered ranged from 3–4 through 12–14 Years; use the size guide and check the selected option before paying."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw84",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw83",
+     "_type": "span",
+     "marks": [],
+     "text": "Buyer feedback includes praise for the look and comfort, but one verified reviewer reported missing both the teeth and cane. Count the pieces when the package arrives. Check the cape length and how easily your child can move in it—the grand entrance should not end with a trip over the hem."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw87",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw86",
+     "_type": "span",
+     "marks": [
+      "hw85"
+     ],
+     "text": "Shop the vampire costume"
+    }
+   ],
+   "markDefs": [
+    {
+     "_key": "hw85",
+     "_type": "link",
+     "href": "https://www.spartanshopper.com/go/bosvin-boys-vampire-costume"
+    }
+   ],
+   "style": "normal"
+  },
+  {
+   "_key": "hw89",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw88",
+     "_type": "span",
+     "marks": [],
+     "text": "Adult bonus — split-sleeve dress: build a look with what you own"
+    }
+   ],
+   "markDefs": [],
+   "style": "h2"
+  },
+  {
+   "_key": "costume-photo-4",
+   "_type": "image",
+   "alt": "Scarlet Darkness split-sleeve dress — Olive Green Large",
+   "asset": {
+    "_ref": "image-734a93ae1c33c43bf5164b2c06e963a65402d2a7-871x1500-jpg",
+    "_type": "reference"
+   },
+   "caption": "Scarlet Darkness split-sleeve dress. Product listing photo; see the included-pieces notes below."
+  },
+  {
+   "_key": "hw91",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw90",
+     "_type": "span",
+     "marks": [],
+     "text": "The Scarlet Darkness dress has split bell sleeves, a smocked waist, a layered high-low hem, and pockets. Start here if you want a fairy, witch, or Renaissance-inspired outfit and already have shoes and accessories that can do another shift."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw93",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw92",
+     "_type": "span",
+     "marks": [],
+     "text": "This is the dress, not a full styled ensemble. The seller suggests a corset and lace-up boots, but those are separate purchases. You do not need to buy every styling suggestion to make the outfit work."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw95",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw94",
+     "_type": "span",
+     "marks": [],
+     "text": "The checked Olive Green, Large was $39.99. Its earlier $33.99 timed offer had ended. Other colors were more expensive, so choose the actual color and size before deciding it fits your budget."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw97",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw96",
+     "_type": "span",
+     "marks": [],
+     "text": "Some verified buyers say it runs large, and others mention wrinkles on arrival. Compare measurements rather than automatically sizing down, and leave time to follow the garment-care instructions before wearing it."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw100",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw99",
+     "_type": "span",
+     "marks": [
+      "hw98"
+     ],
+     "text": "Shop the split-sleeve dress"
+    }
+   ],
+   "markDefs": [
+    {
+     "_key": "hw98",
+     "_type": "link",
+     "href": "https://www.spartanshopper.com/go/scarlet-darkness-split-sleeve-dress"
+    }
+   ],
+   "style": "normal"
+  },
+  {
+   "_key": "hw102",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw101",
+     "_type": "span",
+     "marks": [],
+     "text": "Before you click buy"
+    }
+   ],
+   "markDefs": [],
+   "style": "h2"
+  },
+  {
+   "_key": "hw104",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw103",
+     "_type": "span",
+     "marks": [],
+     "text": "Add up the costume, necessary extras, shipping, and applicable tax. Use shoes and layers you already own when they work with the outfit."
+    }
+   ],
+   "level": 1,
+   "listItem": "bullet",
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw106",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw105",
+     "_type": "span",
+     "marks": [],
+     "text": "Check the selected size and color again at checkout. A price on the first product photo may belong to a different option."
+    }
+   ],
+   "level": 1,
+   "listItem": "bullet",
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw108",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw107",
+     "_type": "span",
+     "marks": [],
+     "text": "Read the included-items list. A model wearing boots does not mean boots are in the box."
+    }
+   ],
+   "level": 1,
+   "listItem": "bullet",
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw110",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw109",
+     "_type": "span",
+     "marks": [],
+     "text": "Check the delivery estimate and return terms for the actual seller and your address."
+    }
+   ],
+   "level": 1,
+   "listItem": "bullet",
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw112",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw111",
+     "_type": "span",
+     "marks": [],
+     "text": "Try everything on early. Walk, sit, and check how the costume works with a coat or extra layer if needed. Test any lights before the day of the event."
+    }
+   ],
+   "level": 1,
+   "listItem": "bullet",
+   "markDefs": [],
+   "style": "normal"
+  },
+  {
+   "_key": "hw114",
+   "_type": "block",
+   "children": [
+    {
+     "_key": "hw113",
+     "_type": "span",
+     "marks": [],
+     "text": "The goal is a costume your child is excited to wear—or one you actually enjoy wearing yourself—without an emergency accessory run. Halloween already has enough surprises. The receipt does not need to join in."
+    }
+   ],
+   "markDefs": [],
+   "style": "normal"
+  }
+ ],
+ "category": "Saving Tips",
+ "coverImage": {
+  "_type": "image",
+  "alt": "Illustration of six children in Halloween costumes on a pumpkin-decorated porch",
+  "asset": {
+   "_ref": "image-3f45cfa9412c424b809cc647bc36dc11bdfffadd-1672x941-png",
+   "_type": "reference"
+  }
+ },
+ "excerpt": "Three boys’ costume picks, three girls’ picks, and an adult bonus—with checked prices, included pieces, and the extras to budget for.",
+ "jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Halloween Costumes Without the Surprise Shopping List\",\"description\":\"Three boys’ costume picks, three girls’ picks, and an adult bonus—with checked prices, included pieces, and the extras to budget for.\",\"mainEntityOfPage\":\"https://www.spartanshopper.com/blog/halloween-costumes-without-surprise-extras\",\"author\":{\"@type\":\"Organization\",\"name\":\"SpartanShopper\"}}",
+ "publishedAt": "2026-09-20T13:31:32.556Z",
+ "relatedCategory": "fashion",
+ "seo": {
+  "canonicalUrl": "https://www.spartanshopper.com/blog/halloween-costumes-without-surprise-extras",
+  "metaDescription": "Three boys’ costume picks, three girls’ picks, and an adult bonus—with checked prices, included pieces, and the extras to budget for.",
+  "metaTitle": "Halloween Costumes for Boys & Girls: 6 Picks + Adult Bonus"
+ },
+ "slug": {
+  "_type": "slug",
+  "current": "halloween-costumes-without-surprise-extras"
+ },
+ "title": "Halloween Costumes Without the Surprise Shopping List"
+}
