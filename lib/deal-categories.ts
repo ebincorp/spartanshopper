@@ -3,6 +3,9 @@
  * schema list (`health-beauty`, `home-garden`, …) while posts' `relatedCategory`
  * uses the coupon list (`beauty`, `health`, `home`, …). Map deal → post
  * categories wherever deals link out to related guides.
+ *
+ * Order matters: the first category is the closest fit, and related-guide
+ * lists rank posts from it before later ones (beauty before health).
  */
 const DEAL_TO_POST_CATEGORIES: Record<string, string[]> = {
   'health-beauty': ['beauty', 'health'],

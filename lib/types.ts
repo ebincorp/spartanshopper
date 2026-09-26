@@ -26,6 +26,8 @@ export interface Deal {
   priceVerifiedAt?: string
   /** Price depends on a no-code clip coupon on the Amazon product page. */
   clipCoupon?: boolean
+  /** Hand-picked guides (deal page only); overrides the automatic category match. */
+  relatedGuides?: { _id: string; title: string; slug: { current: string } }[]
 }
 
 export interface Coupon {

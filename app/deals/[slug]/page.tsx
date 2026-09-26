@@ -85,21 +85,28 @@ export default async function DealPage({ params }: Props) {
   // when older deals carried only the imageUrl string and no Sanity asset.
   // Keep shoppers who aren't ready to buy on the site: same-category deals
   // (with real images) and guides from the matching post categories.
+  // Hand-picked guides win; otherwise rank by the closest post category first
+  // (e.g. beauty before health), then newest.
   const guideCategories = postCategoriesForDeals([deal.category])
-  const [relatedDeals, relatedGuides] = await Promise.all([
+  const pickedGuides = (deal.relatedGuides ?? []).filter(Boolean)
+  const [relatedDeals, matchedGuides] = await Promise.all([
     deal.category
       ? client.fetch<Deal[]>(relatedDealsQuery, { category: deal.category, id: deal._id }).catch(() => [] as Deal[])
       : Promise.resolve([] as Deal[]),
-    guideCategories.length
+    pickedGuides.length === 0 && guideCategories.length
       ? client
           .fetch<Post[]>(
             `*[_type == "post" && defined(slug.current) && publishedAt <= now() && relatedCategory in $categories]
-              | order(publishedAt desc)[0...3] { _id, title, slug }`,
+              | order(publishedAt desc)[0...12] { _id, title, slug, relatedCategory }`,
             { categories: guideCategories }
           )
           .catch(() => [] as Post[])
       : Promise.resolve([] as Post[]),
   ])
+  const categoryRank = (post: Post) => guideCategories.indexOf(post.relatedCategory ?? '')
+  const relatedGuides = pickedGuides.length
+    ? pickedGuides
+    : [...matchedGuides].sort((a, b) => categoryRank(a) - categoryRank(b)).slice(0, 3)
 
   const imageUrl = deal.image ? urlFor(deal.image).width(800).url() : deal.imageUrl || null
   const shopUrl = deal.affiliateSlug ? `/go/${deal.affiliateSlug}` : deal.affiliateUrl

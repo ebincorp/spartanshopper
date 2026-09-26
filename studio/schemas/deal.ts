@@ -115,6 +115,14 @@ export default defineType({
       },
     }),
     defineField({
+      name: 'relatedGuides',
+      title: 'Related Guides',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'post' }], weak: true }],
+      validation: (Rule) => Rule.max(3).unique(),
+      description: 'Optional, up to 3. Shown as "Read before you buy" on the deal page, overriding the automatic category match. Use it to push money pages.',
+    }),
+    defineField({
       name: 'expiryDate',
       title: 'Expiry Date',
       type: 'datetime',
