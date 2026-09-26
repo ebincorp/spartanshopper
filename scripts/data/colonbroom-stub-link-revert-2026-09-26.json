@@ -1,0 +1,39 @@
+{
+ "_id": "27021bed-1586-49a8-9067-973f013bf0b3",
+ "block": {
+  "_key": "55037dccff4a",
+  "_type": "block",
+  "children": [
+   {
+    "_key": "5cdb4af6e91f",
+    "_type": "span",
+    "marks": [],
+    "text": "Check whether powder, capsules, or "
+   },
+   {
+    "_key": "fd58f5ca378d",
+    "_type": "span",
+    "marks": [
+     "5f4ca5197259"
+    ],
+    "text": "a flavored blend"
+   },
+   {
+    "_key": "8e8b38098a6c",
+    "_type": "span",
+    "marks": [],
+    "text": " makes it easier to meet the fluid directions."
+   }
+  ],
+  "level": 1,
+  "listItem": "bullet",
+  "markDefs": [
+   {
+    "_key": "5f4ca5197259",
+    "_type": "link",
+    "href": "https://www.spartanshopper.com/blog/colonbroom-review-2026"
+   }
+  ],
+  "style": "normal"
+ }
+}
