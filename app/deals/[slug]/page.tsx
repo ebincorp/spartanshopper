@@ -1,3 +1,4 @@
+import { isPriceFresh } from '@/lib/deal-price'
 import { client, urlFor } from '@/lib/sanity.client'
 import { dealBySlugQuery, dealSlugsQuery } from '@/lib/queries'
 import type { Deal } from '@/lib/types'
@@ -33,7 +34,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description = ended
     ? `This ${deal.title} deal has ended. See today's live deals on SpartanShopper.`
-    : `Get ${deal.title} at ${deal.store} for $${deal.salePrice.toFixed(2)}. Shop now on SpartanShopper.`
+    : isPriceFresh(deal.priceVerifiedAt)
+      ? `Get ${deal.title} at ${deal.store} for $${deal.salePrice.toFixed(2)}. Shop now on SpartanShopper.`
+      : `${deal.title} at ${deal.store}. Check today's price and availability on SpartanShopper.`
   const imageUrl = deal.image
     ? urlFor(deal.image).width(1200).height(630).url()
     : deal.imageUrl || undefined
@@ -79,8 +82,12 @@ export default async function DealPage({ params }: Props) {
   // Pinterest pins, backlinks, bookmarks — point at these pages and cannot be
   // updated after the fact. A dead-end 404 would break them permanently.
   const expired = !deal.active || (deal.expiryDate ? new Date(deal.expiryDate) < new Date() : false)
+  // Active deals only show the stored price while it's recently verified (see
+  // lib/deal-price.ts). Ended deals keep showing it, labelled as historic.
+  const priceFresh = isPriceFresh(deal.priceVerifiedAt)
+  const showPrice = expired || priceFresh
   const savings =
-    deal.originalPrice && deal.originalPrice > deal.salePrice
+    showPrice && deal.originalPrice && deal.originalPrice > deal.salePrice
       ? Math.round(((deal.originalPrice - deal.salePrice) / deal.originalPrice) * 100)
       : null
 
@@ -106,10 +113,13 @@ export default async function DealPage({ params }: Props) {
 
   return (
     <>
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
-    />
+    {/* An Offer price Google can't match on the landing page is worse than none. */}
+    {showPrice && (
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+    )}
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
@@ -201,7 +211,8 @@ export default async function DealPage({ params }: Props) {
 
             <p className="text-gray-500 text-sm font-medium mb-6">Store: {deal.store}</p>
 
-            <div className="flex items-baseline gap-3 mb-6">
+            {showPrice ? (
+            <div className="flex flex-wrap items-baseline gap-3 mb-6">
               <span style={{ color: '#E63946' }} className="text-4xl font-extrabold">
                 ${deal.salePrice.toFixed(2)}
               </span>
@@ -217,7 +228,28 @@ export default async function DealPage({ params }: Props) {
                   )}
                 </>
               )}
+              {deal.clipCoupon && !expired && (
+                <span className="text-sm font-bold text-emerald-800 bg-emerald-100 px-2 py-1 rounded-full">
+                  Clip coupon
+                </span>
+              )}
             </div>
+            ) : (
+              <div className="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                <p className="font-bold text-gray-900">Check the current price on Amazon</p>
+                <p className="mt-1 text-sm text-gray-600">
+                  We haven&apos;t been able to confirm today&apos;s price for this item. Amazon prices change
+                  often, so the live listing has the current price and availability.
+                </p>
+              </div>
+            )}
+
+            {deal.clipCoupon && priceFresh && !expired && (
+              <p className="mb-6 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-900">
+                <strong>This price includes a clip coupon.</strong> Check the coupon box on the Amazon product
+                page before adding to your cart. Amazon applies the discount at checkout.
+              </p>
+            )}
 
             {deal.description && (
               <div className="text-gray-600 text-sm leading-relaxed mb-6 border-t pt-5">
@@ -245,7 +277,7 @@ export default async function DealPage({ params }: Props) {
               }`}
               style={!expired ? { backgroundColor: '#E63946' } : {}}
             >
-              {expired ? 'This Deal Has Ended' : '🛒 Get This Deal →'}
+              {expired ? 'This Deal Has Ended' : priceFresh ? '🛒 Get This Deal →' : 'Check Price on Amazon →'}
             </a>
 
           </div>

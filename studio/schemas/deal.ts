@@ -38,6 +38,19 @@ export default defineType({
       type: 'number',
     }),
     defineField({
+      name: 'clipCoupon',
+      title: 'Clip Coupon (no code)',
+      type: 'boolean',
+      initialValue: false,
+      description: 'On when the Sale Price depends on a clip coupon on the Amazon product page. Shows a "Clip coupon" badge and checkout note, and makes verification compare the Amazon price against the Original Price (pre-coupon).',
+    }),
+    defineField({
+      name: 'priceVerifiedAt',
+      title: 'Price Verified At',
+      type: 'datetime',
+      description: 'Set by the daily verification job (or by hand when a price is captured). The site only shows the price while this is under 25 hours old; after that it shows "Check current price".',
+    }),
+    defineField({
       name: 'description',
       title: 'Description',
       type: 'text',

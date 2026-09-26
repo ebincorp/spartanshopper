@@ -75,7 +75,7 @@ async function main() {
   }, {})
   console.log(
     `\nSummary: ${result.rows.length} checked — ` +
-      `OK ${counts.OK || 0}, UPDATED ${counts.UPDATED || 0}, DEACTIVATED ${counts.DEACTIVATED || 0}` +
+      `OK ${counts.OK || 0}, UPDATED ${counts.UPDATED || 0}, DEACTIVATED ${counts.DEACTIVATED || 0}, REVIEW ${counts.REVIEW || 0}` +
       (execute ? ' (applied)' : ' (dry-run — no changes written)')
   )
   process.exit(0)

@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import SaveFindButton from './SaveFindButton'
+import { isPriceFresh } from '@/lib/deal-price'
 
 interface DealCardProps {
   title: string
@@ -12,6 +13,8 @@ interface DealCardProps {
   image?: string
   imageUrl?: string
   expiryDate?: string
+  priceVerifiedAt?: string
+  clipCoupon?: boolean
 }
 
 function getExpiryStatus(expiryDate?: string): 'expired' | 'soon' | 'ok' | null {
@@ -35,12 +38,15 @@ export default function DealCard({
   image,
   imageUrl,
   expiryDate,
+  priceVerifiedAt,
+  clipCoupon,
 }: DealCardProps) {
   const shopUrl = affiliateSlug ? `/go/${affiliateSlug}` : affiliateUrl
   // Amazon's source URLs can reject browser hotlinks. Prefer the uploaded
   // Sanity asset, which is stable and is available for the repaired deals.
   const imgSrc = image || imageUrl
   const expiryStatus = getExpiryStatus(expiryDate)
+  const priceFresh = isPriceFresh(priceVerifiedAt)
   const savings =
     originalPrice && originalPrice > salePrice
       ? Math.round(((originalPrice - salePrice) / originalPrice) * 100)
@@ -67,7 +73,7 @@ export default function DealCard({
           </div>
         )}
         {/* Savings badge — only show for realistic discounts (≤75%) */}
-        {savings && savings <= 75 && (
+        {priceFresh && savings && savings <= 75 && (
           <div
             style={{ backgroundColor: '#E63946' }}
             className="absolute top-3 left-3 text-white text-xs font-bold px-2 py-1 rounded-full"
@@ -88,15 +94,22 @@ export default function DealCard({
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{store}</p>
         <h3 className="text-gray-900 font-bold text-sm leading-snug mb-3 flex-1">{title}</h3>
 
-        {/* Pricing */}
-        <div className="flex items-baseline gap-2 mb-3">
+        {/* Pricing — only while recently verified; otherwise send shoppers to check */}
+        {priceFresh ? (
+        <div className="flex flex-wrap items-baseline gap-2 mb-3">
           <span style={{ color: '#E63946' }} className="text-2xl font-extrabold">
             ${salePrice.toFixed(2)}
           </span>
           {originalPrice && originalPrice > salePrice && (
             <span className="text-sm text-gray-500 line-through">${originalPrice.toFixed(2)}</span>
           )}
+          {clipCoupon && (
+            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">Clip coupon</span>
+          )}
         </div>
+        ) : (
+          <p className="text-sm font-semibold text-gray-600 mb-3">Check the current price on Amazon</p>
+        )}
 
         {/* Expiry */}
         {expiryDate && expiryStatus !== 'expired' && (
@@ -118,7 +131,7 @@ export default function DealCard({
           }`}
           style={expiryStatus !== 'expired' ? { backgroundColor: '#E63946' } : {}}
         >
-          {expiryStatus === 'expired' ? 'Deal Expired' : 'Get Deal →'}
+          {expiryStatus === 'expired' ? 'Deal Expired' : priceFresh ? 'Get Deal →' : 'Check Price →'}
         </a>
         <SaveFindButton find={{ kind: 'deal', slug, title }} />
       </div>

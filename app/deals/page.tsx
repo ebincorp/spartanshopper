@@ -174,6 +174,8 @@ export default async function DealsPage({ searchParams }: Props) {
                 image={deal.hasCardImage && deal.image ? urlFor(deal.image).width(400).url() : undefined}
                 imageUrl={deal.hasCardImage ? deal.imageUrl : undefined}
                 expiryDate={deal.expiryDate}
+                priceVerifiedAt={deal.priceVerifiedAt}
+                clipCoupon={deal.clipCoupon}
               />
             ))}
           </div>

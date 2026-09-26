@@ -6,6 +6,7 @@ import { getAllPostsQuery } from '@/lib/blogQueries'
 import type { Coupon, Deal, Post } from '@/lib/types'
 import CouponCard from '@/components/CouponCard'
 import { pageMetadata } from '@/lib/seo'
+import { isPriceFresh } from '@/lib/deal-price'
 
 export const revalidate = 3600
 
@@ -149,12 +150,17 @@ export default async function SearchPage({ searchParams }: Props) {
                     <p className="text-xs text-gray-500 font-medium mb-1">{deal.store}</p>
                     <h3 className="font-bold text-gray-900 text-sm leading-snug">{deal.title}</h3>
                   </div>
-                  <div className="flex items-baseline gap-2 mt-auto">
-                    <span style={{ color: '#E63946' }} className="text-xl font-extrabold">${deal.salePrice.toFixed(2)}</span>
-                    {deal.originalPrice && deal.originalPrice > deal.salePrice && (
-                      <span className="text-sm text-gray-500 line-through">${deal.originalPrice.toFixed(2)}</span>
-                    )}
-                  </div>
+                  {isPriceFresh(deal.priceVerifiedAt) ? (
+                    <div className="flex flex-wrap items-baseline gap-2 mt-auto">
+                      <span style={{ color: '#E63946' }} className="text-xl font-extrabold">${deal.salePrice.toFixed(2)}</span>
+                      {deal.originalPrice && deal.originalPrice > deal.salePrice && (
+                        <span className="text-sm text-gray-500 line-through">${deal.originalPrice.toFixed(2)}</span>
+                      )}
+                      {deal.clipCoupon && <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">Clip coupon</span>}
+                    </div>
+                  ) : (
+                    <p className="mt-auto text-sm font-semibold text-gray-600">Check the current price on Amazon</p>
+                  )}
                 </Link>
               ))}
             </div>

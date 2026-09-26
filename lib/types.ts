@@ -22,6 +22,10 @@ export interface Deal {
   active: boolean
   /** Projected by deal queries: true when the image is a real (non-placeholder) Sanity asset. */
   hasCardImage?: boolean
+  /** Last time the verify job confirmed salePrice against Amazon. See lib/deal-price.ts. */
+  priceVerifiedAt?: string
+  /** Price depends on a no-code clip coupon on the Amazon product page. */
+  clipCoupon?: boolean
 }
 
 export interface Coupon {

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { urlFor } from '@/lib/sanity.client'
 import type { Deal } from '@/lib/types'
 import SaveFindButton from './SaveFindButton'
+import { isPriceFresh } from '@/lib/deal-price'
 
 type Props = {
   title: string
@@ -33,7 +34,8 @@ export default function DealShelf({ title, description, deals }: Props) {
 
       <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-3 sm:mx-0 sm:px-0">
         {deals.map((deal) => {
-          const discount = savings(deal)
+          const priceFresh = isPriceFresh(deal.priceVerifiedAt)
+          const discount = priceFresh ? savings(deal) : null
           // Prefer the uploaded Sanity asset; raw Amazon imageUrls reject hotlinks.
           const image = deal.image ? urlFor(deal.image).width(360).url() : deal.imageUrl
           const shopUrl = deal.affiliateSlug ? `/go/${deal.affiliateSlug}` : deal.affiliateUrl
@@ -53,10 +55,15 @@ export default function DealShelf({ title, description, deals }: Props) {
                     <span className="text-xs font-semibold text-slate-500">{deal.store}</span>
                   </div>
                   <h3 className="line-clamp-2 min-h-10 text-sm font-bold leading-5 text-slate-900 group-hover:text-[#E63946]">{deal.title}</h3>
-                  <div className="mt-2 flex items-baseline gap-1.5">
-                    <span className="text-lg font-extrabold text-slate-950">${deal.salePrice.toFixed(2)}</span>
-                    {deal.originalPrice && deal.originalPrice > deal.salePrice && <span className="text-xs text-slate-500 line-through">${deal.originalPrice.toFixed(2)}</span>}
-                  </div>
+                  {priceFresh ? (
+                    <div className="mt-2 flex flex-wrap items-baseline gap-1.5">
+                      <span className="text-lg font-extrabold text-slate-950">${deal.salePrice.toFixed(2)}</span>
+                      {deal.originalPrice && deal.originalPrice > deal.salePrice && <span className="text-xs text-slate-500 line-through">${deal.originalPrice.toFixed(2)}</span>}
+                      {deal.clipCoupon && <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[11px] font-bold text-emerald-800">Clip coupon</span>}
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-sm font-semibold text-slate-600">Check current price</p>
+                  )}
                 </div>
               </Link>
               <a
@@ -65,7 +72,7 @@ export default function DealShelf({ title, description, deals }: Props) {
                 rel="sponsored nofollow noopener noreferrer"
                 className="mt-3 block w-full rounded-lg bg-[#E63946] py-2 text-center text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
               >
-                Get Deal →
+                {priceFresh ? 'Get Deal →' : 'Check Price →'}
               </a>
               <SaveFindButton find={{ kind: 'deal', slug: deal.slug.current, title: deal.title }} />
             </article>

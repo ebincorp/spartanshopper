@@ -28,7 +28,7 @@ const DEAL_HAS_CARD_IMAGE = `image.asset->metadata.dimensions.width > 1`
 export const dealsQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER}] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active,
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, clipCoupon,
     "hasCardImage": ${DEAL_HAS_CARD_IMAGE} == true
   }
 `
@@ -36,7 +36,7 @@ export const dealsQuery = `
 export const featuredDealsQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER} && defined(slug.current) && salePrice > 0 && ${DEAL_HAS_CARD_IMAGE}] | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active,
+    image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, clipCoupon,
     "hasCardImage": ${DEAL_HAS_CARD_IMAGE} == true
   }
 `
@@ -44,7 +44,7 @@ export const featuredDealsQuery = `
 export const dealsByCategoryQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER} && category == $category] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active,
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, clipCoupon,
     "hasCardImage": ${DEAL_HAS_CARD_IMAGE} == true
   }
 `
@@ -52,7 +52,7 @@ export const dealsByCategoryQuery = `
 export const dealBySlugQuery = `
   *[_type == "deal" && slug.current == $slug][0] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, clipCoupon
   }
 `
 

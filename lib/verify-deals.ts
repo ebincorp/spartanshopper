@@ -9,6 +9,12 @@
  *  - price moved but savingsPercent >= 15       → UPDATE (salePrice/originalPrice)
  *  - savingsPercent < 15                        → DEACTIVATE
  *  - NOT_YET_ELIGIBLE overall                   → no-op, mutate nothing
+ *  - clipCoupon deal                            → compare Amazon's price to the
+ *    stored PRE-coupon price (originalPrice); the API can't see clip coupons, so
+ *    within ±$1 → OK, otherwise REVIEW (no mutation — coupon math needs a human)
+ *
+ * Deals that come back OK or UPDATED get `priceVerifiedAt` stamped; the site only
+ * shows a stored price while that stamp is recent (lib/deal-price.ts).
  *
  * Coupons carry no salePrice, so the ±$1 / UPDATE branches don't apply to them;
  * they are only ever DEACTIVATED (unavailable or savings<15) or left OK.
@@ -28,7 +34,7 @@ const MIN_SAVINGS = 15 // percent
 const FAULT_UNAVAILABLE_RATIO = 0.5
 const FAULT_MIN_SAMPLE = 5 // don't trip the guard on tiny batches
 
-export type Action = 'OK' | 'UPDATED' | 'DEACTIVATED'
+export type Action = 'OK' | 'UPDATED' | 'DEACTIVATED' | 'REVIEW'
 
 export interface VerifyRow {
   id: string
@@ -55,6 +61,7 @@ interface Record {
   asin: string
   salePrice?: number
   originalPrice?: number
+  clipCoupon?: boolean
 }
 
 function makeClient() {
@@ -67,7 +74,7 @@ function makeClient() {
   })
 }
 
-function decide(rec: Record, item: CreatorItem | undefined): VerifyRow {
+export function decide(rec: Record, item: CreatorItem | undefined): VerifyRow {
   const base = {
     id: rec._id,
     type: rec._type,
@@ -79,6 +86,22 @@ function decide(rec: Record, item: CreatorItem | undefined): VerifyRow {
 
   if (!item || !item.available || item.currentPrice == null) {
     return { ...base, action: 'DEACTIVATED', reason: 'unavailable on Amazon' }
+  }
+
+  // Clip-coupon deals: salePrice is the post-coupon price, which the API never
+  // reports. Check the pre-coupon price instead, and never auto-reprice or
+  // deactivate on savings% (the API sees no discount at all).
+  if (rec._type === 'deal' && rec.clipCoupon) {
+    const preCoupon = rec.originalPrice ?? rec.salePrice
+    if (typeof preCoupon === 'number' && Math.abs(item.currentPrice - preCoupon) <= PRICE_TOLERANCE) {
+      return { ...base, action: 'OK', newPrice: item.currentPrice, reason: 'clip coupon: pre-coupon price unchanged' }
+    }
+    return {
+      ...base,
+      action: 'REVIEW',
+      newPrice: item.currentPrice,
+      reason: `clip coupon: Amazon price $${item.currentPrice} vs stored pre-coupon $${preCoupon ?? '?'} — recheck coupon manually`,
+    }
   }
 
   // Coupons have no stored price to compare against.
@@ -115,7 +138,7 @@ export async function runVerifyDeals(opts: { execute: boolean; publishedOnly?: b
 
   const records = await client.fetch<Record[]>(
     `*[_type in ["deal","coupon"] && active == true && defined(asin)]{
-      _id, _type, title, asin, salePrice, originalPrice
+      _id, _type, title, asin, salePrice, originalPrice, clipCoupon
     }`
   )
 
@@ -138,16 +161,24 @@ export async function runVerifyDeals(opts: { execute: boolean; publishedOnly?: b
   }
 
   if (opts.execute) {
+    const verifiedAt = new Date().toISOString()
     let tx = client.transaction()
     let mutations = 0
     for (const row of rows) {
       const item = byAsin.get(row.asin)
-      if (row.action === 'DEACTIVATED') {
+      if (row.action === 'OK' && row.type === 'deal') {
+        tx = tx.patch(row.id, (p) => p.set({ priceVerifiedAt: verifiedAt }))
+        mutations++
+      } else if (row.action === 'DEACTIVATED') {
         tx = tx.patch(row.id, (p) => p.set({ active: false }))
         mutations++
       } else if (row.action === 'UPDATED' && item) {
         tx = tx.patch(row.id, (p) =>
-          p.set({ salePrice: item.currentPrice, originalPrice: item.listPrice ?? item.currentPrice })
+          p.set({
+            salePrice: item.currentPrice,
+            originalPrice: item.listPrice ?? item.currentPrice,
+            ...(row.type === 'deal' && { priceVerifiedAt: verifiedAt }),
+          })
         )
         mutations++
       }
