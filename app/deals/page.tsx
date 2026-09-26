@@ -4,6 +4,7 @@ import { client, urlFor } from '@/lib/sanity.client'
 import { dealsQuery, dealsByCategoryQuery, dealCategoriesQuery } from '@/lib/queries'
 import type { Deal } from '@/lib/types'
 import DealCard from '@/components/DealCard'
+import { isPriceFresh } from '@/lib/deal-price'
 import DealShelf from '@/components/DealShelf'
 import DealsCategoryFilterBar from '@/components/DealsCategoryFilterBar'
 import { pageMetadata } from '@/lib/seo'
@@ -84,9 +85,16 @@ export default async function DealsPage({ searchParams }: Props) {
     picked.forEach((deal) => claimed.add(deal._id))
     return picked
   }
-  const byDiscountPool = [...shelfCandidates].sort(byDiscount)
+  // Verified prices lead; stale ones follow (they render as "Check current price").
+  const fresh = (deal: Deal) => isPriceFresh(deal.priceVerifiedAt)
+  const byDiscountPool = [...shelfCandidates].sort((a, b) => Number(fresh(b)) - Number(fresh(a)) || byDiscount(a, b))
+  const topShelf = shelf(byDiscountPool)
+  // "Best savings" only makes sense when savings are actually on show.
+  const topShelfHasPrices = topShelf.some(fresh)
   const shelves = [
-    { title: 'Best savings right now', description: 'Strong markdowns among the active listings. Check the product page for the final price and availability.', deals: shelf(byDiscountPool) },
+    topShelfHasPrices
+      ? { title: 'Best savings right now', description: 'Strong markdowns among the active listings. Check the product page for the final price and availability.', deals: topShelf }
+      : { title: 'Popular right now', description: 'Standout picks from the active listings. Check the product page for the current price and availability.', deals: topShelf },
     { title: 'Premium picks', description: 'Beauty, fashion, and luxury finds worth a closer look.', deals: shelf(byDiscountPool.filter(inCategories(['luxury', 'health-beauty', 'fashion']))) },
     { title: 'Home, kitchen, and everyday upgrades', description: 'Useful items for the spaces and routines you already have.', deals: shelf(byDiscountPool.filter(inCategories(['home-garden', 'food-dining']))) },
     { title: 'Practical buys and easy gifts', description: 'Everyday essentials and gift ideas that are easy to say yes to.', deals: shelf(byDiscountPool.filter((deal) => deal.salePrice <= 50)) },
@@ -109,7 +117,7 @@ export default async function DealsPage({ searchParams }: Props) {
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-rose-300">SpartanShopper deals</p>
           <h1 className="text-white text-4xl font-extrabold tracking-tight mb-2 sm:text-5xl">Find the deal worth buying.</h1>
           <p className="max-w-2xl text-white/70">
-            Browse {deals.length} active deal{deals.length !== 1 ? 's' : ''} by budget, category, and what you actually need.
+            Browse {deals.length} active deal{deals.length !== 1 ? 's' : ''} by category and what you actually need.
             {category ? ` in ${CATEGORY_LABELS[category] ?? category}` : ''}
           </p>
         </div>

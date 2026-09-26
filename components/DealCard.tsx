@@ -78,7 +78,7 @@ export default function DealCard({
             style={{ backgroundColor: '#E63946' }}
             className="absolute top-3 left-3 text-white text-xs font-bold px-2 py-1 rounded-full"
           >
-            {savings}% OFF
+            {savings}% OFF{clipCoupon ? ' w/ coupon' : ''}
           </div>
         )}
         {/* Expired badge */}

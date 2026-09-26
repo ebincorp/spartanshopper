@@ -49,6 +49,14 @@ export const dealsByCategoryQuery = `
   }
 `
 
+export const relatedDealsQuery = `
+  *[_type == "deal" && ${DEAL_DATE_FILTER} && category == $category && _id != $id && ${DEAL_HAS_CARD_IMAGE}]
+  | order(_createdAt desc)[0...3] {
+    _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
+    image, imageUrl, affiliateUrl, category, expiryDate, active, priceVerifiedAt, clipCoupon
+  }
+`
+
 export const dealBySlugQuery = `
   *[_type == "deal" && slug.current == $slug][0] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,

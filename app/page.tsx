@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { postCategoriesForDeals } from '@/lib/deal-categories'
 import { pageMetadata } from '@/lib/seo'
 import { client, urlFor } from '@/lib/sanity.client'
 import { couponsQuery, featuredDealsQuery } from '@/lib/queries'
@@ -23,7 +24,7 @@ export default async function HomePage() {
   ])
   const coupons = couponResult.status === 'fulfilled' ? couponResult.value : []
   const deals = dealResult.status === 'fulfilled' ? dealResult.value : []
-  const categories = [...new Set(deals.map(deal => deal.category).filter(Boolean))]
+  const categories = postCategoriesForDeals(deals.map(deal => deal.category))
   const guides = categories.length
     ? await client.fetch<Post[]>(relatedGuidesQuery, { categories }).catch(() => [] as Post[])
     : []

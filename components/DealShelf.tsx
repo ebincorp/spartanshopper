@@ -51,7 +51,7 @@ export default function DealShelf({ title, description, deals }: Props) {
                 </div>
                 <div className="pt-3">
                   <div className="mb-1 flex min-h-6 items-center gap-1.5">
-                    {discount && discount <= 75 && <span className="rounded bg-[#E63946] px-1.5 py-1 text-xs font-extrabold text-white">{discount}% off</span>}
+                    {discount && discount <= 75 && <span className="rounded bg-[#E63946] px-1.5 py-1 text-xs font-extrabold text-white">{discount}% off{deal.clipCoupon ? ' w/ coupon' : ''}</span>}
                     <span className="text-xs font-semibold text-slate-500">{deal.store}</span>
                   </div>
                   <h3 className="line-clamp-2 min-h-10 text-sm font-bold leading-5 text-slate-900 group-hover:text-[#E63946]">{deal.title}</h3>

@@ -1,7 +1,9 @@
 import { isPriceFresh } from '@/lib/deal-price'
 import { client, urlFor } from '@/lib/sanity.client'
-import { dealBySlugQuery, dealSlugsQuery } from '@/lib/queries'
-import type { Deal } from '@/lib/types'
+import { dealBySlugQuery, dealSlugsQuery, relatedDealsQuery } from '@/lib/queries'
+import { postCategoriesForDeals } from '@/lib/deal-categories'
+import DealCard from '@/components/DealCard'
+import type { Deal, Post } from '@/lib/types'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -10,6 +12,19 @@ import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
+
+const CATEGORY_NAMES: Record<string, string> = {
+  'health-beauty': 'Health & Beauty',
+  'home-garden': 'Home & Garden',
+  'food-dining': 'Food & Dining',
+  'sports-outdoors': 'Sports & Outdoors',
+  baby: 'Baby & Nursery',
+  electronics: 'Electronics',
+  fashion: 'Fashion',
+  luxury: 'Luxury',
+  automotive: 'Automotive',
+  travel: 'Travel',
+}
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -68,6 +83,24 @@ export default async function DealPage({ params }: Props) {
   // Product schema `image` (and visible image) is never omitted — mirrors DealCard's
   // `imageUrl || image`. This was the root cause of the GSC "Missing field image" errors
   // when older deals carried only the imageUrl string and no Sanity asset.
+  // Keep shoppers who aren't ready to buy on the site: same-category deals
+  // (with real images) and guides from the matching post categories.
+  const guideCategories = postCategoriesForDeals([deal.category])
+  const [relatedDeals, relatedGuides] = await Promise.all([
+    deal.category
+      ? client.fetch<Deal[]>(relatedDealsQuery, { category: deal.category, id: deal._id }).catch(() => [] as Deal[])
+      : Promise.resolve([] as Deal[]),
+    guideCategories.length
+      ? client
+          .fetch<Post[]>(
+            `*[_type == "post" && defined(slug.current) && publishedAt <= now() && relatedCategory in $categories]
+              | order(publishedAt desc)[0...3] { _id, title, slug }`,
+            { categories: guideCategories }
+          )
+          .catch(() => [] as Post[])
+      : Promise.resolve([] as Post[]),
+  ])
+
   const imageUrl = deal.image ? urlFor(deal.image).width(800).url() : deal.imageUrl || null
   const shopUrl = deal.affiliateSlug ? `/go/${deal.affiliateSlug}` : deal.affiliateUrl
 
@@ -178,7 +211,7 @@ export default async function DealPage({ params }: Props) {
                   className="absolute top-4 left-4 text-white text-sm font-bold px-3 py-1 rounded-full"
                   style={{ backgroundColor: '#E63946' }}
                 >
-                  {savings}% OFF
+                  {savings}% OFF{deal.clipCoupon ? ' w/ coupon' : ''}
                 </div>
               )}
               {expired && (
@@ -221,7 +254,7 @@ export default async function DealPage({ params }: Props) {
                   <span className="text-xl text-gray-400 line-through">
                     ${deal.originalPrice.toFixed(2)}
                   </span>
-                  {savings && savings <= 75 && (
+                  {savings && savings <= 75 && !deal.clipCoupon && (
                     <span className="text-sm font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full">
                       Save {savings}%
                     </span>
@@ -282,6 +315,53 @@ export default async function DealPage({ params }: Props) {
 
           </div>
         </div>
+
+        {relatedDeals.length > 0 && (
+          <section aria-labelledby="related-deals-title" className="mt-10">
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+              <h2 id="related-deals-title" className="text-xl font-extrabold text-gray-900">
+                More {CATEGORY_NAMES[deal.category ?? ''] ?? 'related'} deals
+              </h2>
+              <Link href={`/deals?category=${deal.category}`} className="text-sm font-bold text-[#E63946] underline underline-offset-4">
+                See all
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              {relatedDeals.map((d) => (
+                <DealCard
+                  key={d._id}
+                  title={d.title}
+                  store={d.store}
+                  salePrice={d.salePrice}
+                  originalPrice={d.originalPrice}
+                  affiliateUrl={d.affiliateUrl}
+                  slug={d.slug.current}
+                  affiliateSlug={d.affiliateSlug}
+                  image={d.image ? urlFor(d.image).width(400).url() : undefined}
+                  imageUrl={d.imageUrl}
+                  expiryDate={d.expiryDate}
+                  priceVerifiedAt={d.priceVerifiedAt}
+                  clipCoupon={d.clipCoupon}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {relatedGuides.length > 0 && (
+          <section aria-labelledby="related-guides-title" className="mt-10 rounded-2xl bg-white p-6 shadow-sm">
+            <h2 id="related-guides-title" className="mb-3 text-lg font-extrabold text-gray-900">Read before you buy</h2>
+            <ul className="space-y-2">
+              {relatedGuides.map((g) => (
+                <li key={g._id}>
+                  <Link href={`/blog/${g.slug.current}`} className="font-semibold text-gray-800 underline underline-offset-4 hover:text-[#E63946]">
+                    {g.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {deal.category === 'automotive' && (
           <section className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-6">
