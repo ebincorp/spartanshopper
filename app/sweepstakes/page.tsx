@@ -88,6 +88,16 @@ export default async function SweepstakesPage() {
           </div>
         </div>
 
+        <section aria-labelledby="sweepstakes-guide-heading" className="mb-10 rounded-2xl border border-gray-200 bg-white p-6">
+          <h2 id="sweepstakes-guide-heading" className="text-2xl font-bold text-gray-900 mb-3">How free sweepstakes work</h2>
+          <p className="text-gray-700 mb-3">
+            This page lists sweepstakes that are free to enter. Each giveaway has its own sponsor, entry deadline, eligibility rules, and entry frequency, so open the official rules before you enter.
+          </p>
+          <p className="text-gray-700">
+            Check the closing date, any location or age restrictions, and whether an entry is limited to once per day. Never pay a fee to claim a prize, and use the sponsor’s official entry page for the final terms.
+          </p>
+        </section>
+
         {/* Active Sweepstakes */}
         {active.length > 0 ? (
           <>

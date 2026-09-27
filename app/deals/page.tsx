@@ -32,7 +32,7 @@ interface Props {
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const { category } = await searchParams
   return pageMetadata({
-    title: "Today's Best Deals — Discounts & Sales Updated Daily",
+    title: "Today's Best Deals & Sales",
     description: "Shop today's best deals and discounts — hand-picked across electronics, fashion, home, beauty, and more. Updated daily so you never miss a saving.",
     path: '/deals',
     // Category-filtered views canonicalise to the unfiltered listing.

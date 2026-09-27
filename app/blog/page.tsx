@@ -9,7 +9,7 @@ import { pageMetadata } from '@/lib/seo'
 export const revalidate = 3600
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Deal Tips, Coupon Guides & Money-Saving Strategies',
+  title: 'Deal Tips, Coupons & Savings',
   description: 'Expert money-saving tips, coupon code guides, deal breakdowns, and shopping strategies — updated regularly by the SpartanShopper team.',
   path: '/blog',
 })

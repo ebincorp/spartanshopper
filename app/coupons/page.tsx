@@ -76,7 +76,10 @@ export default async function CouponsPage() {
         )}
 
         {sorted.length > 0 ? (
-          <CouponFilterBar coupons={sorted} />
+          <section aria-labelledby="coupon-catalog-heading">
+            <h2 id="coupon-catalog-heading" className="sr-only">Verified coupon codes by category</h2>
+            <CouponFilterBar coupons={sorted} />
+          </section>
         ) : (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🏷️</div>
