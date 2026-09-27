@@ -9,7 +9,7 @@ import { offerExpiryLabel } from '@/lib/offerExpiry'
 export const revalidate = 3600
 
 export const metadata = pageMetadata({
-  title: 'Verified Coupon Codes & Promo Codes — Updated Daily',
+  title: 'Verified Coupon Codes, Updated Daily',
   description: 'Browse verified coupon codes and promo codes across beauty, health, home, pets, tech, and more. Every code is tested before it goes live.',
   path: '/coupons',
 })

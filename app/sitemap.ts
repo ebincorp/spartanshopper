@@ -42,7 +42,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/blog`,             lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE_URL}/deals`,            lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE_URL}/coupons`,          lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${BASE_URL}/sweepstakes`,      lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    ...(sweepstakes.length > 0
+      ? [{ url: `${BASE_URL}/sweepstakes`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 }]
+      : []),
   ]
 
   const dynamicPages: MetadataRoute.Sitemap = [

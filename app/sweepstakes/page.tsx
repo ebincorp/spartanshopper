@@ -3,15 +3,25 @@ import { sweepstakesQuery } from '@/lib/queries'
 import type { Sweepstake } from '@/lib/types'
 import SweepstakesCard from '@/components/SweepstakesCard'
 import Link from 'next/link'
+import { isSweepstakeEnded } from '@/lib/offer-status'
 import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
 
-export const metadata = pageMetadata({
-  title: 'Free Sweepstakes & Giveaways',
-  description: 'Enter free sweepstakes and giveaways for a chance to win real prizes — no purchase necessary. New entries added regularly.',
-  path: '/sweepstakes',
-})
+export async function generateMetadata() {
+  const sweepstakes = await client
+    .fetch<Sweepstake[]>(sweepstakesQuery)
+    .catch(() => [] as Sweepstake[])
+
+  return pageMetadata({
+    title: 'Free Sweepstakes & Giveaways',
+    description: 'Enter free sweepstakes and giveaways for a chance to win real prizes — no purchase necessary. New entries added regularly.',
+    path: '/sweepstakes',
+    // Ended entries remain available as noindexed archive pages, but an empty
+    // directory cannot satisfy a searcher and should not be indexed.
+    noIndex: !sweepstakes.some((sweep) => !isSweepstakeEnded(sweep)),
+  })
+}
 
 export default async function SweepstakesPage() {
   const sweepstakes = await client
