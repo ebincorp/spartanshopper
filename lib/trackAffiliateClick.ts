@@ -24,6 +24,7 @@ export function installAffiliateClickTracking(doc: Document, win: Window) {
         // Attribute client-side navigation clicks to the page being viewed.
         // Omit query strings and fragments, which can contain private tokens.
         page_location: `${win.location.origin}${win.location.pathname}`,
+        source_page_path: win.location.pathname,
         page_title: doc.title,
         transport_type: 'beacon',
         tracking_version: 'browser_v2',

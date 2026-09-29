@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getRedirectBySlug } from '@/lib/redirects'
 import { affiliateRequestPolicy, AFFILIATE_RESPONSE_HEADERS } from '@/lib/affiliateRequest'
+import { recordAffiliateNavigation } from '@/lib/affiliateClickAnalytics'
 
 // Force dynamic — never cache redirect responses
 export const dynamic = 'force-dynamic'
@@ -31,6 +32,7 @@ export async function GET(
       return NextResponse.redirect(new URL('/', req.url), { status: 302, headers: AFFILIATE_RESPONSE_HEADERS })
     }
 
+    recordAffiliateNavigation(req, { slug, destination: redirect.url })
     return NextResponse.redirect(redirect.url, { status: 302, headers: AFFILIATE_RESPONSE_HEADERS })
   } catch (err) {
     console.error(`[/go] Error looking up "${slug}":`, err)
