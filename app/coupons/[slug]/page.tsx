@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description = coupon.seo?.metaDescription
     || coupon.description
-    || `${coupon.discount ? `Save ${coupon.discount} at ${coupon.store}` : `Save at ${coupon.store}`}. Verified coupon code — visit the page to reveal it. Updated daily on SpartanShopper.`
+    || `${coupon.discount ? `Save ${coupon.discount} at ${coupon.store}` : `Save at ${coupon.store}`}. See the offer terms and confirm the discount at checkout.`
 
   const ogImage = coupon.image
     ? urlFor(coupon.image).width(1200).height(630).url()
@@ -172,7 +172,7 @@ export default async function CouponPage({ params }: Props) {
               )}
               {coupon.verified && !ended && (
                 <span className="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full">
-                  ✓ Verified
+                  ✓ Previously checked
                 </span>
               )}
             </div>

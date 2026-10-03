@@ -9,8 +9,8 @@ import { offerExpiryLabel } from '@/lib/offerExpiry'
 export const revalidate = 3600
 
 export const metadata = pageMetadata({
-  title: 'Verified Coupon Codes, Updated Daily',
-  description: 'Browse verified coupon codes and promo codes across beauty, health, home, pets, tech, and more. Every code is tested before it goes live.',
+  title: 'Coupon Codes for Home, Beauty & More',
+  description: 'Browse coupon codes and promo offers for beauty, home, pets, tech, and more. Check offer terms and confirm your discount at checkout.',
   path: '/coupons',
 })
 
@@ -26,8 +26,8 @@ export default async function CouponsPage() {
   const offerCatalogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'OfferCatalog',
-    name: 'Verified Coupon Codes & Promo Codes',
-    description: 'Browse verified coupon codes and promo codes across beauty, health, home, pets, tech, and more.',
+    name: 'Coupon Codes & Promo Offers',
+    description: 'Browse coupon codes and promo offers across beauty, health, home, pets, tech, and more.',
     url: 'https://www.spartanshopper.com/coupons',
     numberOfItems: coupons.length,
     itemListElement: sorted.slice(0, 15).map((c, i) => ({
@@ -59,7 +59,7 @@ export default async function CouponsPage() {
           <h1 className="text-white text-4xl font-extrabold mb-2">🏷️ Coupon Codes</h1>
           <p className="text-white/60">
             {coupons.length} coupon{coupons.length !== 1 ? 's' : ''} available
-            {verified.length > 0 && ` · ${verified.length} verified`}
+            {verified.length > 0 && ` · ${verified.length} previously checked`}
           </p>
         </div>
       </div>
@@ -70,14 +70,14 @@ export default async function CouponsPage() {
           <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-5 py-3 mb-8">
             <span className="text-green-600 text-xl">✓</span>
             <p className="text-green-700 text-sm font-medium">
-              <strong>{verified.length} verified codes</strong> — tested and confirmed working
+              <strong>Confirm your discount at checkout.</strong> Previously checked offers can change and may depend on your account, seller, or selected item.
             </p>
           </div>
         )}
 
         {sorted.length > 0 ? (
           <section aria-labelledby="coupon-catalog-heading">
-            <h2 id="coupon-catalog-heading" className="sr-only">Verified coupon codes by category</h2>
+            <h2 id="coupon-catalog-heading" className="sr-only">Coupon codes by category</h2>
             <CouponFilterBar coupons={sorted} />
           </section>
         ) : (

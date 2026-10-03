@@ -34,7 +34,7 @@ export const getPostBySlugQuery = `
       ...,
       _type == "couponEmbed" => {
         "coupon": coupon-> {
-          _id, title, store, code, discount, description, affiliateUrl, expiryDate, startDate, active,
+          _id, title, store, code, discount, description, affiliateUrl, "affiliateSlug": affiliateSlug.current, expiryDate, startDate, active,
           "imageUrl": image.asset->url
         }
       }

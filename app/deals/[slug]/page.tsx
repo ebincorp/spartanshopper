@@ -10,6 +10,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import { pageMetadata } from '@/lib/seo'
+import { offerExpiryLabel } from '@/lib/offerExpiry'
+import { endTime } from '@/lib/offer-status'
 
 export const revalidate = 3600
 
@@ -45,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!deal) return {}
 
-  const ended = !deal.active || (deal.expiryDate ? new Date(deal.expiryDate) < new Date() : false)
+  const ended = !deal.active || (endTime(deal.expiryDate) ?? Infinity) <= Date.now()
 
   const description = ended
     ? `This ${deal.title} deal has ended. See today's live deals on SpartanShopper.`
@@ -122,7 +124,8 @@ export default async function DealPage({ params }: Props) {
   // The URL is deliberately kept alive (200, not 404) because external links —
   // Pinterest pins, backlinks, bookmarks — point at these pages and cannot be
   // updated after the fact. A dead-end 404 would break them permanently.
-  const expired = !deal.active || (deal.expiryDate ? new Date(deal.expiryDate) < new Date() : false)
+  const expired = !deal.active || (endTime(deal.expiryDate) ?? Infinity) <= Date.now()
+  const expiryLabel = offerExpiryLabel(deal.expiryDate)
   // Active deals only show the stored price while it's recently verified (see
   // lib/deal-price.ts). Ended deals keep showing it, labelled as historic.
   const priceFresh = isPriceFresh(deal.priceVerifiedAt)
@@ -298,12 +301,10 @@ export default async function DealPage({ params }: Props) {
               </div>
             )}
 
-            {deal.expiryDate && !expired && (
+            {expiryLabel && !expired && (
               <p className="text-sm text-gray-400 mb-6">
                 Expires:{' '}
-                {new Date(deal.expiryDate).toLocaleDateString('en-US', {
-                  month: 'long', day: 'numeric', year: 'numeric',
-                })}
+                {expiryLabel}
               </p>
             )}
 

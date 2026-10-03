@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import SaveFindButton from './SaveFindButton'
 import { isPriceFresh } from '@/lib/deal-price'
+import { offerExpiryLabel } from '@/lib/offerExpiry'
+import { endTime } from '@/lib/offer-status'
 
 interface DealCardProps {
   title: string
@@ -18,11 +20,11 @@ interface DealCardProps {
 }
 
 function getExpiryStatus(expiryDate?: string): 'expired' | 'soon' | 'ok' | null {
-  if (!expiryDate) return null
-  const now = new Date()
-  const expiry = new Date(expiryDate)
-  if (expiry < now) return 'expired'
-  const hoursLeft = (expiry.getTime() - now.getTime()) / (1000 * 60 * 60)
+  const expiry = endTime(expiryDate)
+  if (expiry === null) return null
+  const now = Date.now()
+  if (expiry <= now) return 'expired'
+  const hoursLeft = (expiry - now) / (1000 * 60 * 60)
   if (hoursLeft <= 48) return 'soon'
   return 'ok'
 }
@@ -46,6 +48,7 @@ export default function DealCard({
   // Sanity asset, which is stable and is available for the repaired deals.
   const imgSrc = image || imageUrl
   const expiryStatus = getExpiryStatus(expiryDate)
+  const expiryLabel = offerExpiryLabel(expiryDate)
   const priceFresh = isPriceFresh(priceVerifiedAt)
   const savings =
     originalPrice && originalPrice > salePrice
@@ -112,10 +115,10 @@ export default function DealCard({
         )}
 
         {/* Expiry */}
-        {expiryDate && expiryStatus !== 'expired' && (
+        {expiryLabel && expiryStatus !== 'expired' && (
           <p className={`text-xs mb-3 font-medium ${expiryStatus === 'soon' ? 'text-[#E63946]' : 'text-gray-500'}`}>
             {expiryStatus === 'soon' ? '⚠ Expires soon: ' : 'Expires: '}
-            {new Date(expiryDate).toLocaleDateString()}
+            {expiryLabel}
           </p>
         )}
 

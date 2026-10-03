@@ -70,7 +70,7 @@ export const dealBySlugQuery = `
 const COUPON_DATE_FILTER = `
   active == true
   && (!defined(startDate) || startDate <= now())
-  && (!defined(expiryDate) || expiryDate > now())
+  && (!defined(expiryDate) || select(length(expiryDate) == 10 => expiryDate + "T23:59:59.999Z", expiryDate) > now())
 `
 
 export const couponsQuery = `
