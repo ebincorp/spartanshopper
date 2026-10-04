@@ -52,8 +52,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = ended
     ? `This ${deal.title} deal has ended. See today's live deals on SpartanShopper.`
     : isPriceFresh(deal.priceVerifiedAt)
-      ? `Get ${deal.title} at ${deal.store} for $${deal.salePrice.toFixed(2)}. Shop now on SpartanShopper.`
-      : `${deal.title} at ${deal.store}. Check today's price and availability on SpartanShopper.`
+      ? `Get ${deal.title} for ${deal.salePrice.toFixed(2)}. Check the offer details on SpartanShopper.`
+      : `${deal.title}. Check today's price and availability on SpartanShopper.`
   const imageUrl = deal.image
     ? urlFor(deal.image).width(1200).height(630).url()
     : deal.imageUrl || undefined
