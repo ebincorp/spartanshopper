@@ -51,6 +51,18 @@ export default function CouponCard({
 
   const handleReveal = () => {
     setRevealed(true)
+    try {
+      const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag
+      gtag?.('event', 'coupon_code_revealed', {
+        coupon_slug: slug,
+        store,
+        discount_label: discount ?? '(not supplied)',
+        source_page_path: window.location.pathname,
+        tracking_version: 'coupon_v1',
+      })
+    } catch {
+      // Analytics must never prevent a shopper from revealing a code.
+    }
     navigator.clipboard?.writeText(code!).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)

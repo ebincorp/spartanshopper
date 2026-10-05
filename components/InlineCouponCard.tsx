@@ -58,7 +58,7 @@ export default function InlineCouponCard({ coupon }: Props) {
               >
                 {coupon.code}
               </div>
-              <CopyButton code={coupon.code} />
+              <CopyButton code={coupon.code} couponSlug={coupon.affiliateSlug ?? coupon._id} store={coupon.store} />
             </div>
           )}
 

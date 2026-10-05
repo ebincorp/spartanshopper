@@ -4,12 +4,25 @@ import { useState } from 'react'
 
 interface Props {
   code: string
+  couponSlug?: string
+  store?: string
 }
 
-export default function CopyButton({ code }: Props) {
+export default function CopyButton({ code, couponSlug, store }: Props) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
+    try {
+      const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag
+      gtag?.('event', 'coupon_code_copied', {
+        coupon_slug: couponSlug ?? '(unknown)',
+        store: store ?? '(unknown)',
+        source_page_path: window.location.pathname,
+        tracking_version: 'coupon_v1',
+      })
+    } catch {
+      // Copying the code must not depend on Analytics being available.
+    }
     try {
       await navigator.clipboard.writeText(code)
       setCopied(true)

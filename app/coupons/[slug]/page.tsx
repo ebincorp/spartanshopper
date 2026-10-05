@@ -197,7 +197,7 @@ export default async function CouponPage({ params }: Props) {
                 >
                   {coupon.code}
                 </div>
-                <CopyButton code={coupon.code} />
+                <CopyButton code={coupon.code} couponSlug={coupon.slug.current} store={coupon.store} />
               </div>
             )}
 
