@@ -17,6 +17,11 @@ const MARKETPLACE = 'www.amazon.com'
 const PARTNER_TAG = 'sku18798384-20'
 const BATCH_SIZE = 10 // GetItems accepts up to 10 ASINs per call
 const THROTTLE_MS = 1000
+// Amazon can occasionally throttle a healthy credential. Retrying a batch is
+// safe because GetItems is read-only; use a bounded backoff so a persistent
+// outage still returns control to the 60-second Vercel cron.
+const RATE_LIMIT_MAX_RETRIES = 3
+const RATE_LIMIT_INITIAL_BACKOFF_MS = 2000
 
 const RESOURCES = [
   'itemInfo.title',
@@ -60,6 +65,14 @@ function isNotEligible(err: unknown): boolean {
   if (reason === 'AssociateNotEligible') return true
   const blob = JSON.stringify(e?.body ?? e?.response?.body ?? e?.message ?? '')
   return /AssociateNotEligible/i.test(blob)
+}
+
+function isRateLimited(err: unknown): boolean {
+  // The vendored SDK exposes its HTTP response as a plain object. Keep this
+  // deliberately defensive so a future SDK version can nest the status.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const e = err as any
+  return e?.status === 429 || e?.response?.status === 429
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -137,28 +150,41 @@ export async function getItems(asins: string[]): Promise<GetItemsResult> {
     req.itemIds = batch
     req.resources = RESOURCES
 
-    try {
-      const resp = await api.getItems(MARKETPLACE, req)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const items: any[] = resp?.itemsResult?.items ?? []
-      for (const it of items) {
-        const mapped = mapItem(it)
-        if (mapped.asin) byAsin.set(mapped.asin, mapped)
-      }
-    } catch (err) {
-      if (isNotEligible(err)) {
-        return {
-          status: 'NOT_YET_ELIGIBLE',
-          message: 'Creators API returned AssociateNotEligible — credential still in review window.',
+    for (let attempt = 0; attempt <= RATE_LIMIT_MAX_RETRIES; attempt++) {
+      try {
+        const resp = await api.getItems(MARKETPLACE, req)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const items: any[] = resp?.itemsResult?.items ?? []
+        for (const it of items) {
+          const mapped = mapItem(it)
+          if (mapped.asin) byAsin.set(mapped.asin, mapped)
         }
+        break
+      } catch (err) {
+        if (isNotEligible(err)) {
+          return {
+            status: 'NOT_YET_ELIGIBLE',
+            message: 'Creators API returned AssociateNotEligible — credential still in review window.',
+          }
+        }
+
+        if (isRateLimited(err) && attempt < RATE_LIMIT_MAX_RETRIES) {
+          const delay = RATE_LIMIT_INITIAL_BACKOFF_MS * 2 ** attempt
+          console.warn(
+            `[creators-api] GetItems rate-limited for batch ${i / BATCH_SIZE + 1}; retrying in ${delay}ms`
+          )
+          await sleep(delay)
+          continue
+        }
+
+        // The SDK's callApi rejects with a plain object, not an Error — rethrowing
+        // it bare makes `err instanceof Error` false upstream, so the message
+        // collapses to "[object Object]" / "Unknown error". Normalize to a real
+        // Error carrying the actual status/body so the crash alert is diagnosable.
+        throw err instanceof Error
+          ? err
+          : new Error(`Creators API GetItems failed for [${batch.join(', ')}]: ${formatError(err)}`)
       }
-      // The SDK's callApi rejects with a plain object, not an Error — rethrowing
-      // it bare makes `err instanceof Error` false upstream, so the message
-      // collapses to "[object Object]" / "Unknown error". Normalize to a real
-      // Error carrying the actual status/body so the crash alert is diagnosable.
-      throw err instanceof Error
-        ? err
-        : new Error(`Creators API GetItems failed for [${batch.join(', ')}]: ${formatError(err)}`)
     }
 
     if (i + BATCH_SIZE < unique.length) await sleep(THROTTLE_MS)
