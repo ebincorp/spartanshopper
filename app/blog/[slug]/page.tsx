@@ -12,6 +12,7 @@ import InlineCouponCard from '@/components/InlineCouponCard'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import DealsPromoWidget from '@/components/DealsPromoWidget'
 import EmailSignup from '@/components/EmailSignup'
+import RelatedKitchenGuides from '@/components/RelatedKitchenGuides'
 import TikTokEmbed from '@/components/TikTokEmbed'
 import { pageMetadata } from '@/lib/seo'
 
@@ -356,6 +357,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         )}
 
+        <RelatedKitchenGuides slug={slug} />
         <EmailSignup />
 
         <div className="mt-8 flex justify-center">

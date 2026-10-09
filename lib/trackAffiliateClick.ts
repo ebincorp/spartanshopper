@@ -10,13 +10,25 @@ export function installAffiliateClickTracking(doc: Document, win: Window) {
     try { url = new URL(anchor.getAttribute('href')!, win.location.href); } catch { return; }
     if (url.origin !== win.location.origin) return;
     const match = url.pathname.match(/^\/go\/([^/]+)\/?$/);
-    if (!match) return;
+    const videoGuide = anchor.getAttribute('data-video-guide');
+    const isVideoGuide = win.location.pathname === '/videos' && !!videoGuide && url.pathname === `/blog/${videoGuide}`;
+    if (!match && !isVideoGuide) return;
 
     // gtag supplies the real client/session context and respects its consent settings.
     // Do not prevent navigation or invent IDs when Analytics is unavailable.
     const gtag = (win as Window & { gtag?: (...args: unknown[]) => void }).gtag;
     if (typeof gtag !== 'function') return;
     try {
+      if (isVideoGuide) {
+        gtag('event', 'video_guide_click', {
+          guide_slug: videoGuide,
+          source_page_path: '/videos',
+          page_location: `${win.location.origin}/videos`,
+          transport_type: 'beacon',
+        });
+        return;
+      }
+      if (!match) return;
       gtag('event', 'outbound_affiliate_click', {
         affiliate_slug: decodeURIComponent(match[1]),
         link_url: url.href,

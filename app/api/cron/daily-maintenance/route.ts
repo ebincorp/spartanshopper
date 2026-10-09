@@ -33,7 +33,7 @@ export const maxDuration = 60
  */
 export async function GET(req: NextRequest) {
   const auth = req.headers.get('authorization')
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -139,7 +139,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(summary)
   } catch (err) {
     const message = formatError(err)
-    console.error('[daily-maintenance]', message, err)
+    console.error('[daily-maintenance]', message)
     await sendVerifyAlert({
       severity: 'alert',
       subject: '🚨 Daily maintenance cron FAILED',

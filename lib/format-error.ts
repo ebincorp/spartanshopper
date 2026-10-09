@@ -7,7 +7,7 @@
  * the useless "[object Object]" that hid the real cause of a verify-deals crash.
  *
  * This pulls out a human-readable message from whatever it's handed, falling
- * back to a JSON dump that includes non-enumerable Error props (name/stack).
+ * back to a safe generic message instead of serializing request credentials.
  */
 export function formatError(err: unknown): string {
   if (err instanceof Error) {
@@ -18,7 +18,7 @@ export function formatError(err: unknown): string {
   if (typeof err !== 'object') return String(err)
 
   // Structured rejection (e.g. Creators API SDK, fetch Response-like). Surface
-  // the fields that actually explain the failure before falling back to a dump.
+  // the fields that explain the failure without serializing request options.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const e = err as any
   const parts: string[] = []
@@ -31,10 +31,7 @@ export function formatError(err: unknown): string {
   if (typeof reason === 'string' && reason) parts.push(`(${reason})`)
   if (parts.length > 0) return parts.join(' ')
 
-  try {
-    // getOwnPropertyNames so Error-like objects with non-enumerable props still serialize.
-    return JSON.stringify(err, Object.getOwnPropertyNames(err))
-  } catch {
-    return String(err)
-  }
+  // SDK error objects may contain Authorization headers and credential-bearing
+  // request options. Never serialize an unknown object into logs or email.
+  return 'Unknown service error (details omitted to protect credentials)'
 }

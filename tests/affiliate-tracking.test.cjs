@@ -17,7 +17,7 @@ const policy = load('lib/affiliateRequest.ts');
 const destination = 'https://www.amazon.com/dp/EXAMPLE?tag=spartan03-20&campaignId=amzn1.campaign.example&linkId=amzn1.campaign.example_123';
 const context = { params: Promise.resolve({ slug: 'test-deal' }) };
 function routeWith(resolver) {
-  return load('app/go/[slug]/route.ts', { '@/lib/affiliateRequest': policy, '@/lib/redirects': { getRedirectBySlug: resolver } });
+  return load('app/go/[slug]/route.ts', { '@/lib/affiliateRequest': policy, '@/lib/redirects': { getRedirectBySlug: resolver }, '@/lib/affiliateClickAnalytics': {recordAffiliateNavigation() {}} });
 }
 
 test('HEAD, prefetch and known bots never resolve a retailer link', async () => {

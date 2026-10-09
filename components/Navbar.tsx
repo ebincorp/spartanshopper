@@ -8,6 +8,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('')
 
   const navLinks = [
+    { label: 'Videos', href: '/videos' },
     { label: 'Deals', href: '/deals' },
     { label: 'Coupons', href: '/coupons' },
     { label: 'Sweepstakes', href: '/sweepstakes' },
