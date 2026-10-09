@@ -6,6 +6,7 @@ export const revalidate = 60
 export const metadata = pageMetadata({ title: 'Shop Our Videos', description: 'Find the products featured in SpartanShopper videos, read the buying guides, and check current retailer details.', path: '/videos', noIndex: true })
 // Social navigation destination, deliberately not an SEO competitor to the guides.
 const features = [
+  { slug: 'milkmaid-dress-fall-styling', label: 'Three ways to style a milkmaid dress for fall', category: 'Fashion', affiliate: 'scarlet-darkness-milkmaid-dress' },
   { slug: 'ototo-avocado-spoon-rest', label: 'A spot for your messy cooking spoon', category: 'Kitchen', affiliate: 'ototo-avocado-spoon-rest' },
   { slug: 'dr-jart-ceramidin-mask-20-minute-routine-guide', label: 'A simpler evening skincare step', category: 'Beauty', affiliate: 'dr-jart-ceramidin-skin-barrier-mask' },
 ]
