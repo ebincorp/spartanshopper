@@ -79,15 +79,15 @@ export async function GET(req: NextRequest) {
       // Mass-deactivation guard tripped: nothing was mutated. Surface loudly and
       // fail the run so Vercel flags it too.
       console.error(
-        `[daily-maintenance] verify: SUSPECTED_FAULT — ${result.unavailable}/${result.checked} unavailable, NOT committing`
+        `[daily-maintenance] verify: SUSPECTED_FAULT — ${result.unavailable}/${result.checked} missing prices, NOT committing`
       )
       await sendVerifyAlert({
         severity: 'alert',
         subject: '🚨 Deal verification ABORTED — suspected Amazon API fault',
-        heading: 'Refused to mass-deactivate deals',
+        heading: 'Refused to act on an incomplete Amazon response',
         lines: [
-          `<strong>${result.unavailable} of ${result.checked}</strong> deals came back "unavailable" — implausibly high.`,
-          'This looks like a partial Amazon outage or malformed response, not a real mass-expiry.',
+          `<strong>${result.unavailable} of ${result.checked}</strong> deals had no usable Amazon price — implausibly high.`,
+          'This looks like a partial Amazon outage or malformed response, not proof that the offers ended.',
           'The run was <strong>aborted with zero mutations</strong> to protect the deals page.',
           'If Amazon really did pull these, re-run <code>scripts/verify-amazon-deals.ts --execute</code> manually after confirming.',
         ],
@@ -104,7 +104,8 @@ export async function GET(req: NextRequest) {
     } else {
       const updated = result.rows.filter((r) => r.action === 'UPDATED').length
       const deactivated = result.rows.filter((r) => r.action === 'DEACTIVATED').length
-      summary.verify = { status: 'DONE', checked: result.rows.length, updated, deactivated }
+      const review = result.rows.filter((r) => r.action === 'REVIEW').length
+      summary.verify = { status: 'DONE', checked: result.rows.length, updated, deactivated, review }
 
       // Digest on EVERY successful run — a heartbeat. If this stops arriving the
       // cron itself is down, which no exception or 500 would otherwise surface.
@@ -114,12 +115,12 @@ export async function GET(req: NextRequest) {
       await sendVerifyAlert({
         severity: 'digest',
         subject:
-          updated + deactivated > 0
-            ? `✅ Daily maintenance: ${updated} repriced, ${deactivated + expire.deactivated} deactivated`
+          updated + deactivated + review > 0
+            ? `Daily maintenance: ${updated} repriced, ${deactivated + expire.deactivated} deactivated, ${review} need review`
             : `✅ Daily maintenance: all ${result.rows.length} deals OK`,
         heading: `Checked ${result.rows.length} deals · expiry sweep removed ${expire.deactivated}`,
         lines: [
-          `<strong>${result.rows.length}</strong> checked · <strong>${updated}</strong> repriced · <strong>${deactivated}</strong> deactivated by price.`,
+          `<strong>${result.rows.length}</strong> checked · <strong>${updated}</strong> repriced · <strong>${deactivated}</strong> deactivated by price · <strong>${review}</strong> need manual review.`,
           `Expiry sweep deactivated <strong>${expire.deactivated}</strong> (deals ${expire.deals}, coupons ${expire.coupons}).`,
           ...(changes.length > 0
             ? changes

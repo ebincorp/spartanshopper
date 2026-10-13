@@ -133,8 +133,9 @@ function makeApi() {
 
 /**
  * Fetch live data for the given ASINs. Batches by 10, throttles ~1s between
- * calls. Returns one CreatorItem per requested ASIN (unavailable=false for any
- * the API didn't return). Surfaces AssociateNotEligible as NOT_YET_ELIGIBLE.
+ * calls. Returns one CreatorItem per requested ASIN; an omitted ASIN has no
+ * price and must be reviewed rather than treated as confirmed out of stock.
+ * Surfaces AssociateNotEligible as NOT_YET_ELIGIBLE.
  */
 export async function getItems(asins: string[]): Promise<GetItemsResult> {
   const unique = [...new Set(asins.filter(Boolean))]
@@ -190,7 +191,7 @@ export async function getItems(asins: string[]): Promise<GetItemsResult> {
     if (i + BATCH_SIZE < unique.length) await sleep(THROTTLE_MS)
   }
 
-  // Ensure one entry per requested ASIN; missing ones are treated as unavailable.
+  // Ensure one entry per requested ASIN; missing ones have no verified price.
   const items: CreatorItem[] = unique.map(
     (asin) =>
       byAsin.get(asin) ?? {

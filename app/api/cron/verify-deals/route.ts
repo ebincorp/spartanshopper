@@ -64,15 +64,15 @@ export async function GET(req: NextRequest) {
     // Vercel also flags it. Committing here would have blanked the deals page.
     if (result.status === 'SUSPECTED_FAULT') {
       console.error(
-        `[/api/cron/verify-deals] SUSPECTED_FAULT — ${result.unavailable}/${result.checked} unavailable, NOT committing`
+        `[/api/cron/verify-deals] SUSPECTED_FAULT — ${result.unavailable}/${result.checked} missing prices, NOT committing`
       )
       await sendVerifyAlert({
         severity: 'alert',
         subject: '🚨 Deal verification ABORTED — suspected Amazon API fault',
-        heading: 'Refused to mass-deactivate deals',
+        heading: 'Refused to act on an incomplete Amazon response',
         lines: [
-          `<strong>${result.unavailable} of ${result.checked}</strong> deals came back "unavailable" — implausibly high.`,
-          'This looks like a partial Amazon outage or malformed response, not a real mass-expiry.',
+          `<strong>${result.unavailable} of ${result.checked}</strong> deals had no usable Amazon price — implausibly high.`,
+          'This looks like a partial Amazon outage or malformed response, not proof that the offers ended.',
           'The run was <strong>aborted with zero mutations</strong> to protect the deals page.',
           'If Amazon really did pull these, re-run <code>scripts/verify-amazon-deals.ts --execute</code> manually after confirming.',
         ],
@@ -85,6 +85,7 @@ export async function GET(req: NextRequest) {
 
     const updated = result.rows.filter((r) => r.action === 'UPDATED').length
     const deactivated = result.rows.filter((r) => r.action === 'DEACTIVATED').length
+    const review = result.rows.filter((r) => r.action === 'REVIEW').length
 
     if (updated + deactivated > 0) {
       revalidatePath('/deals')
@@ -101,12 +102,12 @@ export async function GET(req: NextRequest) {
     await sendVerifyAlert({
       severity: 'digest',
       subject:
-        updated + deactivated > 0
-          ? `✅ Deal verification: ${updated} repriced, ${deactivated} deactivated`
+        updated + deactivated + review > 0
+          ? `Deal verification: ${updated} repriced, ${deactivated} deactivated, ${review} need review`
           : `✅ Deal verification: all ${result.rows.length} deals OK`,
       heading: `Checked ${result.rows.length} deals`,
       lines: [
-        `<strong>${result.rows.length}</strong> checked · <strong>${updated}</strong> repriced · <strong>${deactivated}</strong> deactivated.`,
+        `<strong>${result.rows.length}</strong> checked · <strong>${updated}</strong> repriced · <strong>${deactivated}</strong> deactivated · <strong>${review}</strong> need manual review.`,
         ...(changes.length > 0
           ? changes
           : ['No changes — all active deals still valid at their stored price. (Heartbeat: cron ran.)']),
@@ -122,6 +123,7 @@ export async function GET(req: NextRequest) {
       checked: result.rows.length,
       updated,
       deactivated,
+      review,
     })
   } catch (err) {
     const message = formatError(err)

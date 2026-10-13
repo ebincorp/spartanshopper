@@ -55,7 +55,7 @@ async function main() {
   if (result.status === 'SUSPECTED_FAULT') {
     printTable(result.rows)
     console.log(
-      `\n🚨 SUSPECTED_FAULT — ${result.unavailable}/${result.checked} came back "unavailable" ` +
+      `\n🚨 SUSPECTED_FAULT — ${result.unavailable}/${result.checked} had no usable price ` +
         `(> ${'50'}% threshold).`
     )
     console.log(

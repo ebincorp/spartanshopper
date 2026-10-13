@@ -4,7 +4,8 @@
  * /api/cron/verify-deals route (execute mode).
  *
  * Rules (per record with an asin):
- *  - unavailable via API                       → DEACTIVATE (active=false)
+ *  - explicit out-of-stock signal              → DEACTIVATE (active=false)
+ *  - missing listing or price data             → REVIEW (no mutation)
  *  - currentPrice within ±$1 of stored price   → OK (no change)
  *  - price moved but savingsPercent >= 15       → UPDATE (salePrice/originalPrice)
  *  - savingsPercent < 15                        → DEACTIVATE
@@ -26,10 +27,9 @@ const PRICE_TOLERANCE = 1 // dollars
 const MIN_SAVINGS = 15 // percent
 
 // Safety guard against a bad-but-200 Amazon response. If the API has a partial
-// outage or returns malformed/empty items, every un-returned ASIN maps to
-// available=false → DEACTIVATED. Committing that would silently blank the whole
-// deals page while reporting success. When more than this fraction of a
-// large-enough batch comes back "unavailable", we treat it as a suspected API
+// outage or returns malformed/empty items, unreturned ASINs must not be
+// deactivated. When more than this fraction of a large-enough batch has no
+// usable price, we treat it as a suspected API
 // fault, mutate NOTHING, and surface SUSPECTED_FAULT so callers can alert.
 const FAULT_UNAVAILABLE_RATIO = 0.5
 const FAULT_MIN_SAMPLE = 5 // don't trip the guard on tiny batches
@@ -84,7 +84,13 @@ export function decide(rec: Record, item: CreatorItem | undefined): VerifyRow {
     savingsPercent: item?.savingsPercent,
   }
 
-  if (!item || !item.available || item.currentPrice == null) {
+  // The Creators API sometimes omits a purchasable ASIN or its price. That is
+  // not evidence that the live offer ended; a person must check the listing.
+  if (!item || item.currentPrice == null) {
+    return { ...base, action: 'REVIEW', reason: 'Amazon API returned no price; check product page' }
+  }
+
+  if (!item.available) {
     return { ...base, action: 'DEACTIVATED', reason: 'unavailable on Amazon' }
   }
 
@@ -134,7 +140,7 @@ export function decide(rec: Record, item: CreatorItem | undefined): VerifyRow {
 }
 
 export async function runVerifyDeals(opts: { execute: boolean; publishedOnly?: boolean }): Promise<VerifyResult> {
-  const client = opts.publishedOnly ? makeClient().withConfig({ perspective: 'published' }) : makeClient()
+  const client = makeClient().withConfig({ perspective: opts.publishedOnly === false ? 'raw' : 'published' })
 
   const records = await client.fetch<Record[]>(
     `*[_type in ["deal","coupon"] && active == true && defined(asin)]{
@@ -152,10 +158,10 @@ export async function runVerifyDeals(opts: { execute: boolean; publishedOnly?: b
   const byAsin = new Map(result.items.map((it) => [it.asin, it]))
   const rows = records.map((rec) => decide(rec, byAsin.get(rec.asin)))
 
-  // Guard: an implausible share of "unavailable" results signals an API fault
+  // Guard: an implausible share of missing-price results signals an API fault
   // (empty/partial response), not that every product genuinely went dead. Never
   // commit that — it would blank the deals page. Surface it for alerting instead.
-  const unavailable = rows.filter((r) => r.reason === 'unavailable on Amazon').length
+  const unavailable = rows.filter((r) => r.reason === 'Amazon API returned no price; check product page').length
   if (rows.length >= FAULT_MIN_SAMPLE && unavailable / rows.length > FAULT_UNAVAILABLE_RATIO) {
     return { status: 'SUSPECTED_FAULT', rows, checked: rows.length, unavailable }
   }
