@@ -5,11 +5,13 @@ import { dealsQuery, dealsByCategoryQuery, dealCategoriesQuery } from '@/lib/que
 import type { Deal } from '@/lib/types'
 import DealCard from '@/components/DealCard'
 import { isPriceFresh } from '@/lib/deal-price'
+import { endingSoonDeals } from '@/lib/ending-soon-deals'
+import EndingSoonDeals from '@/components/EndingSoonDeals'
 import DealShelf from '@/components/DealShelf'
 import DealsCategoryFilterBar from '@/components/DealsCategoryFilterBar'
 import { pageMetadata } from '@/lib/seo'
 
-export const revalidate = 3600
+export const revalidate = 300
 
 const CATEGORY_LABELS: Record<string, string> = {
   electronics: 'Electronics',
@@ -80,6 +82,8 @@ export default async function DealsPage({ searchParams }: Props) {
   // lists every active deal.
   const shelfCandidates = deals.filter((deal) => deal.hasCardImage)
   const claimed = new Set<string>()
+  const urgentDeals = endingSoonDeals(deals)
+  urgentDeals.forEach(deal => claimed.add(deal._id))
   const shelf = (pool: Deal[], limit = 8) => {
     const picked = pool.filter((deal) => !claimed.has(deal._id)).slice(0, limit)
     picked.forEach((deal) => claimed.add(deal._id))
@@ -124,6 +128,7 @@ export default async function DealsPage({ searchParams }: Props) {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-10">
+        <EndingSoonDeals deals={urgentDeals} />
         {/* Category Filters */}
         {categories.length > 0 && (
           <DealsCategoryFilterBar categories={categories} activeCategory={category} />

@@ -2,10 +2,12 @@ import Link from 'next/link'
 import { postCategoriesForDeals } from '@/lib/deal-categories'
 import { pageMetadata } from '@/lib/seo'
 import { client, urlFor } from '@/lib/sanity.client'
-import { couponsQuery, featuredDealsQuery } from '@/lib/queries'
+import { couponsQuery, featuredDealsQuery, dealsQuery } from '@/lib/queries'
 import type { Coupon, Deal, Post } from '@/lib/types'
 import CouponFilterBar from '@/components/CouponFilterBar'
 import DealCard from '@/components/DealCard'
+import EndingSoonDeals from '@/components/EndingSoonDeals'
+import { endingSoonDeals } from '@/lib/ending-soon-deals'
 
 export const revalidate = 300
 export const metadata = pageMetadata({
@@ -19,11 +21,13 @@ const relatedGuidesQuery = `*[_type == "post" && defined(slug.current)
   | order(publishedAt desc)[0...3] { _id, title, slug }`
 
 export default async function HomePage() {
-  const [couponResult, dealResult] = await Promise.allSettled([
+  const [couponResult, dealResult, urgentResult] = await Promise.allSettled([
     client.fetch<Coupon[]>(couponsQuery), client.fetch<Deal[]>(featuredDealsQuery),
+    client.fetch<Deal[]>(dealsQuery),
   ])
   const coupons = couponResult.status === 'fulfilled' ? couponResult.value : []
   const deals = dealResult.status === 'fulfilled' ? dealResult.value : []
+  const urgentDeals = endingSoonDeals(urgentResult.status === 'fulfilled' ? urgentResult.value : [], Date.now(), 3)
   const categories = postCategoriesForDeals(deals.map(deal => deal.category))
   const guides = categories.length
     ? await client.fetch<Post[]>(relatedGuidesQuery, { categories }).catch(() => [] as Post[])
@@ -42,23 +46,23 @@ export default async function HomePage() {
   return (
     <main className="bg-slate-50 text-slate-900">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
-      <section className="bg-[#1A1A2E] px-4 py-10 sm:py-14 text-white">
+      <section className="bg-[#1A1A2E] px-4 py-6 sm:py-8 text-white">
         <div className="max-w-7xl mx-auto grid grid-cols-1 gap-8 lg:grid-cols-[1.5fr_1fr] lg:items-center">
           <div>
             <p className="text-sm font-semibold tracking-widest uppercase text-rose-300 mb-3">SpartanShopper / Shop with a plan</p>
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight max-w-2xl">Find the right product.<br />Then find the better offer.</h1>
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight max-w-2xl">Find the right product.<br />Then find the better offer.</h1>
             <p className="text-slate-300 text-lg mt-4 max-w-xl">Start with a current offer, a practical comparison, or a quick search across home, beauty, tech, pets, and more.</p>
             <div className="flex flex-wrap gap-3 mt-6">
               <Link href="/deals" className="bg-[#E63946] rounded-lg px-6 py-3 font-bold hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">Shop current offers</Link>
               <Link href="/blog" className="border border-white/40 rounded-lg px-6 py-3 font-semibold hover:bg-white/10">Compare products</Link>
             </div>
-            <nav aria-label="Popular ways to shop" className="mt-7 flex flex-wrap gap-x-5 gap-y-3 text-sm">
+            <nav aria-label="Popular ways to shop" className="mt-4 hidden sm:flex flex-wrap gap-x-5 gap-y-3 text-sm">
               <Link href="/coupons" className="font-semibold text-white underline underline-offset-4 hover:text-rose-200">Browse coupon offers</Link>
               <Link href="/blog/psyllium-husk-vs-miralax" className="font-semibold text-white underline underline-offset-4 hover:text-rose-200">Read popular wellness comparisons</Link>
               <Link href="/blog/best-korean-eye-patches-2026" className="font-semibold text-white underline underline-offset-4 hover:text-rose-200">Explore beauty picks</Link>
             </nav>
           </div>
-          <form action="/search" role="search" className="min-w-0 bg-white rounded-2xl p-6 text-slate-900 shadow-lg">
+          <form action="/search" role="search" className="hidden lg:block min-w-0 bg-white rounded-2xl p-6 text-slate-900 shadow-lg">
             <label htmlFor="home-search" className="block text-xl font-bold mb-2">Know what you need?</label>
             <p id="search-help" className="text-slate-600 mb-4">Search product types, brands, stores, or buying questions.</p>
             <div className="flex gap-2">
@@ -72,6 +76,7 @@ export default async function HomePage() {
       <div className="border-b border-slate-200 bg-white px-4 py-3">
         <p className="max-w-7xl mx-auto text-sm text-slate-600">We may earn a commission from qualifying purchases. <Link href="/affiliate-disclosure" className="underline underline-offset-2">How affiliate links work</Link></p>
       </div>
+      {urgentDeals.length > 0 && <div className="max-w-7xl mx-auto px-4 pt-6"><EndingSoonDeals deals={urgentDeals} /></div>}
       <section id="coupons" className="max-w-7xl mx-auto px-4 py-9 scroll-mt-20">
         <div className="flex flex-wrap justify-between items-end gap-3 mb-5">
           <div><h2 className="text-3xl font-extrabold tracking-tight">Browse coupon offers</h2>
