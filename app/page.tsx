@@ -50,11 +50,11 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 gap-8 lg:grid-cols-[1.5fr_1fr] lg:items-center">
           <div>
             <p className="text-sm font-semibold tracking-widest uppercase text-rose-300 mb-3">SpartanShopper / Shop with a plan</p>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight max-w-2xl">Find the right product.<br />Then find the better offer.</h1>
-            <p className="text-slate-300 text-lg mt-4 max-w-xl">Start with a current offer, a practical comparison, or a quick search across home, beauty, tech, pets, and more.</p>
-            <div className="flex flex-wrap gap-3 mt-6">
-              <Link href="/deals" className="bg-[#E63946] rounded-lg px-6 py-3 font-bold hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">Shop current offers</Link>
-              <Link href="/blog" className="border border-white/40 rounded-lg px-6 py-3 font-semibold hover:bg-white/10">Compare products</Link>
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight max-w-2xl">Find the right product.<br />Then find the better offer.</h1>
+            <p className={`text-slate-300 text-lg mt-4 max-w-xl ${urgentDeals.length ? 'hidden sm:block' : ''}`}>Start with a current offer, a practical comparison, or a quick search across home, beauty, tech, pets, and more.</p>
+            <div className="flex flex-wrap gap-3 mt-4 sm:mt-6 text-sm sm:text-base">
+              <Link href="/deals" className="bg-[#E63946] rounded-lg px-4 sm:px-6 py-3 font-bold hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">Shop current offers</Link>
+              <Link href="/blog" className="border border-white/40 rounded-lg px-4 sm:px-6 py-3 font-semibold hover:bg-white/10">Compare products</Link>
             </div>
             <nav aria-label="Popular ways to shop" className="mt-4 hidden sm:flex flex-wrap gap-x-5 gap-y-3 text-sm">
               <Link href="/coupons" className="font-semibold text-white underline underline-offset-4 hover:text-rose-200">Browse coupon offers</Link>
