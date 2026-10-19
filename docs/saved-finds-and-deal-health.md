@@ -17,3 +17,13 @@ The default review queue examines published deal/coupon records, expiry dates, s
 The explicit Amazon check reuses `runVerifyDeals` in dry-run mode, scoped to published documents. Its suggested actions are review inputs, never mutations. Coupon eligibility is not verified by the list-price discount. API eligibility failures and mass-unavailability warnings remain visible. Reports can be exported as JSON.
 
 No publishing, deactivation, deployment, or scheduled job changes are performed by these features.
+
+## Saved Finds release — October 19, 2026
+
+Owner approved production deployment after reviewing the local preview. This release improves saved-state buttons, navigation counts, the shortlist layout, filters, coupon instructions, expiry labels, image fallbacks, removal with undo, loading/failure handling and interaction coverage. References remain browser-local; codes, prices and affiliate destinations are not persisted in browser storage. Coupon cards lead to coupon details and terms before shopping.
+
+Prepared from current origin/main in an isolated managed checkout. Preserves the Videos navigation link and video tracking, production price-freshness checks, and default Pacific timestamp formatting. No Sanity content or unrelated working-directory changes are included. Stale prices retain the existing Check current price fallback.
+
+Validation includes 28 Saved Finds/affiliate regression tests and a production build. Existing expiry, offer-status and Videos tracking checks also pass. Broader validation found a pre-existing mismatch in tests/deal-price.test.ts: missing clip-coupon API data is expected to deactivate, while the unchanged production verifier returns REVIEW. That test and verifier are outside this release and were left unchanged.
+
+Deployment follows the normal main-branch Vercel integration. Live verification evidence is retained in the local review workspace under docs/saved-finds-oct19. Rollback is a standard revert of this isolated release commit.

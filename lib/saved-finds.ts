@@ -9,6 +9,8 @@ export interface CurrentFind extends SavedFind {
   image?: string
   offer?: string
   affiliateSlug?: string
+  expiryDate?: string
+  instructions?: string
 }
 export function validFind(value: unknown): value is SavedFind {
   if (!value || typeof value !== 'object') return false
@@ -16,6 +18,12 @@ export function validFind(value: unknown): value is SavedFind {
   return (v.kind === 'deal' || v.kind === 'coupon') && typeof v.slug === 'string' && /^[a-zA-Z0-9_-]{1,200}$/.test(v.slug) && typeof v.title === 'string' && v.title.length <= 500
 }
 export function findKey(find: Pick<SavedFind, 'kind' | 'slug'>) { return `${find.kind}:${find.slug}` }
+export function updateSavedFinds(finds: SavedFind[], find: SavedFind, save: boolean): SavedFind[] {
+  const remaining = finds.filter(item => findKey(item) !== findKey(find))
+  if (!save) return remaining
+  if (remaining.length >= MAX_SAVED_FINDS) throw new Error('Your list holds 100 finds. Remove one before adding another.')
+  return [...remaining, { kind: find.kind, slug: find.slug, title: find.title }]
+}
 export function parseSavedFinds(raw: string | null): SavedFind[] {
   try {
     const values: unknown = JSON.parse(raw || '[]')

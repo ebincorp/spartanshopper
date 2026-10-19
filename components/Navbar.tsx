@@ -2,10 +2,13 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useSavedFinds } from './useSavedFinds'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const { finds, ready } = useSavedFinds()
+  const savedCount = ready && finds.length > 0 ? finds.length : null
 
   const navLinks = [
     { label: 'Videos', href: '/videos' },
@@ -65,9 +68,10 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-white/80 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold transition hover:bg-white/10"
+                className="text-white/80 hover:text-white px-3 py-2 rounded-lg text-sm font-semibold transition hover:bg-white/10"
               >
                 {link.label}
+                {link.href === '/my-finds' && savedCount !== null && <span className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-white/15 px-1.5 text-xs text-white" aria-label={`${savedCount} saved ${savedCount === 1 ? 'find' : 'finds'}`}>{savedCount}</span>}
               </Link>
             ))}
           </div>
@@ -77,6 +81,8 @@ export default function Navbar() {
             className="md:hidden text-white p-2"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-navigation"
           >
             {menuOpen ? (
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,7 +98,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {menuOpen && (
-          <div className="md:hidden pb-4 space-y-2">
+          <div id="mobile-navigation" className="md:hidden pb-4 space-y-2">
             {/* Search — mobile */}
             <form
               className="flex"
@@ -119,6 +125,7 @@ export default function Navbar() {
                 className="block text-white/80 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/10 transition"
               >
                 {link.label}
+                {link.href === '/my-finds' && savedCount !== null && <span className="ml-2 rounded-full bg-white/15 px-2 py-1 text-xs text-white" aria-label={`${savedCount} saved ${savedCount === 1 ? 'find' : 'finds'}`}>{savedCount}</span>}
               </Link>
             ))}
           </div>

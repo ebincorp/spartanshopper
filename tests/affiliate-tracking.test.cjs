@@ -17,7 +17,7 @@ const policy = load('lib/affiliateRequest.ts');
 const destination = 'https://www.amazon.com/dp/EXAMPLE?tag=spartan03-20&campaignId=amzn1.campaign.example&linkId=amzn1.campaign.example_123';
 const context = { params: Promise.resolve({ slug: 'test-deal' }) };
 function routeWith(resolver) {
-  return load('app/go/[slug]/route.ts', { '@/lib/affiliateRequest': policy, '@/lib/redirects': { getRedirectBySlug: resolver }, '@/lib/affiliateClickAnalytics': {recordAffiliateNavigation() {}} });
+  return load('app/go/[slug]/route.ts', { '@/lib/affiliateRequest': policy, '@/lib/redirects': { getRedirectBySlug: resolver }, '@/lib/affiliateClickAnalytics': { recordAffiliateNavigation() {} } });
 }
 
 test('HEAD, prefetch and known bots never resolve a retailer link', async () => {
@@ -63,9 +63,9 @@ function browserFixture() {
   const listeners = new Map();
   const calls = [];
   class Element {
-    constructor(href, download = false) { this.href = href; this.download = download; }
+    constructor(href, download = false, savedFind = false) { this.href = href; this.download = download; this.savedFind = savedFind; }
     closest() { return this.href === null ? null : this; }
-    hasAttribute() { return this.download; }
+    hasAttribute(name) { return name === 'download' ? this.download : name === 'data-saved-find' ? this.savedFind : false; }
     getAttribute() { return this.href; }
   }
   const doc = { title: 'Example offer', addEventListener: (name, fn) => listeners.set(name, fn), removeEventListener: name => listeners.delete(name) };
@@ -104,6 +104,18 @@ test('SPA navigation updates attribution without leaking URL tokens', () => {
   f.win.location = new URL('https://www.spartanshopper.com/blog/owala-vs-stanley?token=private#email');
   f.click('/go/test-deal');
   assert.equal(f.calls[0][2].page_location, 'https://www.spartanshopper.com/blog/owala-vs-stanley');
+});
+
+test('shortlist affiliate clicks are identified without changing attribution or navigation', () => {
+  const f = browserFixture();
+  f.win.location = new URL('https://www.spartanshopper.com/my-finds');
+  f.click('/go/saved-offer', { target: new f.Element('/go/saved-offer', false, true) });
+  assert.equal(f.calls.length, 1);
+  assert.equal(f.calls[0][2].saved_find, true);
+  assert.equal(f.calls[0][2].affiliate_slug, 'saved-offer');
+  assert.equal(f.calls[0][2].source_page_path, '/my-finds');
+  f.click('/go/other-offer');
+  assert.equal(f.calls[1][2].saved_find, false);
 });
 
 test('synthetic clicks, right clicks, unrelated links and downloads do not count', () => {

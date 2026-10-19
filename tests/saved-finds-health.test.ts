@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseSavedFinds, offerStatus } from '../lib/saved-finds'
+import { parseSavedFinds, offerStatus, updateSavedFinds, type SavedFind } from '../lib/saved-finds'
 import { inspectOffer, type HealthRecord } from '../lib/deal-health'
 import { healthAuthorized } from '../lib/deal-health-auth'
 
@@ -18,6 +18,17 @@ test('availability respects date-only end of day, future dates and inactive reco
   assert.equal(offerStatus(true, '2026-09-26', undefined, now), 'upcoming')
   assert.equal(offerStatus(false, undefined, undefined, now), 'unavailable')
   assert.equal(offerStatus(true, undefined, 'invalid-date', now), 'unavailable')
+})
+
+test('remove and undo are explicit operations and persist references only', () => {
+  const find: SavedFind = { kind: 'deal', slug: 'pick', title: 'A pick' }
+  const withDetails = { ...find, offer: '$10', affiliateSlug: 'shop', code: 'SECRET' }
+  assert.deepEqual(updateSavedFinds([], withDetails, true), [find])
+  assert.deepEqual(updateSavedFinds([find], find, false), [])
+  assert.deepEqual(updateSavedFinds([find], find, true), [find])
+  const full = Array.from({ length: 100 }, (_, i) => ({ ...find, slug: `pick-${i}` }))
+  assert.throws(() => updateSavedFinds(full, find, true), /100 finds/)
+  assert.equal(updateSavedFinds(full, full[0], false).length, 99)
 })
 const good: HealthRecord = { _id: 'offer', _type: 'deal', title: 'Offer', active: true, slug: 'offer', affiliateSlug: 'offer', salePrice: 20, originalPrice: 40, expiryDate: '2026-12-31', destination: 'https://www.amazon.com/dp/TEST?tag=sku18798384-20' }
 const now = Date.parse('2026-09-25T12:00:00Z')
