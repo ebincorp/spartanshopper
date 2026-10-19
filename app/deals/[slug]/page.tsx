@@ -141,7 +141,7 @@ export default async function DealPage({ params }: Props) {
     name: deal.title,
     ...(deal.description && { description: deal.description }),
     ...(imageUrl && { image: imageUrl }),
-    brand: { '@type': 'Brand', name: deal.store },
+    brand: { '@type': 'Brand', name: deal.brand || deal.store },
     offers: {
       '@type': 'Offer',
       price: deal.salePrice,

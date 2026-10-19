@@ -5,6 +5,8 @@ export interface SanityImage {
 }
 
 export interface Deal {
+  /** Manufacturer brand when supplied separately from the retailer. */
+  brand?: string
   _id: string
   title: string
   slug: { current: string }

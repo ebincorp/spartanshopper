@@ -59,6 +59,7 @@ export const relatedDealsQuery = `
 
 export const dealBySlugQuery = `
   *[_type == "deal" && slug.current == $slug][0] {
+    brand,
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
     description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, clipCoupon,
     // Filter refs before dereferencing: unpublished/future posts drop out, picked order is kept.
