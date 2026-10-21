@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-20",
+  "page": "https://spartanshopper.com/videos",
+  "purpose": "Help social visitors find the exact products from recent posts; not a search-acquisition landing page.",
+  "baselineCommit": "128e2ae",
+  "rollback": "Revert the scoped commit that adds this record. No Sanity documents were changed.",
+  "implementation": {
+    "configuredProducts": 21,
+    "publishedCardsAtVerification": 20,
+    "shoppingLinksAtVerification": 15,
+    "features": ["Newest-first product cards", "Brand, product and model search", "Category filters", "Exact-product photos", "Current retailer price links", "Inactive-offer notices"],
+    "indexability": "Existing noindex and sitemap exclusion retained",
+    "attribution": "Existing published /go/ redirects retained; no affiliate destinations rewritten",
+    "commerceClaims": "No stale prices, discounts or ratings repeated"
+  },
+  "evidence": {
+    "source": "Existing social publication records in the primary workspace, October 17-19, 2026",
+    "risina": "Existing /videos product retained; publication log described TikTok review, so no new assertion of public TikTok visibility",
+    "drJart": "Configured legacy guide has no published CMS record and is correctly omitted",
+    "assets": "Four exact-product reference photos reused from existing social assets; other images from published Sanity records"
+  },
+  "checks": {
+    "typecheck": "Passed: tsc --noEmit --incremental false",
+    "productionBuild": "Passed: Next.js production build, 205 routes",
+    "cjsTests": "30 passed, including 7 new social-product tests",
+    "otherTests": "6 passed; one unrelated pre-existing deal-price test expects DEACTIVATED instead of current REVIEW. Relevant files unchanged from baseline.",
+    "links": "All 20 detail URLs returned HTTP 200; all 15 enabled retailer links have published redirect records",
+    "browser": "Desktop and 390px mobile visual checks passed. Coffee-maker search, category mismatch, reset and exact-model HD433CP search verified.",
+    "performanceInterpretation": "QA visits are not customer conversions. No orders or revenue attributed to this update."
+  }
+}
