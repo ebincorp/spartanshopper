@@ -37,6 +37,14 @@ const BING_TITLE_OVERRIDES: Record<string, string> = {
   'psyllium-husk-vs-miralax': 'Psyllium vs. MiraLax: How to Choose',
 }
 
+const SEARCH_INTENT_METADATA: Record<string, { title: string; description: string }> = {
+  'how-to-choose-cordless-leaf-blower': {
+    title: 'Cordless Leaf Blower Guide: CFM, MPH and Batteries',
+    description:
+      'Cordless leaf blower buying guide for small yards, patios and wet leaves: compare CFM, MPH, battery runtime, working weight and when a rake works better.',
+  },
+}
+
 interface Props {
   params: Promise<{ slug: string }>
 }
@@ -58,8 +66,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // metaTitle overrides the post title but is still brand-suffixed, matching
   // the behaviour these posts already shipped with under the layout template.
-  const metaTitle = BING_TITLE_OVERRIDES[slug] || post.seo?.metaTitle || post.title
-  const metaDescription = post.seo?.metaDescription || post.excerpt
+  const searchIntent = SEARCH_INTENT_METADATA[slug]
+  const metaTitle = searchIntent?.title || BING_TITLE_OVERRIDES[slug] || post.seo?.metaTitle || post.title
+  const metaDescription = searchIntent?.description || post.seo?.metaDescription || post.excerpt
 
   return pageMetadata({
     title: metaTitle,
