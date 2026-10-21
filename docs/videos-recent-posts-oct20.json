@@ -6,8 +6,8 @@
   "rollback": "Revert the scoped commit that adds this record. No Sanity documents were changed.",
   "implementation": {
     "configuredProducts": 21,
-    "publishedCardsAtVerification": 20,
-    "shoppingLinksAtVerification": 15,
+    "publishedCardsAtVerification": 21,
+    "shoppingLinksAtVerification": 16,
     "features": ["Newest-first product cards", "Brand, product and model search", "Category filters", "Exact-product photos", "Current retailer price links", "Inactive-offer notices"],
     "indexability": "Existing noindex and sitemap exclusion retained",
     "attribution": "Existing published /go/ redirects retained; no affiliate destinations rewritten",
@@ -16,7 +16,7 @@
   "evidence": {
     "source": "Existing social publication records in the primary workspace, October 17-19, 2026",
     "risina": "Existing /videos product retained; publication log described TikTok review, so no new assertion of public TikTok visibility",
-    "drJart": "Configured legacy guide has no published CMS record and is correctly omitted",
+    "drJart": "Published guide retained in production. Unauthenticated preview reads omit its dotted document ID; an authenticated published-perspective read confirms post.dr-jart-ceramidin-mask-20-minute-routine-guide, published October 8 and last updated October 17. It is not a draft.",
     "assets": "Four exact-product reference photos reused from existing social assets; other images from published Sanity records"
   },
   "checks": {
@@ -24,7 +24,9 @@
     "productionBuild": "Passed: Next.js production build, 205 routes",
     "cjsTests": "30 passed, including 7 new social-product tests",
     "otherTests": "6 passed; one unrelated pre-existing deal-price test expects DEACTIVATED instead of current REVIEW. Relevant files unchanged from baseline.",
-    "links": "All 20 detail URLs returned HTTP 200; all 15 enabled retailer links have published redirect records",
+    "links": "All 21 detail URLs returned HTTP 200; all 16 enabled retailer links have published redirect records",
+    "liveDeployment": "64801e0 deployed successfully. Live HTTP 200, 21 cards, 16 retailer links, 5 inactive-offer notices, one H1, self-canonical, noindex/follow, /videos absent from sitemap, and all four reused product images HTTP 200.",
+    "searchConsole": "OpenSEO URL inspection unavailable: Search Console is not connected. No index submission attempted for this intentionally noindex page.",
     "browser": "Desktop and 390px mobile visual checks passed. Coffee-maker search, category mismatch, reset and exact-model HD433CP search verified.",
     "performanceInterpretation": "QA visits are not customer conversions. No orders or revenue attributed to this update."
   }
