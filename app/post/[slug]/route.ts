@@ -9,6 +9,8 @@ const sanity = createClient({
   dataset: 'production',
   apiVersion: '2024-01-01',
   useCdn: false,
+  // A legacy URL must never expose or redirect to an unpublished document.
+  perspective: 'published',
 })
 
 const typeToPath: Record<string, string> = {
