@@ -27,6 +27,16 @@ const CATEGORY_COLORS: Record<string, string> = {
   News: '#6D6875',
 }
 
+// Bing's October 21, 2026 crawl reported these four published pages above its
+// 70-character title recommendation once the site name is appended. Keep the
+// on-page H1 and CMS title intact; this only supplies concise search metadata.
+const BING_TITLE_OVERRIDES: Record<string, string> = {
+  'biodance-bio-collagen-real-deep-mask-review': 'BIODANCE Collagen Mask: Overnight and Rinsing',
+  'biodance-eye-patches-review': 'BIODANCE Eye Patches: How to Use',
+  'metamucil-for-constipation': 'Metamucil for Constipation: Powder and Capsules',
+  'psyllium-husk-vs-miralax': 'Psyllium vs. MiraLax: How to Choose',
+}
+
 interface Props {
   params: Promise<{ slug: string }>
 }
@@ -48,7 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // metaTitle overrides the post title but is still brand-suffixed, matching
   // the behaviour these posts already shipped with under the layout template.
-  const metaTitle = post.seo?.metaTitle || post.title
+  const metaTitle = BING_TITLE_OVERRIDES[slug] || post.seo?.metaTitle || post.title
   const metaDescription = post.seo?.metaDescription || post.excerpt
 
   return pageMetadata({
