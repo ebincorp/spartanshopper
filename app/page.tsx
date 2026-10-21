@@ -8,6 +8,8 @@ import CouponFilterBar from '@/components/CouponFilterBar'
 import DealCard from '@/components/DealCard'
 import EndingSoonDeals from '@/components/EndingSoonDeals'
 import { endingSoonDeals } from '@/lib/ending-soon-deals'
+import HalloweenFeature from '@/components/HalloweenFeature'
+import { isHalloweenFeatureActive } from '@/lib/halloween-feature'
 
 export const revalidate = 300
 export const metadata = pageMetadata({
@@ -76,6 +78,7 @@ export default async function HomePage() {
       <div className="border-b border-slate-200 bg-white px-4 py-3">
         <p className="max-w-7xl mx-auto text-sm text-slate-600">We may earn a commission from qualifying purchases. <Link href="/affiliate-disclosure" className="underline underline-offset-2">How affiliate links work</Link></p>
       </div>
+      {isHalloweenFeatureActive() && <HalloweenFeature />}
       {urgentDeals.length > 0 && <div className="max-w-7xl mx-auto px-4 pt-6"><EndingSoonDeals deals={urgentDeals} /></div>}
       <section id="coupons" className="max-w-7xl mx-auto px-4 py-9 scroll-mt-20">
         <div className="flex flex-wrap justify-between items-end gap-3 mb-5">
