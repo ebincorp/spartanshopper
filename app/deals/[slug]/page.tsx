@@ -12,6 +12,7 @@ import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import { pageMetadata } from '@/lib/seo'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
 import { endTime } from '@/lib/offer-status'
+import { dealSearchCopy, dealProductJsonLd, serializeDealJsonLd } from '@/lib/deal-seo'
 
 export const revalidate = 3600
 
@@ -49,18 +50,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const ended = !deal.active || (endTime(deal.expiryDate) ?? Infinity) <= Date.now()
 
-  const description = ended
-    ? `This ${deal.title} deal has ended. See today's live deals on SpartanShopper.`
-    : isPriceFresh(deal.priceVerifiedAt)
-      ? `Get ${deal.title} for USD ${deal.salePrice.toFixed(2)}. Check the offer details on SpartanShopper.`
-      : `${deal.title}. Check today's price and availability on SpartanShopper.`
+  const { title, description } = dealSearchCopy(deal, ended)
   const imageUrl = deal.image
     ? urlFor(deal.image).width(1200).height(630).url()
     : deal.imageUrl || undefined
 
   return {
     ...pageMetadata({
-      title: ended ? `${deal.title} — Deal Ended` : deal.title,
+      title,
       description,
       path: `/deals/${slug}`,
       image: imageUrl,
@@ -135,33 +132,15 @@ export default async function DealPage({ params }: Props) {
       ? Math.round(((deal.originalPrice - deal.salePrice) / deal.originalPrice) * 100)
       : null
 
-  const productJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: deal.title,
-    ...(deal.description && { description: deal.description }),
-    ...(imageUrl && { image: imageUrl }),
-    brand: { '@type': 'Brand', name: deal.brand || deal.store },
-    offers: {
-      '@type': 'Offer',
-      price: deal.salePrice,
-      priceCurrency: 'USD',
-      availability: expired
-        ? 'https://schema.org/OutOfStock'
-        : 'https://schema.org/InStock',
-      url: deal.affiliateUrl,
-      seller: { '@type': 'Organization', name: deal.store },
-      ...(deal.expiryDate && { priceValidUntil: deal.expiryDate }),
-    },
-  }
+  const productJsonLd = dealProductJsonLd(deal, imageUrl, !expired && priceFresh)
 
   return (
     <>
     {/* An Offer price Google can't match on the landing page is worse than none. */}
-    {showPrice && (
+    {productJsonLd && (
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeDealJsonLd(productJsonLd) }}
       />
     )}
     <script
