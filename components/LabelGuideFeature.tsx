@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import VoltariTekOffer from './VoltariTekOffer'
 import { LABEL_GUIDE_SLUGS, type BlogSearchItem } from '@/lib/blog-discovery'
 
 export default function LabelGuideFeature({ posts, image }: { posts: BlogSearchItem[]; image?: string }) {
@@ -16,6 +17,7 @@ export default function LabelGuideFeature({ posts, image }: { posts: BlogSearchI
         <p className="text-xs font-bold uppercase tracking-widest text-rose-700">Featured update · Workshop organization</p>
         <h2 id="label-guide-feature" className="mt-2 text-2xl font-extrabold text-slate-900">Your drawers. Your words. Preview the labels in 3D.</h2>
         <p className="mt-3 text-sm leading-relaxed text-slate-600">Explore the current custom builder, compare custom sets with ready-made packs, and check surface fit and pricing before you order.</p>
+        <VoltariTekOffer />
         <div className="mt-5 flex flex-wrap gap-3">
           <Link href="/blog/magnetic-toolbox-labels" className="rounded-xl bg-slate-900 px-5 py-3 font-bold text-white">Read the updated guide</Link>
           <Link href="/videos#voltaritek-label-builder" className="rounded-xl border border-slate-300 px-5 py-3 font-bold text-slate-900">Find the video product</Link>

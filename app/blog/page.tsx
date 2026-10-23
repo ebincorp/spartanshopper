@@ -6,6 +6,8 @@ import { getAllPostsQuery } from '@/lib/blogQueries'
 import type { Post } from '@/lib/types'
 import BlogDiscovery from '@/components/BlogDiscovery'
 import LabelGuideFeature from '@/components/LabelGuideFeature'
+import VoltariTekOffer from '@/components/VoltariTekOffer'
+import { LABEL_GUIDE_SLUGS } from '@/lib/blog-discovery'
 import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
@@ -128,6 +130,7 @@ export default async function BlogPage() {
                       {post.excerpt}
                     </p>
                   )}
+                  {LABEL_GUIDE_SLUGS.includes(post.slug.current) && <VoltariTekOffer />}
                   <Link
                     href={`/blog/${post.slug.current}`}
                     className="inline-block text-center text-white font-bold py-2.5 rounded-xl text-sm hover:opacity-90 active:scale-95 transition"

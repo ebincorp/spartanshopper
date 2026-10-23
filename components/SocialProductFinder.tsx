@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import VoltariTekOffer from './VoltariTekOffer'
+import { voltaritekOffer } from '../lib/voltaritek-offer'
 import { useMemo, useState } from 'react'
 import { filterSocialProducts, type SocialProductCard } from '@/lib/social-products'
 
@@ -93,6 +95,7 @@ export default function SocialProductFinder({ products }: { products: SocialProd
       <div id="social-product-results" className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {matches.map((product, index) => {
           const date = featuredDate(product.postedAt)
+          const labelOffer = product.id === 'voltaritek-label-builder' && voltaritekOffer.active && Boolean(product.affiliateHref) && !product.offerEnded
           const detailSlug = product.detailHref.split('?')[0].split('/').filter(Boolean).pop()
           return (
             <article id={product.id} data-social-product={product.id} key={product.id} className="flex min-w-0 scroll-mt-24 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -103,16 +106,17 @@ export default function SocialProductFinder({ products }: { products: SocialProd
                   {date && <time dateTime={product.postedAt} className="text-slate-500">Featured {date}</time>}
                 </div>
                 <h2 className="mt-2 text-xl font-bold leading-snug tracking-tight text-[#1A1A2E]">{product.title}</h2>
+                {labelOffer && <VoltariTekOffer showButton={false} />}
                 <p className="mt-3 text-sm leading-relaxed text-slate-600">{product.description}</p>
                 {product.offerEnded && <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm leading-relaxed text-amber-950">The previous offer is no longer active. View the product details for context.</p>}
                 <div className="mt-auto space-y-2 pt-5">
-                  {product.watchUrl && <a href={product.watchUrl} target="_blank" rel="noopener noreferrer" className={`flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-semibold text-[#1A1A2E] ${focusRing}`}>Watch the builder video ↗</a>}
                   {product.affiliateHref && !product.offerEnded && (
-                    <a href={product.affiliateHref} aria-label={`Check price at ${product.store} for ${product.title}`} rel="sponsored nofollow" className={`flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#1A1A2E] px-3 py-3 text-center text-sm font-bold text-white transition-colors hover:bg-[#30304b] ${focusRing}`}>
-                      Check price at {product.store}
+                    <a href={product.affiliateHref} aria-label={labelOffer ? 'Build VoltariTek labels and save 25%' : `Check price at ${product.store} for ${product.title}`} rel="sponsored nofollow" className={`flex min-h-12 items-center justify-center gap-2 rounded-xl ${labelOffer ? 'bg-[#E63946] hover:bg-rose-700' : 'bg-[#1A1A2E] hover:bg-[#30304b]'} px-3 py-3 text-center text-sm font-bold text-white transition-colors ${focusRing}`}>
+                      {labelOffer ? voltaritekOffer.cta : `Check price at ${product.store}`}
                       <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-4 w-4 shrink-0"><path d="M4 10h11m-4-4 4 4-4 4" /></svg>
                     </a>
                   )}
+                  {product.watchUrl && <a href={product.watchUrl} target="_blank" rel="noopener noreferrer" className={`flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-semibold text-[#1A1A2E] ${focusRing}`}>Watch the builder video ↗</a>}
                   <Link
                     href={product.detailHref}
                     aria-label={product.detailKind === 'guide' ? `Read the guide for ${product.title}` : `Product details for ${product.title}`}
