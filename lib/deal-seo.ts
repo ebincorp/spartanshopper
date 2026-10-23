@@ -24,7 +24,10 @@ function shorten(value: string, limit: number): string {
 /** Stable, retailer-neutral snippets: volatile prices belong in the verified offer. */
 export function dealSearchCopy(deal: DealSeoInput, ended: boolean) {
   const label = neutral(deal.title) || 'Product offer'
-  const title = shorten(label, ended ? 31 : 44) + (ended ? ' — Deal Ended' : '')
+  const prefix = label.split(/:\s/)[0]
+  const compact = label.length > 44 && prefix.length >= 16 && prefix.length <= 39
+    ? `${prefix} Deal` : label
+  const title = shorten(compact, ended ? 31 : 44) + (ended ? ' — Deal Ended' : '')
   const focus = deal.category === 'fashion'
     ? 'Check sizing, included pieces and delivery before buying.'
     : deal.category === 'automotive'
