@@ -17,7 +17,7 @@ const record = { _type: 'deal', slug: 'sample', active: true, imageUrl: 'https:/
 
 test('featured products have unique IDs, exact mappings and no old price claims', () => {
   assert.equal(new Set(features.map(f => f.id)).size, features.length)
-  assert.equal(features.length, 21)
+  assert.equal(features.length, 22)
   for (const f of features) {
     assert(Boolean(f.dealSlug) !== Boolean(f.guideSlug))
     assert.match(f.affiliateSlug, /^[a-z0-9-]+$/)

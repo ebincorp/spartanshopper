@@ -10,6 +10,8 @@ export interface SocialProductFeature {
   guideSlug?: string
   affiliateSlug: string
   fallbackImage?: string
+  store?: string
+  watchUrl?: string
 }
 
 export interface SocialProductCard {
@@ -25,6 +27,7 @@ export interface SocialProductCard {
   affiliateHref?: string
   store: string
   offerEnded: boolean
+  watchUrl?: string
 }
 
 export interface SocialProductRecord {
@@ -44,6 +47,7 @@ export interface SocialProductRecord {
 // deadline. Preserve the existing Risina pick without asserting TikTok visibility.
 // Add confirmed posts here; published CMS records still gate every card.
 export const socialProductFeatures: SocialProductFeature[] = [
+  { id: 'voltaritek-label-builder', title: 'VoltariTek Custom Magnetic Label Builder', description: 'Type your own label names and preview them in 3D. For toolbox drawers, medical carts, cabinets and workplace organization; check magnetic or adhesive backing for your surface.', category: 'Workshop & Organization', postedAt: '2026-10-22', guideSlug: 'magnetic-toolbox-labels', affiliateSlug: 'voltaritek-label-builder', store: 'VoltariTek', watchUrl: 'https://www.tiktok.com/@spartanshopper/video/7699663141633903885' },
   { id: 'shark-flexstyle', title: 'Shark FlexStyle Copper', description: 'HD433CP multi-styler bundle. Match the Copper model and included attachments from Mara’s video.', category: 'Beauty', postedAt: '2026-10-19', dealSlug: 'shark-flexstyle-copper-multi-styler', affiliateSlug: 'shark-flexstyle-copper-multi-styler' },
   { id: 'risina-trimmer', title: 'Risina 2-in-1 Bikini Trimmer', description: 'TC-017 Pink Essential Kit with separate body and facial heads and guide combs.', category: 'Beauty', postedAt: '2026-10-19', dealSlug: 'risina-2-in-1-bikini-trimmer-pink', affiliateSlug: 'risina-2-in-1-bikini-trimmer-pink' },
   { id: 'samsonite-freeform', title: 'Samsonite Freeform Luggage Set', description: 'Amethyst Purple two-piece set: carry-on and large suitcase. Check airline size limits before buying.', category: 'Travel', postedAt: '2026-10-18', dealSlug: 'samsonite-freeform-purple-2-piece', affiliateSlug: 'samsonite-freeform-purple-2-piece' },
@@ -88,7 +92,8 @@ export function buildSocialProductCards(features: SocialProductFeature[], record
       detailHref: `/${kind === 'deal' ? 'deals' : 'blog'}/${slug}`,
       detailKind: kind === 'deal' ? 'deal' as const : 'guide' as const,
       affiliateHref: !offerEnded && links.has(feature.affiliateSlug) ? `/go/${feature.affiliateSlug}` : undefined,
-      store: record.store || 'Amazon', offerEnded,
+      store: feature.store || record.store || 'Amazon', offerEnded,
+      ...(feature.watchUrl ? { watchUrl: feature.watchUrl } : {}),
     }]
   })
 }

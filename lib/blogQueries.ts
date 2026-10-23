@@ -1,6 +1,7 @@
 export const getAllPostsQuery = `
-  *[_type == "post"] | order(publishedAt desc) {
+  *[_type == "post" && defined(slug.current) && publishedAt <= now()] | order(publishedAt desc) {
     _id,
+    _updatedAt,
     title,
     slug,
     publishedAt,

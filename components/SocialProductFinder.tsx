@@ -63,7 +63,7 @@ export default function SocialProductFinder({ products }: { products: SocialProd
             type="search"
             value={query}
             onChange={event => setQuery(event.target.value)}
-            placeholder="Try Shark, coffee maker, toner pads…"
+            placeholder="Try VoltariTek, magnetic labels, coffee maker…"
             autoComplete="off"
             aria-controls="social-product-results"
             className={`min-h-12 w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-12 pr-4 text-base text-slate-900 placeholder:text-slate-500 ${focusRing}`}
@@ -106,6 +106,7 @@ export default function SocialProductFinder({ products }: { products: SocialProd
                 <p className="mt-3 text-sm leading-relaxed text-slate-600">{product.description}</p>
                 {product.offerEnded && <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm leading-relaxed text-amber-950">The previous offer is no longer active. View the product details for context.</p>}
                 <div className="mt-auto space-y-2 pt-5">
+                  {product.watchUrl && <a href={product.watchUrl} target="_blank" rel="noopener noreferrer" className={`flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-semibold text-[#1A1A2E] ${focusRing}`}>Watch the builder video ↗</a>}
                   {product.affiliateHref && !product.offerEnded && (
                     <a href={product.affiliateHref} aria-label={`Check price at ${product.store} for ${product.title}`} rel="sponsored nofollow" className={`flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#1A1A2E] px-3 py-3 text-center text-sm font-bold text-white transition-colors hover:bg-[#30304b] ${focusRing}`}>
                       Check price at {product.store}

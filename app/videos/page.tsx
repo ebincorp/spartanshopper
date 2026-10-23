@@ -39,7 +39,7 @@ export default async function VideosPage() {
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-rose-300">Saw it in a post? Find it here.</p>
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Shop our recent posts</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-200 sm:text-base">Find the exact products from our Instagram, TikTok and Pinterest posts.</p>
-          <p className="mt-3 max-w-3xl text-xs leading-relaxed text-slate-300">Affiliate links: As an Amazon Associate I earn from qualifying purchases.</p>
+          <p className="mt-3 max-w-3xl text-xs leading-relaxed text-slate-300">Affiliate disclosure: We may earn a commission from qualifying purchases through retailer links, at no extra cost to you. As an Amazon Associate I earn from qualifying purchases.</p>
         </div>
       </header>
       <SocialProductFinder products={products} />
