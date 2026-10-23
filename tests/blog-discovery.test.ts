@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { findBlogPosts, LABEL_GUIDE_SLUGS } from '../lib/blog-discovery'
-import { buildSocialProductCards, socialProductFeatures } from '../lib/social-products'
+import { buildSocialProductCards, filterSocialProducts, socialProductFeatures } from '../lib/social-products'
 const posts = LABEL_GUIDE_SLUGS.map((slug, i) => ({ id: String(i), slug, title: slug.replaceAll('-', ' '), category: 'Reviews', publishedAt: '2026-05-01', updatedAt: '2026-10-23' }))
 const other = { id: 'other', slug: 'coffee', title: 'Café coffee guide', category: 'Kitchen', publishedAt: '2026-10-22', updatedAt: '2026-10-22' }
 test('VoltariTek and magnetic label searches find all eight established guides', () => {
@@ -20,6 +20,7 @@ test('builder video card uses its real retailer, guide and watch URL', () => {
   const records = [{ _type: 'post' as const, slug: 'magnetic-toolbox-labels', publishedAt: '2026-05-01' }]
   const card = buildSocialProductCards([feature], records, ['voltaritek-label-builder'], Date.parse('2026-10-23'))[0]
   assert.equal(card.store, 'VoltariTek')
+  assert.equal(filterSocialProducts([card], 'magnetic labels').length, 1)
   assert.equal(card.affiliateHref, '/go/voltaritek-label-builder')
   assert.equal(card.detailHref, '/blog/magnetic-toolbox-labels')
   assert.equal(card.watchUrl, 'https://www.tiktok.com/@spartanshopper/video/7699663141633903885')
