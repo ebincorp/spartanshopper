@@ -287,10 +287,13 @@ export default async function DealPage({ params }: Props) {
               </p>
             )}
 
+            <p className="mb-3 text-xs leading-relaxed text-gray-500">
+              Affiliate disclosure: We may earn a commission from qualifying purchases, at no extra cost to you.
+            </p>
             <a
               href={shopUrl}
               target="_blank"
-              rel="noopener noreferrer nofollow"
+              rel="sponsored noopener noreferrer nofollow"
               className={`block w-full text-center font-extrabold py-4 rounded-xl text-lg tracking-wide transition ${
                 expired
                   ? 'bg-gray-200 text-gray-400 pointer-events-none'
