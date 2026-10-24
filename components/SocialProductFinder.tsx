@@ -116,7 +116,7 @@ export default function SocialProductFinder({ products }: { products: SocialProd
                       <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-4 w-4 shrink-0"><path d="M4 10h11m-4-4 4 4-4 4" /></svg>
                     </a>
                   )}
-                  {product.watchUrl && <a href={product.watchUrl} target="_blank" rel="noopener noreferrer" className={`flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-semibold text-[#1A1A2E] ${focusRing}`}>Watch the builder video ↗</a>}
+                  {product.watchUrl && <a href={product.watchUrl} target="_blank" rel="noopener noreferrer" className={`flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-semibold text-[#1A1A2E] ${focusRing}`}>Watch the video ↗</a>}
                   <Link
                     href={product.detailHref}
                     aria-label={product.detailKind === 'guide' ? `Read the guide for ${product.title}` : `Product details for ${product.title}`}
