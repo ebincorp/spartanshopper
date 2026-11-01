@@ -18,7 +18,7 @@ function featuredDate(value?: string) {
 function ProductImage({ product, priority }: { product: SocialProductCard; priority: boolean }) {
   const [failed, setFailed] = useState(false)
   return (
-    <div className={`relative flex shrink-0 items-center justify-center overflow-hidden border-b border-slate-100 bg-white ${product.videoThumbnail ? 'h-80 sm:h-96' : 'h-52 p-5 sm:h-56 sm:p-6'}`}>
+    <div className={`relative flex shrink-0 items-center justify-center overflow-hidden border-b border-slate-100 bg-white ${product.largeImage ? 'h-80 sm:h-96' : 'h-52 p-5 sm:h-56 sm:p-6'}`}>
       {product.imageUrl && !failed ? (
         // Existing published product imagery; never a promotional graphic with an old price.
         // eslint-disable-next-line @next/next/no-img-element
@@ -27,7 +27,7 @@ function ProductImage({ product, priority }: { product: SocialProductCard; prior
           alt={product.imageAlt}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
-          className={`absolute inset-0 h-full w-full object-contain ${product.videoThumbnail ? '' : 'p-5 sm:p-6'}`}
+          className={`absolute inset-0 h-full w-full object-contain ${product.largeImage ? '' : 'p-5 sm:p-6'}`}
           onError={() => setFailed(true)}
         />
       ) : (
