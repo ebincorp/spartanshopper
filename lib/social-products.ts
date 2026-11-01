@@ -113,6 +113,9 @@ export function filterSocialProducts(products: SocialProductCard[], query: strin
   return products.filter(product => {
     if (category !== 'All' && product.category !== category) return false
     const searchable = normalize(`${product.title} ${product.description} ${product.category}`)
-    return words.every(word => searchable.includes(word))
+    return words.every(word => searchable.includes(word) || (
+      // Shoppers type "pajamas" or "cardigans" even when a title uses the singular.
+      word.length > 3 && word.endsWith('s') && !word.endsWith('ss') && searchable.includes(word.slice(0, -1))
+    ))
   })
 }
