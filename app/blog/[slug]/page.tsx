@@ -19,6 +19,13 @@ import { pageMetadata } from '@/lib/seo'
 export const revalidate = 3600
 export const dynamicParams = true
 
+// These guides use exact portrait product photos; keep every garment visible.
+const FULL_PRODUCT_COVERS = new Set([
+  'lillusory-cardigan-fabric-fit-guide',
+  'campsnail-fleece-lined-leggings-fit-guide',
+  'ekouaer-two-pack-pajama-sets-guide',
+])
+
 const CATEGORY_COLORS: Record<string, string> = {
   Deals: '#E63946',
   Coupons: '#2A9D8F',
@@ -74,7 +81,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: metaTitle,
     description: metaDescription ?? '',
     path: `/blog/${slug}`,
-    image: post.coverImage ? urlFor(post.coverImage).width(1200).height(630).url() : undefined,
+    image: post.coverImage ? (FULL_PRODUCT_COVERS.has(slug)
+      ? urlFor(post.coverImage).width(1200).height(630).fit('max').url()
+      : urlFor(post.coverImage).width(1200).height(630).url()) : undefined,
     type: 'article',
     ...(post.seo?.canonicalUrl ? { canonicalPath: post.seo.canonicalUrl } : {}),
     // Time-bound posts stay published but stop being indexed after their date.
@@ -313,12 +322,12 @@ export default async function BlogPostPage({ params }: Props) {
     <main className="min-h-screen bg-gray-50">
       {/* Cover image */}
       {post.coverImage && (
-        <div className="relative w-full max-w-3xl mx-auto h-48 sm:h-96 bg-gray-200 overflow-hidden">
+        <div className={`relative w-full max-w-3xl mx-auto overflow-hidden ${FULL_PRODUCT_COVERS.has(post.slug.current) ? 'h-64 sm:h-96 bg-white' : 'h-48 sm:h-96 bg-gray-200'}`}>
           <Image
             src={urlFor(post.coverImage).width(1200).url()}
-            alt={post.title}
+            alt={post.coverImage.alt || post.title}
             fill
-            className={`object-cover ${
+            className={FULL_PRODUCT_COVERS.has(post.slug.current) ? 'object-contain' : `object-cover ${
               // is-amazon-luxury-authentic: the GZ94 sneaker sits in the
               // bottom ~45% of its 500x500 source frame — lower than the
               // other cover photos on this template — so object-center
@@ -330,14 +339,14 @@ export default async function BlogPostPage({ params }: Props) {
             priority
             unoptimized
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          {!FULL_PRODUCT_COVERS.has(post.slug.current) && <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />}
         </div>
       )}
 
       {/* Header */}
       <div
         style={{ backgroundColor: '#1A1A2E' }}
-        className={`px-4 py-10 ${post.coverImage ? '-mt-16 relative' : ''}`}
+        className={`px-4 py-10 ${post.coverImage && !FULL_PRODUCT_COVERS.has(post.slug.current) ? '-mt-16 relative' : ''}`}
       >
         <div className="max-w-3xl mx-auto">
           {post.category && (
