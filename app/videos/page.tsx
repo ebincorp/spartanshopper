@@ -15,7 +15,7 @@ export const metadata = pageMetadata({
 // Social navigation, not a competing SEO landing page. Keep noindex and sitemap
 // exclusion, and never repeat prices from old posts as current offers.
 export default async function VideosPage() {
-  const [records, links] = await Promise.all([
+  const [records, links, featuredGuides] = await Promise.all([
     client.fetch<SocialProductRecord[]>(`*[
       (_type == "deal" && slug.current in $dealSlugs) ||
       (_type == "post" && slug.current in $guideSlugs && publishedAt <= now())
@@ -30,7 +30,14 @@ export default async function VideosPage() {
     client.fetch<{ slug: string }[]>('*[_type == "affiliateLink" && slug.current in $slugs && defined(destination) && destination != ""]{"slug": slug.current}', {
       slugs: socialProductFeatures.map(feature => feature.affiliateSlug),
     }),
+    client.fetch<{ slug: string }[]>('*[_type == "post" && slug.current in $slugs && publishedAt <= now()]{"slug": slug.current}', {
+      slugs: ['jiyu-toner-pad-dupes', 'cosori-turboblaze-vs-ninja-af141'],
+    }),
   ])
+  const recentComparisons = [
+    { slug: 'jiyu-toner-pad-dupes', label: 'Beauty', title: 'JiYu vs medicube toner pads', description: 'Compare cost per pad, jar counts and formula differences.', action: 'Compare toner pads' },
+    { slug: 'cosori-turboblaze-vs-ninja-af141', label: 'Kitchen', title: 'COSORI TurboBlaze vs Ninja AF141', description: 'Compare basket size and cooking modes before paying for extras.', action: 'Compare air fryers' },
+  ].filter(guide => featuredGuides.some(record => record.slug === guide.slug))
   const products = buildSocialProductCards(socialProductFeatures, records, links.map(link => link.slug))
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
@@ -42,6 +49,22 @@ export default async function VideosPage() {
           <p className="mt-3 max-w-3xl text-xs leading-relaxed text-slate-300">Affiliate disclosure: We may earn a commission from qualifying purchases through retailer links, at no extra cost to you. As an Amazon Associate I earn from qualifying purchases.</p>
         </div>
       </header>
+      {recentComparisons.length > 0 && (
+        <section aria-labelledby="recent-comparisons" className="mx-auto max-w-6xl px-5 pt-7">
+          <h2 id="recent-comparisons" className="text-xl font-bold text-[#1A1A2E]">From our latest posts</h2>
+          <p className="mt-1 text-sm text-slate-600">Open the comparison you came here for.</p>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {recentComparisons.map(guide => (
+              <Link key={guide.slug} href={`/blog/${guide.slug}`} className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-[#E63946] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E63946]">
+                <p className="text-xs font-bold uppercase tracking-wider text-[#E63946]">{guide.label}</p>
+                <h3 className="mt-2 text-lg font-bold text-[#1A1A2E]">{guide.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{guide.description}</p>
+                <p className="mt-4 text-sm font-bold text-[#1A1A2E] group-hover:underline">{guide.action} <span aria-hidden="true">→</span></p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
       <SocialProductFinder products={products} />
       <p className="mx-auto max-w-6xl px-5 pb-6 text-xs leading-relaxed text-slate-500">Prices, coupons and availability can change after a post; check the retailer before buying. Our content may use AI presenters and illustrative images.</p>
       <nav aria-label="More shopping help" className="mx-auto flex max-w-6xl flex-wrap gap-x-6 gap-y-4 border-t border-slate-200 px-5 py-8 text-sm font-semibold text-[#1A1A2E]">
