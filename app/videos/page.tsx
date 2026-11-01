@@ -50,20 +50,19 @@ export default async function VideosPage() {
         </div>
       </header>
       {recentComparisons.length > 0 && (
-        <section aria-labelledby="recent-comparisons" className="mx-auto max-w-6xl px-5 pt-7">
-          <h2 id="recent-comparisons" className="text-xl font-bold text-[#1A1A2E]">From our latest posts</h2>
-          <p className="mt-1 text-sm text-slate-600">Open the comparison you came here for.</p>
+        <details className="mx-auto max-w-6xl px-5 pt-4">
+          <summary className="min-h-11 cursor-pointer rounded-lg py-3 text-sm font-semibold text-[#1A1A2E] underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E63946]">Toner-pad &amp; air-fryer comparisons</summary>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {recentComparisons.map(guide => (
               <Link key={guide.slug} href={`/blog/${guide.slug}`} className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-[#E63946] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E63946]">
                 <p className="text-xs font-bold uppercase tracking-wider text-[#E63946]">{guide.label}</p>
-                <h3 className="mt-2 text-lg font-bold text-[#1A1A2E]">{guide.title}</h3>
+                <h2 className="mt-2 text-lg font-bold text-[#1A1A2E]">{guide.title}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">{guide.description}</p>
                 <p className="mt-4 text-sm font-bold text-[#1A1A2E] group-hover:underline">{guide.action} <span aria-hidden="true">→</span></p>
               </Link>
             ))}
           </div>
-        </section>
+        </details>
       )}
       <SocialProductFinder products={products} />
       <p className="mx-auto max-w-6xl px-5 pb-6 text-xs leading-relaxed text-slate-500">Prices, coupons and availability can change after a post; check the retailer before buying. Our content may use AI presenters and illustrative images.</p>
