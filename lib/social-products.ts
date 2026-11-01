@@ -10,6 +10,7 @@ export interface SocialProductFeature {
   guideSlug?: string
   affiliateSlug: string
   fallbackImage?: string
+  imageAlt?: string
   store?: string
   watchUrl?: string
 }
@@ -47,9 +48,9 @@ export interface SocialProductRecord {
 // deadline. Preserve the existing Risina pick without asserting TikTok visibility.
 // Add confirmed posts here; published CMS records still gate every card.
 export const socialProductFeatures: SocialProductFeature[] = [
-  { id: 'lillusory-cardigan', title: 'LILLUSORY Lightweight Cardigan', description: 'Check the 65% polyester, 30% rayon and 5% spandex blend, open-front fit and selected color. Presenter clothing is illustrative.', category: 'Fashion', postedAt: '2026-11-01', guideSlug: 'lillusory-cardigan-fabric-fit-guide', affiliateSlug: 'lillusory-lightweight-cardigan', watchUrl: 'https://www.tiktok.com/@spartanshopper/video/7703261111520464141' },
-  { id: 'campsnail-fleece-leggings', title: 'CAMPSNAIL Fleece-Lined Leggings', description: 'Waist, hips and inseam before fleece. Read the fit guide and the listing’s frequently returned notice before choosing a size.', category: 'Fashion', postedAt: '2026-11-01', guideSlug: 'campsnail-fleece-lined-leggings-fit-guide', affiliateSlug: 'campsnail-fleece-lined-leggings', watchUrl: 'https://www.tiktok.com/@spartanshopper/video/7703261633090522381' },
-  { id: 'ekouaer-pajama-two-pack', title: 'Ekouaer Two-Pack Pajama Sets', description: 'Two matching sets, four garments. Check the polyester-spandex blend, top and pants measurements, and selected prints.', category: 'Fashion', postedAt: '2026-11-01', guideSlug: 'ekouaer-two-pack-pajama-sets-guide', affiliateSlug: 'ekouaer-two-pack-pajama-sets', watchUrl: 'https://www.tiktok.com/@spartanshopper/video/7703262146922155277' },
+  { id: 'lillusory-cardigan', fallbackImage: '/images/social-products/fashion-cardigan-video-nov01.jpg', imageAlt: 'Video preview: Mara in an ivory shirt and chocolate waistcoat discussing the LILLUSORY cardigan; presenter clothing is not the product.', title: 'LILLUSORY Lightweight Cardigan', description: 'Check the 65% polyester, 30% rayon and 5% spandex blend, open-front fit and selected color. Presenter clothing is illustrative.', category: 'Fashion', postedAt: '2026-11-01', guideSlug: 'lillusory-cardigan-fabric-fit-guide', affiliateSlug: 'lillusory-lightweight-cardigan', watchUrl: 'https://www.tiktok.com/@spartanshopper/video/7703261111520464141' },
+  { id: 'campsnail-fleece-leggings', fallbackImage: '/images/social-products/fashion-leggings-video-nov01.jpg', imageAlt: 'Video preview: Jace in a rust sweatshirt discussing CAMPSNAIL leggings; presenter clothing is not the product.', title: 'CAMPSNAIL Fleece-Lined Leggings', description: 'Waist, hips and inseam before fleece. Read the fit guide and the listing’s frequently returned notice before choosing a size.', category: 'Fashion', postedAt: '2026-11-01', guideSlug: 'campsnail-fleece-lined-leggings-fit-guide', affiliateSlug: 'campsnail-fleece-lined-leggings', watchUrl: 'https://www.tiktok.com/@spartanshopper/video/7703261633090522381' },
+  { id: 'ekouaer-pajama-two-pack', fallbackImage: '/images/social-products/fashion-pajamas-video-nov01.jpg', imageAlt: 'Video preview: Mara in a powder-blue sweatshirt discussing the Ekouaer pajama two-pack; presenter clothing is not the product.', title: 'Ekouaer Two-Pack Pajama Sets', description: 'Two matching sets, four garments. Check the polyester-spandex blend, top and pants measurements, and selected prints.', category: 'Fashion', postedAt: '2026-11-01', guideSlug: 'ekouaer-two-pack-pajama-sets-guide', affiliateSlug: 'ekouaer-two-pack-pajama-sets', watchUrl: 'https://www.tiktok.com/@spartanshopper/video/7703262146922155277' },
   { id: 'tata-harper-creme-supreme', title: 'Tata Harper Crème Supreme Rich Moisture Cream', description: 'Full-size 1.7 fl oz / 50 ml rich moisture cream for dry or mature-feeling skin. It has a strong botanical fragrance, so it is not the pick for fragrance-free routines. Check the live price before buying.', category: 'Beauty', postedAt: '2026-10-24', dealSlug: 'tata-harper-creme-supreme-50ml', affiliateSlug: 'tata-harper-creme-supreme-50ml', watchUrl: 'https://www.tiktok.com/@spartanshopper/video/7700364256016944397' },
   { id: 'voltaritek-label-builder', title: 'VoltariTek Custom Magnetic Labels & 3D Builder', description: 'Type your own label names and preview them in 3D. For toolbox drawers, medical carts, cabinets and workplace organization; check magnetic or adhesive backing for your surface.', category: 'Workshop & Organization', postedAt: '2026-10-22', guideSlug: 'magnetic-toolbox-labels', affiliateSlug: 'voltaritek-label-builder', store: 'VoltariTek', watchUrl: 'https://www.tiktok.com/@spartanshopper/video/7699663141633903885' },
   { id: 'shark-flexstyle', title: 'Shark FlexStyle Copper', description: 'HD433CP multi-styler bundle. Match the Copper model and included attachments from Mara’s video.', category: 'Beauty', postedAt: '2026-10-19', dealSlug: 'shark-flexstyle-copper-multi-styler', affiliateSlug: 'shark-flexstyle-copper-multi-styler' },
@@ -92,7 +93,7 @@ export function buildSocialProductCards(features: SocialProductFeature[], record
     return [{
       id: feature.id, title: feature.title, description: feature.description,
       category: feature.category, postedAt: feature.postedAt,
-      imageUrl, imageAlt: feature.title,
+      imageUrl, imageAlt: feature.imageAlt || feature.title,
       detailHref: `/${kind === 'deal' ? 'deals' : 'blog'}/${slug}`,
       detailKind: kind === 'deal' ? 'deal' as const : 'guide' as const,
       affiliateHref: !offerEnded && links.has(feature.affiliateSlug) ? `/go/${feature.affiliateSlug}` : undefined,
