@@ -19,11 +19,14 @@ import { pageMetadata } from '@/lib/seo'
 export const revalidate = 3600
 export const dynamicParams = true
 
-// These guides use exact portrait product photos; keep every garment visible.
+// These guides use exact product photos; keep the complete products visible.
 const FULL_PRODUCT_COVERS = new Set([
   'lillusory-cardigan-fabric-fit-guide',
   'campsnail-fleece-lined-leggings-fit-guide',
   'ekouaer-two-pack-pajama-sets-guide',
+  'kidmi-clogs-sizing-materials-guide',
+  'everfoams-slippers-sizing-care-guide',
+  'purse-organizer-insert-size-guide',
 ])
 
 const CATEGORY_COLORS: Record<string, string> = {
