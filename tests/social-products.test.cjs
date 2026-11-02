@@ -19,7 +19,7 @@ test('featured products have unique IDs, exact mappings and no old price claims'
   assert.equal(new Set(features.map(f => f.id)).size, features.length)
   assert(features.length > 0)
   for (const f of features) {
-    assert(Boolean(f.dealSlug) !== Boolean(f.guideSlug))
+    assert.equal([f.dealSlug, f.guideSlug, f.postUrl].filter(Boolean).length, 1)
     assert.match(f.affiliateSlug, /^[a-z0-9-]+$/)
     // Fabric percentages are product facts, not stale discount claims.
     assert(!/\$\d|\d+%\s*off|save\s+\d+%/i.test(f.title + f.description))
@@ -36,6 +36,19 @@ test('published product maps to exact detail and verified redirect', () => {
   assert.equal(card.affiliateHref, '/go/sample')
   assert.equal(card.offerEnded, false)
   assert.equal(build([feature], [record], [], now)[0].affiliateHref, undefined)
+})
+
+test('social-only products require a published link and a valid past post date', () => {
+  const social = { ...feature, dealSlug: undefined, postUrl: 'https://www.instagram.com/p/example/' }
+  const card = build([social], [], ['sample'], now)[0]
+  assert.equal(card.affiliateHref, '/go/sample')
+  assert.equal(card.postUrl, social.postUrl)
+  assert.equal(card.detailHref, undefined)
+  assert.equal(build([social], [], [], now).length, 0)
+  for (const postedAt of [undefined, 'invalid', '2026-10-21']) assert.equal(build([{ ...social, postedAt }], [], ['sample'], now).length, 0)
+  assert.equal(build([{ ...social, postUrl: undefined }], [], ['sample'], now).length, 0)
+  // A missing guide must not fall through into a purchasable social-only card.
+  assert.equal(build([{ ...social, guideSlug: 'missing' }], [], ['sample'], now).length, 0)
 })
 test('ended, inactive and invalid-expiry offers remain recognizable without purchase CTA', () => {
   for (const change of [{ active: false }, { expiryDate: '2026-10-19' }, { expiryDate: 'invalid' }]) {

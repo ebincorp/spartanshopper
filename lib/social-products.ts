@@ -14,6 +14,7 @@ export interface SocialProductFeature {
   largeImage?: boolean
   store?: string
   watchUrl?: string
+  postUrl?: string
 }
 
 export interface SocialProductCard {
@@ -25,12 +26,13 @@ export interface SocialProductCard {
   imageUrl?: string
   imageAlt: string
   largeImage?: boolean
-  detailHref: string
-  detailKind: 'deal' | 'guide'
+  detailHref?: string
+  detailKind?: 'deal' | 'guide'
   affiliateHref?: string
   store: string
   offerEnded: boolean
   watchUrl?: string
+  postUrl?: string
 }
 
 export interface SocialProductRecord {
@@ -48,8 +50,13 @@ export interface SocialProductRecord {
 // Publication evidence: docs/*/social-publication.json and tiktok-publication.json
 // in the primary workspace, Oct 17–19, 2026. Dates describe our feature, not a sale
 // deadline. Preserve the existing Risina pick without asserting TikTok visibility.
-// Add confirmed posts here; published CMS records still gate every card.
+// Add confirmed posts here; published CMS records gate guide/deal cards.
+// Social-only cards require a published affiliate link and a dated social post.
 export const socialProductFeatures: SocialProductFeature[] = [
+  // Published Instagram carousels, November 1, 2026. No sale-price promises.
+  { id: 'flowerbomb-edp', title: 'Viktor&Rolf Flowerbomb Eau de Parfum', description: 'Match the Eau de Parfum edition. The listing’s 5 fl oz selector conflicts with “5.1 fl oz refill” wording elsewhere; confirm bottle versus refill packaging with the seller before ordering.', category: 'Beauty', postedAt: '2026-11-01', affiliateSlug: 'flowerbomb-edp', largeImage: true, fallbackImage: 'https://cdn.sanity.io/images/eohdr7jw/production/9a5f774557e7aba268ddfd55f36bad8d889495fc-500x500.jpg', imageAlt: 'Actual Flowerbomb listing photo: faceted pink bottle with rose-gold cap and black seal; confirm package with seller', postUrl: 'https://www.instagram.com/p/DfOFIA9GKC_/' },
+  { id: 'acqua-di-gio-parfum', title: 'Armani Acqua di Giò Parfum', description: 'Parfum edition, 6.7 fl oz option. Compare the same edition and size when checking prices. A refillable bottle is listed; confirm the correct refill and its separate cost.', category: 'Beauty', postedAt: '2026-11-01', affiliateSlug: 'acqua-di-gio-parfum', largeImage: true, fallbackImage: 'https://cdn.sanity.io/images/eohdr7jw/production/16f368af2a042a80806a96757fff48a29cb9da18-500x500.jpg', imageAlt: 'Armani Acqua di Giò Parfum bottle with a black cap and black-to-clear gradient glass', postUrl: 'https://www.instagram.com/p/DfOFWfWGJBz/' },
+  { id: 'genifique-ultimate-serum', title: 'Lancôme Génifique Ultimate Recovery Serum', description: '3.88 fl oz option. Compare the current price per fluid ounce within the same formula. Check ingredients and the package’s opening-life guidance before choosing how much to buy.', category: 'Beauty', postedAt: '2026-11-01', affiliateSlug: 'genifique-ultimate-serum', largeImage: true, fallbackImage: 'https://cdn.sanity.io/images/eohdr7jw/production/a623de1a2a4e0b65556a3a2b4d2174b8e64c2823-500x500.jpg', imageAlt: 'Lancôme Génifique Ultimate Recovery Serum bottle with silver dropper cap and separate glass pipette', postUrl: 'https://www.instagram.com/p/DfOFk3VmA7n/' },
   // Instagram publication evidence: docs/instagram-next-2026-11-01/publication.json.
   { id: 'kidmi-suede-clogs', largeImage: true, fallbackImage: 'https://cdn.sanity.io/images/eohdr7jw/production/e7984a3c5181a15d05315eb5088ae72b666381e2-500x500.jpg', imageAlt: 'Taupe KIDMI suede clogs with adjustable buckles and cork footbeds', title: 'KIDMI Suede Clogs', description: 'Check length, width and sock room using the current size chart. An adjustable buckle cannot make a short footbed longer. Taupe style shown; confirm your selected size.', category: 'Fashion', postedAt: '2026-11-01', guideSlug: 'kidmi-clogs-sizing-materials-guide', affiliateSlug: 'kidmi-suede-cork-clogs' },
   { id: 'everfoams-fuzzy-slippers', largeImage: true, fallbackImage: 'https://cdn.sanity.io/images/eohdr7jw/production/8ab1edb75ae74f41ff2d0786e67aa5c657fa9a05-500x500.jpg', imageAlt: 'Cream White EverFoams fuzzy closed-toe, open-back slippers shown as a pair', title: 'EverFoams Fuzzy Slippers', description: 'Fuzzy does not mean wool: this listing specifies polyester and faux fur. Compare the grouped size options and follow the care label for washing and drying. Cream White style shown.', category: 'Fashion', postedAt: '2026-11-01', guideSlug: 'everfoams-slippers-sizing-care-guide', affiliateSlug: 'everfoams-fuzzy-slippers' },
@@ -85,9 +92,21 @@ export const socialProductFeatures: SocialProductFeature[] = [
 /** Only records read with the published Sanity perspective may be passed here. */
 export function buildSocialProductCards(features: SocialProductFeature[], records: SocialProductRecord[], affiliateSlugs: string[], now = Date.now()): SocialProductCard[] {
   const links = new Set(affiliateSlugs)
-  return [...features].sort((a, b) => (b.postedAt || '').localeCompare(a.postedAt || '')).flatMap(feature => {
+  return [...features].sort((a, b) => (b.postedAt || '').localeCompare(a.postedAt || '')).flatMap((feature): SocialProductCard[] => {
     const kind = feature.dealSlug ? 'deal' : 'post'
     const slug = feature.dealSlug || feature.guideSlug
+    if (!slug) {
+      // No invented guide/deal page: hide the card if its published link is removed.
+      const postedAt = Date.parse(feature.postedAt || '')
+      if (!feature.postUrl || !Number.isFinite(postedAt) || postedAt > now || !links.has(feature.affiliateSlug)) return []
+      return [{
+        id: feature.id, title: feature.title, description: feature.description,
+        category: feature.category, postedAt: feature.postedAt,
+        imageUrl: feature.fallbackImage, imageAlt: feature.imageAlt || feature.title,
+        largeImage: feature.largeImage, affiliateHref: `/go/${feature.affiliateSlug}`,
+        store: feature.store || 'Amazon', offerEnded: false, postUrl: feature.postUrl,
+      }]
+    }
     const record = records.find(item => item._type === kind && item.slug === slug)
     if (!record || !slug) return []
     if (record.startDate && (!Number.isFinite(Date.parse(record.startDate)) || Date.parse(record.startDate) > now)) return []

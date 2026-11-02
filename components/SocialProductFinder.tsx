@@ -96,7 +96,7 @@ export default function SocialProductFinder({ products }: { products: SocialProd
         {matches.map((product, index) => {
           const date = featuredDate(product.postedAt)
           const labelOffer = product.id === 'voltaritek-label-builder' && voltaritekOffer.active && Boolean(product.affiliateHref) && !product.offerEnded
-          const detailSlug = product.detailHref.split('?')[0].split('/').filter(Boolean).pop()
+          const detailSlug = product.detailHref?.split('?')[0].split('/').filter(Boolean).pop()
           return (
             <article id={product.id} data-social-product={product.id} key={product.id} className="flex min-w-0 scroll-mt-24 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
               <ProductImage product={product} priority={index < 3} />
@@ -117,13 +117,14 @@ export default function SocialProductFinder({ products }: { products: SocialProd
                     </a>
                   )}
                   {product.watchUrl && <a href={product.watchUrl} target="_blank" rel="noopener noreferrer" className={`flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-semibold text-[#1A1A2E] ${focusRing}`}>Watch the video ↗</a>}
-                  <Link
+                  {product.postUrl && <a href={product.postUrl} target="_blank" rel="noopener noreferrer" className={`flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-semibold text-[#1A1A2E] ${focusRing}`}>View the Instagram post ↗</a>}
+                  {product.detailHref && <Link
                     href={product.detailHref}
                     aria-label={product.detailKind === 'guide' ? `Read the guide for ${product.title}` : `Product details for ${product.title}`}
                     data-video-guide={product.detailKind === 'guide' ? detailSlug : undefined}
                     data-video-deal={product.detailKind === 'deal' ? detailSlug : undefined}
                     className={`flex min-h-12 items-center justify-center rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-semibold text-[#1A1A2E] transition-colors hover:bg-slate-50 ${focusRing}`}
-                  >{product.detailKind === 'guide' ? 'Read the guide' : 'Product details'}</Link>
+                  >{product.detailKind === 'guide' ? 'Read the guide' : 'Product details'}</Link>}
                 </div>
               </div>
             </article>
