@@ -170,7 +170,7 @@ export default function CouponCard({
           </p>
         )}
 
-        <p className="text-sm text-gray-600 mb-3">Confirm eligibility and the final price at checkout.</p>
+        <p className="text-sm text-gray-600 mb-3">Check that the discount applies to your items before paying.</p>
         {/* CTA */}
         <a
           href={expired ? undefined : shopUrl}
@@ -184,7 +184,7 @@ export default function CouponCard({
           }`}
           style={!expired ? { backgroundColor: '#1A1A2E' } : {}}
         >
-          {expired ? 'Coupon Expired' : 'Shop Now →'}
+          {expired ? 'Coupon Expired' : 'Check offer at retailer →'}
         </a>
         <SaveFindButton find={{ kind: 'coupon', slug, title }} />
       </div>

@@ -16,9 +16,9 @@ export default function BlogDiscovery({ posts, children, featured }: { posts: Bl
     <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
         <div>
-          <label htmlFor="blog-search" className="block font-bold text-slate-900">Find an article</label>
+          <label htmlFor="blog-search" className="block font-bold text-slate-900">What are you choosing or planning?</label>
           <input id="blog-search" type="search" value={query} onChange={e => setQuery(e.target.value)}
-            placeholder="Try magnetic labels, VoltariTek, skincare…" aria-controls="blog-results"
+            placeholder="Try air fryer, pantry or magnetic labels" aria-controls="blog-results"
             className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus-visible:ring-2 focus-visible:ring-rose-500" />
         </div>
         <div>

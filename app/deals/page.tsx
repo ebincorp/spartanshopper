@@ -34,8 +34,8 @@ interface Props {
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const { category } = await searchParams
   return pageMetadata({
-    title: "Today's Best Deals & Sales",
-    description: "Shop today's best deals and discounts — hand-picked across electronics, fashion, home, beauty, and more. Updated daily so you never miss a saving.",
+    title: 'Shopping Deals: Compare Models & Offers',
+    description: 'Browse deals by category, then check the exact model, size and included accessories. Read offer details before visiting the retailer for the current price.',
     path: '/deals',
     // Category-filtered views canonicalise to the unfiltered listing.
     ...(category ? { canonicalPath: '/deals' } : {}),
@@ -56,8 +56,8 @@ export default async function DealsPage({ searchParams }: Props) {
     ? {
         '@context': 'https://schema.org',
         '@type': 'ItemList',
-        name: "Today's Best Deals",
-        description: "Hand-picked deals and discounts updated daily.",
+        name: 'Shopping Deals: Compare Models & Offers',
+        description: 'Product deals with model details and offer notes to check before buying.',
         url: 'https://www.spartanshopper.com/deals',
         numberOfItems: deals.length,
         // Product rich results belong on individual deal pages, not this directory.
@@ -97,13 +97,13 @@ export default async function DealsPage({ searchParams }: Props) {
   const topShelfHasPrices = topShelf.some(fresh)
   const shelves = [
     topShelfHasPrices
-      ? { title: 'Best savings right now', description: 'Strong markdowns among the active listings. Check the product page for the final price and availability.', deals: topShelf }
-      : { title: 'Popular right now', description: 'Standout picks from the active listings. Check the product page for the current price and availability.', deals: topShelf },
-    { title: 'Premium picks', description: 'Beauty, fashion, and luxury finds worth a closer look.', deals: shelf(byDiscountPool.filter(inCategories(['luxury', 'health-beauty', 'fashion']))) },
-    { title: 'Home, kitchen, and everyday upgrades', description: 'Useful items for the spaces and routines you already have.', deals: shelf(byDiscountPool.filter(inCategories(['home-garden', 'food-dining']))) },
-    { title: 'Practical buys and easy gifts', description: 'Everyday essentials and gift ideas that are easy to say yes to.', deals: shelf(byDiscountPool.filter((deal) => deal.salePrice <= 50)) },
-    { title: 'Seasonal style and comfort', description: 'Fashion and home finds for fall routines, travel, and gifting.', deals: shelf(byDiscountPool.filter(inCategories(['fashion', 'home-garden', 'travel']))) },
-    { title: 'Recently added deals', description: 'The newest additions to SpartanShopper’s active deal directory.', deals: shelf(shelfCandidates) },
+      ? { title: 'Compare prices and product details', description: 'Recently checked prices appear first. Open a product to see the selected model and offer notes.', deals: topShelf }
+      : { title: 'Explore the current listings', description: 'Open a product for model and offer details, then check its current price with the retailer.', deals: topShelf },
+    { title: 'Beauty, fashion and luxury', description: 'Compare the size, color or attachment bundle before choosing your version.', deals: shelf(byDiscountPool.filter(inCategories(['luxury', 'health-beauty', 'fashion']))) },
+    { title: 'For the kitchen and around the house', description: 'Check capacity, counter space and included accessories against the job you need done.', deals: shelf(byDiscountPool.filter(inCategories(['home-garden', 'food-dining']))) },
+    { title: 'Small purchases and gift ideas', description: 'Check the pack size and delivered total before deciding whether an extra is worth adding.', deals: shelf(byDiscountPool.filter((deal) => deal.salePrice <= 50)) },
+    { title: 'Clothing, luggage and home finds', description: 'Check garment measurements, suitcase dimensions and product sizes before ordering.', deals: shelf(byDiscountPool.filter(inCategories(['fashion', 'home-garden', 'travel']))) },
+    { title: 'Recently added deals', description: 'See what was added to the directory, with links to the product details and retailer.', deals: shelf(shelfCandidates) },
   ]
 
   return (
@@ -119,10 +119,10 @@ export default async function DealsPage({ searchParams }: Props) {
       <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4 sm:py-14">
         <div className="max-w-7xl mx-auto">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-rose-300">SpartanShopper deals</p>
-          <h1 className="text-white text-4xl font-extrabold tracking-tight mb-2 sm:text-5xl">Find the deal worth buying.</h1>
+          <h1 className="text-white text-4xl font-extrabold tracking-tight mb-2 sm:text-5xl">Check what you get for the price.</h1>
           <p className="max-w-2xl text-white/70">
-            Browse {deals.length} active deal{deals.length !== 1 ? 's' : ''} by category and what you actually need.
-            {category ? ` in ${CATEGORY_LABELS[category] ?? category}` : ''}
+            Browse {deals.length} active deal{deals.length !== 1 ? 's' : ''}{category ? ` in ${CATEGORY_LABELS[category] ?? category}` : ' by category'}.
+            {' '}Open the details to check the model, size or included pieces before visiting the retailer.
           </p>
         </div>
       </div>

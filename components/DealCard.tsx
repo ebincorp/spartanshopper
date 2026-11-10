@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import SaveFindButton from './SaveFindButton'
 import { isPriceFresh } from '@/lib/deal-price'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
@@ -95,7 +96,7 @@ export default function DealCard({
       {/* Body */}
       <div className="p-4 flex flex-col flex-1">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{store}</p>
-        <h3 className="text-gray-900 font-bold text-sm leading-snug mb-3 flex-1">{title}</h3>
+        <h3 className="text-gray-900 font-bold text-sm leading-snug mb-3 flex-1"><Link href={`/deals/${slug}`} className="hover:underline">{title}</Link></h3>
 
         {/* Pricing — only while recently verified; otherwise send shoppers to check */}
         {priceFresh ? (
@@ -111,7 +112,7 @@ export default function DealCard({
           )}
         </div>
         ) : (
-          <p className="text-sm font-semibold text-gray-600 mb-3">Check the current price on Amazon</p>
+          <p className="text-sm font-semibold text-gray-600 mb-3">Check the current price with {store}</p>
         )}
 
         {/* Expiry */}
@@ -123,10 +124,14 @@ export default function DealCard({
         )}
 
         {/* CTA */}
+        <Link href={`/deals/${slug}`} aria-label={`See product and offer details for ${title}`} className="mb-3 min-h-11 flex items-center justify-center text-center text-sm font-semibold text-rose-700 underline underline-offset-4">
+          See product &amp; offer details
+        </Link>
         <a
           href={shopUrl}
           target="_blank"
-          rel="noopener noreferrer nofollow"
+          rel="noopener noreferrer sponsored nofollow"
+          aria-label={expiryStatus === 'expired' ? `${title}: deal expired` : `Check ${title} at ${store}`}
           className={`block w-full text-center text-white font-bold py-2.5 rounded-xl text-sm transition-opacity ${
             expiryStatus === 'expired'
               ? 'bg-gray-300 pointer-events-none opacity-60'
@@ -134,7 +139,7 @@ export default function DealCard({
           }`}
           style={expiryStatus !== 'expired' ? { backgroundColor: '#E63946' } : {}}
         >
-          {expiryStatus === 'expired' ? 'Deal Expired' : priceFresh ? 'Get Deal →' : 'Check Price →'}
+          {expiryStatus === 'expired' ? 'Deal Expired' : `Check price at ${store} →`}
         </a>
         <SaveFindButton find={{ kind: 'deal', slug, title }} />
       </div>

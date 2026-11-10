@@ -13,8 +13,8 @@ import { pageMetadata } from '@/lib/seo'
 export const revalidate = 3600
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Deal Tips, Coupons & Savings',
-  description: 'Expert money-saving tips, coupon code guides, deal breakdowns, and shopping strategies — updated regularly by the SpartanShopper team.',
+  title: 'Buying Guides & Product Comparisons',
+  description: 'Compare product differences, check sizes and plan practical projects. Find buying guides for your kitchen, home, hobbies, beauty routine and more.',
   path: '/blog',
 })
 
@@ -37,8 +37,8 @@ export default async function BlogPage() {
   const blogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    name: 'SpartanShopper Blog',
-    description: 'Expert money-saving tips, coupon code guides, deal breakdowns, and shopping strategies.',
+    name: 'SpartanShopper Buying Guides & Product Comparisons',
+    description: 'Product comparisons, sizing checks and practical project guides to help plan a purchase.',
     url: 'https://www.spartanshopper.com/blog',
     publisher: {
       '@type': 'Organization',
@@ -67,9 +67,10 @@ export default async function BlogPage() {
       {/* Header */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-white text-4xl font-extrabold mb-2">📝 Blog</h1>
+          <h1 className="text-white text-4xl font-extrabold mb-2">Work out what to buy and what to skip.</h1>
+          <p className="max-w-2xl text-white/80 mb-3">Compare similar products, check measurements and plan a project before filling your cart.</p>
           <p className="text-white/60">
-            Saving tips, deal guides, and news — {posts.length} article{posts.length !== 1 ? 's' : ''}
+            {posts.length} guide{posts.length !== 1 ? 's' : ''} and article{posts.length !== 1 ? 's' : ''}. Search by product, topic or the job you need done.
           </p>
         </div>
       </div>
@@ -133,10 +134,11 @@ export default async function BlogPage() {
                   {LABEL_GUIDE_SLUGS.includes(post.slug.current) && <VoltariTekOffer />}
                   <Link
                     href={`/blog/${post.slug.current}`}
+                    aria-label={`Read the guide: ${post.title}`}
                     className="inline-block text-center text-white font-bold py-2.5 rounded-xl text-sm hover:opacity-90 active:scale-95 transition"
                     style={{ backgroundColor: '#E63946' }}
                   >
-                    Read More →
+                    Read the guide →
                   </Link>
                 </div>
               </article>

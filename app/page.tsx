@@ -13,9 +13,9 @@ import { isHalloweenFeatureActive } from '@/lib/halloween-feature'
 
 export const revalidate = 300
 export const metadata = pageMetadata({
-  absoluteTitle: 'SpartanShopper — Coupon Codes & Shopping Deals',
-  title: 'Coupon Codes & Shopping Deals',
-  description: 'Browse coupon codes and shopping deals across home, beauty, tech, pets, and more. Find offer details and check the final price with the retailer.',
+  absoluteTitle: 'SpartanShopper: Deals, Coupons & Product Buying Guides',
+  title: 'Deals, Coupons & Product Buying Guides',
+  description: 'Compare product models, included parts and fit before you buy. Browse shopping deals, reveal coupon codes and find a guide for your next purchase.',
   path: '/',
 })
 const relatedGuidesQuery = `*[_type == "post" && defined(slug.current)
@@ -53,25 +53,25 @@ export default async function HomePage() {
           <div>
             <p className="text-sm font-semibold tracking-widest uppercase text-rose-300 mb-3">SpartanShopper / Shop with a plan</p>
             <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight max-w-2xl">Find the right product.<br />Then find the better offer.</h1>
-            <p className={`text-slate-300 text-lg mt-4 max-w-xl ${urgentDeals.length ? 'hidden sm:block' : ''}`}>Start with a current offer, a practical comparison, or a quick search across home, beauty, tech, pets, and more.</p>
+            <p className={`text-slate-300 text-lg mt-4 max-w-xl ${urgentDeals.length ? 'hidden sm:block' : ''}`}>A lower price only helps if the product fits your needs. Compare models, included parts and sizing, then check the offer before you buy.</p>
             <div className="flex flex-wrap gap-3 mt-4 sm:mt-6 text-sm sm:text-base">
-              <Link href="/deals" className="bg-[#E63946] rounded-lg px-4 sm:px-6 py-3 font-bold hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">Shop current offers</Link>
-              <Link href="/blog" className="border border-white/40 rounded-lg px-4 sm:px-6 py-3 font-semibold hover:bg-white/10">Compare products</Link>
+              <Link href="/deals" className="bg-[#E63946] rounded-lg px-4 sm:px-6 py-3 font-bold hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">Browse deals by category</Link>
+              <Link href="/blog" className="border border-white/40 rounded-lg px-4 sm:px-6 py-3 font-semibold hover:bg-white/10">Find a buying guide</Link>
             </div>
-            <nav aria-label="Popular ways to shop" className="mt-4 hidden sm:flex flex-wrap gap-x-5 gap-y-3 text-sm">
+            <nav aria-label="Ways to shop" className="mt-4 hidden sm:flex flex-wrap gap-x-5 gap-y-3 text-sm">
               <Link href="/coupons" className="font-semibold text-white underline underline-offset-4 hover:text-rose-200">Browse coupon offers</Link>
-              <Link href="/blog/psyllium-husk-vs-miralax" className="font-semibold text-white underline underline-offset-4 hover:text-rose-200">Read popular wellness comparisons</Link>
-              <Link href="/blog/best-korean-eye-patches-2026" className="font-semibold text-white underline underline-offset-4 hover:text-rose-200">Explore beauty picks</Link>
+              <Link href="/blog/psyllium-husk-vs-miralax" className="font-semibold text-white underline underline-offset-4 hover:text-rose-200">Psyllium husk vs. MiraLAX</Link>
+              <Link href="/blog/best-korean-eye-patches-2026" className="font-semibold text-white underline underline-offset-4 hover:text-rose-200">Compare Korean eye patches</Link>
             </nav>
           </div>
           <form action="/search" role="search" className="hidden lg:block min-w-0 bg-white rounded-2xl p-6 text-slate-900 shadow-lg">
             <label htmlFor="home-search" className="block text-xl font-bold mb-2">Know what you need?</label>
-            <p id="search-help" className="text-slate-600 mb-4">Search product types, brands, stores, or buying questions.</p>
+            <p id="search-help" className="text-slate-600 mb-4">Find a product, coupon or guide by name.</p>
             <div className="flex gap-2">
-              <input id="home-search" name="q" type="search" required maxLength={200} aria-describedby="search-help" placeholder="Try kitchen or skincare" className="min-w-0 flex-1 border border-slate-300 rounded-lg px-3 py-3 focus:outline-2 focus:outline-[#E63946]" />
+              <input id="home-search" name="q" type="search" required maxLength={200} aria-describedby="search-help" placeholder="Try air fryer or toolbox labels" className="min-w-0 flex-1 border border-slate-300 rounded-lg px-3 py-3 focus:outline-2 focus:outline-[#E63946]" />
               <button className="bg-[#1A1A2E] text-white font-semibold rounded-lg px-4 hover:bg-slate-700">Search</button>
             </div>
-            <p className="text-sm text-slate-600 mt-4">We’ll help you compare first; always confirm the final price and offer terms with the retailer.</p>
+            <p className="text-sm text-slate-600 mt-4">Buying a specific model? Include its model number to narrow the results.</p>
           </form>
         </div>
       </section>
@@ -82,27 +82,27 @@ export default async function HomePage() {
       {urgentDeals.length > 0 && <div className="max-w-7xl mx-auto px-4 pt-6"><EndingSoonDeals deals={urgentDeals} /></div>}
       <section id="coupons" className="max-w-7xl mx-auto px-4 py-9 scroll-mt-20">
         <div className="flex flex-wrap justify-between items-end gap-3 mb-5">
-          <div><h2 className="text-3xl font-extrabold tracking-tight">Browse coupon offers</h2>
-            <p className="mt-2 text-slate-600">{couponResult.status === 'fulfilled' ? `${coupons.length} listed offers. ` : ''}Choose a category to narrow your search.</p></div>
-          <Link href="/coupons" className="font-semibold underline underline-offset-4">View coupon directory</Link>
+          <div><h2 className="text-3xl font-extrabold tracking-tight">Find a code for your next order</h2>
+            <p className="mt-2 text-slate-600">{couponResult.status === 'fulfilled' ? `${coupons.length} listed offers. ` : ''}Choose a category, reveal a code and check which products qualify.</p></div>
+          <Link href="/coupons" className="font-semibold underline underline-offset-4">See all coupon offers</Link>
         </div>
         {coupons.length > 0 ? <CouponFilterBar coupons={coupons} initialLimit={6} /> :
           <p className="border rounded-xl bg-white p-6">{couponResult.status === 'rejected' ? 'We couldn’t load coupon offers. Please try again shortly.' : 'No coupon offers are currently listed. Explore our shopping guides while we add more.'}</p>}
       </section>
       {deals.length > 0 && <section id="spartan-picks" aria-labelledby="spartan-picks-title" className="max-w-7xl mx-auto px-4 pb-10 scroll-mt-20">
-        <p className="text-sm font-bold uppercase tracking-widest text-rose-700 mb-2">A little browsing. A little less spending.</p>
+        <p className="text-sm font-bold uppercase tracking-widest text-rose-700 mb-2">New to the deal directory</p>
         <div className="flex flex-wrap justify-between gap-3 items-end mb-5"><h2 id="spartan-picks-title" className="text-3xl font-extrabold tracking-tight">Spartan Picks</h2><Link href="/deals" className="font-semibold underline underline-offset-4">View all deals</Link></div>
-        <p className="text-slate-600 mb-2">Your cart doesn’t need a pep talk. Your budget might appreciate one.</p>
-        <p className="text-sm text-slate-600 mb-5">Recent additions to our active deal directory. Prices and availability can change; confirm the final price and offer conditions with the retailer.</p>
+        <p className="text-slate-600 mb-2">Check the model and what comes in the box before comparing prices.</p>
+        <p className="text-sm text-slate-600 mb-5">Open the product details for our offer notes, or check the retailer’s current price and availability.</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{deals.map(deal => <DealCard key={deal._id} {...deal} slug={deal.slug.current} image={deal.image ? urlFor(deal.image).width(400).url() : undefined} imageUrl={deal.imageUrl} />)}</div>
         {guides.length > 0 && <aside className="mt-6 rounded-xl border border-slate-200 bg-white p-5" aria-label="Related shopping guides">
-          <h3 className="font-bold text-lg">Do a little homework before checkout</h3>
-          <p className="mt-1 text-sm text-slate-600">Explore guides in these shopping categories.</p>
+          <h3 className="font-bold text-lg">Work out what you need before checkout</h3>
+          <p className="mt-1 text-sm text-slate-600">These related guides explain the choices behind the purchase.</p>
           <ul className="mt-3 space-y-3">{guides.map(guide => <li key={guide._id}><Link className="font-semibold underline underline-offset-4 hover:text-rose-700" href={`/blog/${guide.slug.current}`}>{guide.title}</Link></li>)}</ul>
         </aside>}
       </section>}
       <section className="bg-[#1A1A2E] text-white px-4 py-10">
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6"><div><h2 className="text-2xl font-bold">Compare before you buy</h2><p className="text-slate-300 mt-2">Explore product comparisons and shopping guides.</p></div><Link href="/blog" className="bg-white text-[#1A1A2E] font-bold px-6 py-3 rounded-lg">Read the guides</Link></div>
+        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6"><div><h2 className="text-2xl font-bold">Which one fits your space and routine?</h2><p className="text-slate-300 mt-2">Compare appliance sizes, skincare formulas and storage options before choosing.</p></div><Link href="/blog" className="bg-white text-[#1A1A2E] font-bold px-6 py-3 rounded-lg">Find a comparison or guide</Link></div>
       </section>
     </main>
   )

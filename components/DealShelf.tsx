@@ -55,6 +55,7 @@ export default function DealShelf({ title, description, deals }: Props) {
                     <span className="text-xs font-semibold text-slate-500">{deal.store}</span>
                   </div>
                   <h3 className="line-clamp-2 min-h-10 text-sm font-bold leading-5 text-slate-900 group-hover:text-[#E63946]">{deal.title}</h3>
+                  <p className="mt-2 text-xs font-semibold text-rose-700 underline underline-offset-2">See product &amp; offer details</p>
                   {priceFresh ? (
                     <div className="mt-2 flex flex-wrap items-baseline gap-1.5">
                       <span className="text-lg font-extrabold text-slate-950">${deal.salePrice.toFixed(2)}</span>
@@ -69,10 +70,11 @@ export default function DealShelf({ title, description, deals }: Props) {
               <a
                 href={shopUrl}
                 target="_blank"
+                aria-label={`Check ${deal.title} at ${deal.store}`}
                 rel="sponsored nofollow noopener noreferrer"
                 className="mt-3 block w-full rounded-lg bg-[#E63946] py-2 text-center text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
               >
-                {priceFresh ? 'Get Deal →' : 'Check Price →'}
+                Check retailer price →
               </a>
               <SaveFindButton find={{ kind: 'deal', slug: deal.slug.current, title: deal.title }} />
             </article>
