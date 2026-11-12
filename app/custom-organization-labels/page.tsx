@@ -7,7 +7,7 @@ export const metadata: Metadata = pageMetadata({
   title: 'Custom Labels for Your Workspace',
   description: 'Plan clear labels for carts, back bars, workshops, shelves, and supply stations, then preview a custom set in 3D.',
   path: '/custom-organization-labels',
-  image: 'https://cdn.sanity.io/images/eohdr7jw/production/6b2b5eed50339f4aafc2bc27534a2d3aaa90e4b1-2545x1248.jpg',
+  image: 'https://cdn.sanity.io/images/eohdr7jw/production/4e7bf36c1459cefeaf278ab6f755359932e2b10e-2545x1304.jpg',
   // This campaign landing page is intentionally excluded from search until its
   // dedicated search-intent research and post-launch review are complete.
   noIndex: true,
@@ -52,9 +52,9 @@ export default function CustomOrganizationLabelsPage() {
             </div>
           </div>
           <div className="overflow-hidden rounded-3xl border border-white/15 bg-black/20 shadow-2xl">
-            {/* Official builder screenshot, November 9, 2026. */}
+            {/* Official builder screenshot, November 11, 2026. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="https://cdn.sanity.io/images/eohdr7jw/production/6b2b5eed50339f4aafc2bc27534a2d3aaa90e4b1-2545x1248.jpg" alt="VoltariTek live 3D builder showing Clinical style and a twelve-label set" className="h-full w-full object-contain" />
+            <img src="https://cdn.sanity.io/images/eohdr7jw/production/4e7bf36c1459cefeaf278ab6f755359932e2b10e-2545x1304.jpg" alt="VoltariTek live 3D builder showing Clinical style and a twelve-label set" className="h-full w-full object-contain" />
           </div>
         </div>
       </section>
@@ -92,9 +92,9 @@ export default function CustomOrganizationLabelsPage() {
 
       <section className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-3xl font-extrabold text-slate-950">Choose a style, then build your sets</h2>
-        <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">The current builder has four steps: Trade, Look, Labels and Checkout. Pick Classic, Tactical, Clinical, Hazard, Retro Garage, Minimal or Name tag. Each style has its own colors. Labels in one set share a style, color and size; start another set for a different look. Every set counts toward the order’s volume pricing.</p>
-        <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">Large labels are 34 mm tall, Medium 28.9 mm and Small 23.8 mm. Check the displayed width for your exact words: the standard limit is 12 characters, or 13 for a field label ending in a colon, with a maximum printed width of 243 mm.</p>
-        <p className="mt-4 text-sm text-slate-500">Official builder screenshot checked November 9, 2026. This is a software preview, not a product-performance test.</p>
+        <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">The builder now has three steps: Design your sets, Add your set to the cart, then Checkout. Pick Classic, Tactical, Clinical, Hazard, Retro Garage, Minimal or Name tag, with available fonts and colors. Each set shares a style, color and size. Add it to the cart before designing another set; every label in the cart counts toward the quantity tiers.</p>
+        <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">Large labels are 34 mm tall, Medium 28.9 mm and Small 23.8 mm. There is no fixed character count: the builder checks physical fit. VoltariTek lists a maximum finished length of 255 mm (about 10 inches); the usable text width can be smaller for a particular design. Follow the fit indicator and measure your mounting space.</p>
+        <p className="mt-4 text-sm text-slate-500">Official builder screenshot checked November 11, 2026. This is a software preview, not a product-performance test.</p>
         <div className="mt-6 flex flex-wrap gap-4">
           <a href="/go/voltaritek-industries" rel="sponsored nofollow" className="font-bold text-slate-900 underline underline-offset-4">Browse industry starting points</a>
           <a href="/go/voltaritek-bulk-orders" rel="sponsored nofollow" className="font-bold text-slate-900 underline underline-offset-4">Review bulk and team options</a>
@@ -107,16 +107,18 @@ export default function CustomOrganizationLabelsPage() {
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             <div>
               <h3 className="text-xl font-bold text-slate-900">Custom labels: price the complete list</h3>
-              <p className="mt-3 leading-relaxed text-slate-600">Before the coupon, shipping and taxes, the first five Large labels cost $4.99 each ($24.95). Labels 6–25 cost $3.99 each, 26–50 cost $3.49 each and 51 onward cost $2.99 each. These are marginal tiers: ten Large labels total $44.90 before the coupon. Medium costs 5% less and Small 10% less; check the live quote for premium design choices.</p>
+              <p className="mt-3 leading-relaxed text-slate-600">Before the coupon, shipping and taxes, five standard Large labels cost $19.00 and twelve cost $29.99. The first five cost $3.80 each; labels 6–25 cost $1.57 each, 26–50 cost $1.49 each and 51 onward cost $1.39 each. These are marginal tiers: ten Large labels total $26.85. Medium costs 5% less and Small 10% less. Check the quote for premium options; magnetic or adhesive backing is included, while both together cost an extra $0.50 per label.</p>
             </div>
             <div>
               <h3 className="text-xl font-bold text-slate-900">Seven stocked packs: count useful names</h3>
               <p className="mt-3 leading-relaxed text-slate-600">Choose from Hazmat &amp; Shop Chemicals, General Essentials, Electrical &amp; Fasteners, Automotive, Automotive Hand Tools, Automotive Sockets, and Dental &amp; Medical Supplies. Packs contain 10–15 labels with listed base prices of $19.99–$24.99. Compare the actual words with your list; custom-builder tiers do not price the stock packs.</p>
-              <a href="/go/voltaritek-ready-made-packs" rel="sponsored nofollow" className="mt-4 inline-block font-bold text-slate-900 underline underline-offset-4">Compare the current ready-made packs</a>
+              <a href="/go/voltaritek-ready-made-packs" rel="sponsored nofollow" className="mt-4 inline-block font-bold text-slate-900 underline underline-offset-4">Compare stocked packs and trade sets</a>
             </div>
           </div>
+          <h3 className="mt-8 text-xl font-bold text-slate-900">21 more sets, printed to order</h3>
+          <p className="mt-3 max-w-4xl leading-relaxed text-slate-600">The catalog also offers sets for Bar, Coffee Bar, Dental Office, HVAC Van, Machine Shop, Office In/Out Board, Classroom Jobs and other workspaces. Many contain 12 labels at a $29.99 base price; count and price vary. Start with the supplied names or edit the words in the builder. These sets are separate from the seven stocked packs.</p>
           <h3 className="mt-8 text-xl font-bold text-slate-900">Shipping and returns affect the decision</h3>
-          <p className="mt-3 max-w-4xl leading-relaxed text-slate-600">Checked November 9, 2026: the US shipping policy lists Standard at $8 or Express at $15, added at checkout. Custom labels normally dispatch in 3–5 business days; Express changes transit, not printing. Stock packs ship after packing. Confirm your order’s timing. Custom wording is final sale for change of mind or buyer-entered errors. Unused stock packs have a 30-day return window, with return shipping paid by the buyer.</p>
+          <p className="mt-3 max-w-4xl leading-relaxed text-slate-600">Checked November 11, 2026: US Standard shipping is free on orders of $29.99 or more and $8 below that; Express is $15. Check the shipping charge after applying the coupon: the published policy does not specify whether the threshold uses the amount before or after discounts. Custom labels normally dispatch in 3–5 business days; Express changes transit, not printing. Confirm the timing for stocked packs and sets printed to order. Custom wording is final sale for change of mind or buyer-entered errors. Unused stock packs have a 30-day return window, with return shipping paid by the buyer.</p>
           <p className="mt-3 max-w-4xl leading-relaxed text-slate-600">The maker’s one-year Hold Guarantee covers specified failures under normal use, subject to its exclusions. It does not establish universal fit or medical suitability. <a href="https://voltaritek.com/policies.html" className="font-semibold underline underline-offset-4">Read the full shipping, returns and guarantee policy</a>.</p>
         </div>
       </section>

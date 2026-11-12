@@ -16,7 +16,7 @@ export default function LabelGuideFeature({ posts, image }: { posts: BlogSearchI
       <div className="p-6 sm:p-8">
         <p className="text-xs font-bold uppercase tracking-widest text-rose-700">Featured update · Workspace organization</p>
         <h2 id="label-guide-feature" className="mt-2 text-2xl font-extrabold text-slate-900">Your drawers. Your words. Preview the labels in 3D.</h2>
-        <p className="mt-3 text-sm leading-relaxed text-slate-600">Explore seven builder styles and seven ready-made packs. Plan drawer, shelf or supply-station names, then check surface fit and the complete order cost.</p>
+        <p className="mt-3 text-sm leading-relaxed text-slate-600">Explore seven builder styles, seven stocked packs and 21 more sets printed to order. Plan drawer, shelf or supply-station names, then check surface fit and the complete order cost.</p>
         <VoltariTekOffer />
         <div className="mt-5 flex flex-wrap gap-3">
           <Link href="/blog/magnetic-toolbox-labels" className="rounded-xl bg-slate-900 px-5 py-3 font-bold text-white">Read the updated guide</Link>
