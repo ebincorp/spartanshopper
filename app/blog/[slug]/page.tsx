@@ -19,8 +19,9 @@ import { pageMetadata } from '@/lib/seo'
 export const revalidate = 3600
 export const dynamicParams = true
 
-// These guides use exact product photos; keep the complete products visible.
+// Keep complete product photos and labeled editorial illustrations visible.
 const FULL_PRODUCT_COVERS = new Set([
+  'holiday-deals-fragrance-coffee-car-gear',
   'lillusory-cardigan-fabric-fit-guide',
   'campsnail-fleece-lined-leggings-fit-guide',
   'ekouaer-two-pack-pajama-sets-guide',

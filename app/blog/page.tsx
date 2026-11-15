@@ -91,7 +91,7 @@ export default async function BlogPage() {
                       alt={post.coverImage.alt ?? post.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover"
+                      className={post.slug.current === 'holiday-deals-fragrance-coffee-car-gear' ? 'object-contain' : 'object-cover'}
                       unoptimized
                     />
                   ) : (
