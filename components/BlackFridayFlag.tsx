@@ -1,6 +1,6 @@
 'use client'
 
-import { useSyncExternalStore, type ReactNode } from 'react'
+import { useCallback, useId, useSyncExternalStore, type ReactNode } from 'react'
 import {
   blackFridayCutoff,
   matchBlackFridayOffer,
@@ -97,10 +97,61 @@ const checkedDate = new Intl.DateTimeFormat('en-US', {
   timeZone: 'America/Los_Angeles',
 })
 
-function Flag({ offer }: { offer: BlackFridayOffer }) {
-  return (
+const flagPlacements = new Map<string, { asin: string; marker: HTMLSpanElement }>()
+const flagListeners = new Set<() => void>()
+let firstPlacements = new Set<string>()
+let placementUpdatePending = false
+
+function schedulePlacementUpdate() {
+  if (placementUpdatePending) return
+  placementUpdatePending = true
+
+  // Hydration order can differ from the rendered order of links and shelves.
+  queueMicrotask(() => {
+    placementUpdatePending = false
+    const pages = new Map<Document, Map<string, { id: string; marker: HTMLSpanElement }>>()
+    for (const [id, { asin, marker }] of flagPlacements) {
+      if (!marker.isConnected) continue
+      let firstByAsin = pages.get(marker.ownerDocument)
+      if (!firstByAsin) {
+        firstByAsin = new Map()
+        pages.set(marker.ownerDocument, firstByAsin)
+      }
+      const first = firstByAsin.get(asin)
+      if (!first || first.marker.compareDocumentPosition(marker) & Node.DOCUMENT_POSITION_PRECEDING) {
+        firstByAsin.set(asin, { id, marker })
+      }
+    }
+
+    const next = new Set(Array.from(pages.values()).flatMap(page => Array.from(page.values(), p => p.id)))
+    if (next.size === firstPlacements.size && Array.from(next).every(id => firstPlacements.has(id))) return
+    firstPlacements = next
+    for (const notify of flagListeners) notify()
+  })
+}
+
+function subscribeToPlacements(notify: () => void) {
+  flagListeners.add(notify)
+  return () => { flagListeners.delete(notify) }
+}
+
+function Flag({ offer, containerClassName }: { offer: BlackFridayOffer; containerClassName?: string }) {
+  const id = useId()
+  const { asin } = offer
+  const register = useCallback((marker: HTMLSpanElement | null) => {
+    if (!marker) return
+    flagPlacements.set(id, { asin, marker })
+    schedulePlacementUpdate()
+    return () => {
+      if (flagPlacements.get(id)?.marker === marker) flagPlacements.delete(id)
+      schedulePlacementUpdate()
+    }
+  }, [asin, id])
+  const isFirst = useSyncExternalStore(subscribeToPlacements, () => firstPlacements.has(id), () => false)
+
+  const label = isFirst ? (
     <span
-      data-black-friday-asin={offer.asin}
+      data-black-friday-asin={asin}
       className="inline-flex flex-wrap items-baseline gap-x-2 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs leading-5 text-rose-950"
     >
       <strong className="font-bold">
@@ -110,6 +161,13 @@ function Flag({ offer }: { offer: BlackFridayOffer }) {
         Checked {checkedDate.format(Date.parse(offer.checkedAt))}
       </time>
     </span>
+  ) : null
+
+  return (
+    <>
+      <span ref={register} hidden />
+      {label && (containerClassName ? <div className={containerClassName}>{label}</div> : label)}
+    </>
   )
 }
 
@@ -128,7 +186,7 @@ export function BlackFridayPrice({
   const offer = matchBlackFridayOffer(useLiveOffers(), target)
   if (!offer) return children
   if (!flagClassName) return null
-  return <div className={flagClassName}><Flag offer={offer} /></div>
+  return <Flag offer={offer} containerClassName={flagClassName} />
 }
 
 export function BlackFridayCardLabel({ target, children }: { target: OfferTarget; children: ReactNode }) {
