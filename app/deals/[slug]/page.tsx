@@ -326,6 +326,7 @@ export default async function DealPage({ params }: Props) {
                   salePrice={d.salePrice}
                   originalPrice={d.originalPrice}
                   affiliateUrl={d.affiliateUrl}
+                  asin={d.asin}
                   slug={d.slug.current}
                   affiliateSlug={d.affiliateSlug}
                   image={d.image ? urlFor(d.image).width(400).url() : undefined}

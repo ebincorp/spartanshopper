@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import SaveFindButton from './SaveFindButton'
+import { BlackFridayCardLabel, BlackFridayPrice } from './BlackFridayFlag'
+import { getBlackFridayTarget } from '@/lib/black-friday-offers'
 import { isPriceFresh } from '@/lib/deal-price'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
 import { endTime } from '@/lib/offer-status'
@@ -13,6 +15,7 @@ interface DealCardProps {
   affiliateUrl: string
   slug: string
   affiliateSlug?: string
+  asin?: string
   image?: string
   imageUrl?: string
   expiryDate?: string
@@ -38,6 +41,7 @@ export default function DealCard({
   affiliateUrl,
   slug,
   affiliateSlug,
+  asin,
   image,
   imageUrl,
   expiryDate,
@@ -50,11 +54,39 @@ export default function DealCard({
   const imgSrc = image || imageUrl
   const expiryStatus = getExpiryStatus(expiryDate)
   const expiryLabel = offerExpiryLabel(expiryDate)
+  const offerTarget = expiryStatus !== 'expired' ? getBlackFridayTarget(shopUrl, asin) : undefined
   const priceFresh = isPriceFresh(priceVerifiedAt)
   const savings =
     originalPrice && originalPrice > salePrice
       ? Math.round(((originalPrice - salePrice) / originalPrice) * 100)
       : null
+
+  const savingsBadge = priceFresh && savings && savings <= 75 ? (
+    <div
+      style={{ backgroundColor: '#E63946' }}
+      className="absolute top-3 left-3 text-white text-xs font-bold px-2 py-1 rounded-full"
+    >
+      {savings}% OFF{clipCoupon ? ' w/ coupon' : ''}
+    </div>
+  ) : null
+
+  const pricing = priceFresh ? (
+    <div className="flex flex-wrap items-baseline gap-2 mb-3">
+      <span style={{ color: '#E63946' }} className="text-2xl font-extrabold">
+        ${salePrice.toFixed(2)}
+      </span>
+      {originalPrice && originalPrice > salePrice && (
+        <span className="text-sm text-gray-500 line-through">${originalPrice.toFixed(2)}</span>
+      )}
+      {clipCoupon && (
+        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">Clip coupon</span>
+      )}
+    </div>
+  ) : (
+    <p className="text-sm font-semibold text-gray-600 mb-3">Check the current price with {store}</p>
+  )
+
+  const cta = expiryStatus === 'expired' ? 'Deal Expired' : `Check price at ${store} →`
 
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-200 group">
@@ -77,14 +109,7 @@ export default function DealCard({
           </div>
         )}
         {/* Savings badge — only show for realistic discounts (≤75%) */}
-        {priceFresh && savings && savings <= 75 && (
-          <div
-            style={{ backgroundColor: '#E63946' }}
-            className="absolute top-3 left-3 text-white text-xs font-bold px-2 py-1 rounded-full"
-          >
-            {savings}% OFF{clipCoupon ? ' w/ coupon' : ''}
-          </div>
-        )}
+        {savingsBadge && (offerTarget ? <BlackFridayPrice target={offerTarget}>{savingsBadge}</BlackFridayPrice> : savingsBadge)}
         {/* Expired badge */}
         {expiryStatus === 'expired' && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -99,21 +124,9 @@ export default function DealCard({
         <h3 className="text-gray-900 font-bold text-sm leading-snug mb-3 flex-1"><Link href={`/deals/${slug}`} className="hover:underline">{title}</Link></h3>
 
         {/* Pricing — only while recently verified; otherwise send shoppers to check */}
-        {priceFresh ? (
-        <div className="flex flex-wrap items-baseline gap-2 mb-3">
-          <span style={{ color: '#E63946' }} className="text-2xl font-extrabold">
-            ${salePrice.toFixed(2)}
-          </span>
-          {originalPrice && originalPrice > salePrice && (
-            <span className="text-sm text-gray-500 line-through">${originalPrice.toFixed(2)}</span>
-          )}
-          {clipCoupon && (
-            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">Clip coupon</span>
-          )}
-        </div>
-        ) : (
-          <p className="text-sm font-semibold text-gray-600 mb-3">Check the current price with {store}</p>
-        )}
+        {offerTarget
+          ? <BlackFridayPrice target={offerTarget} flagClassName="mb-3">{pricing}</BlackFridayPrice>
+          : pricing}
 
         {/* Expiry */}
         {expiryLabel && expiryStatus !== 'expired' && (
@@ -139,7 +152,7 @@ export default function DealCard({
           }`}
           style={expiryStatus !== 'expired' ? { backgroundColor: '#E63946' } : {}}
         >
-          {expiryStatus === 'expired' ? 'Deal Expired' : `Check price at ${store} →`}
+          {offerTarget ? <BlackFridayCardLabel target={offerTarget}>{cta}</BlackFridayCardLabel> : cta}
         </a>
         <SaveFindButton find={{ kind: 'deal', slug, title }} />
       </div>

@@ -53,7 +53,7 @@ export const relatedDealsQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER} && category == $category && _id != $id && ${DEAL_HAS_CARD_IMAGE}]
   | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    image, imageUrl, affiliateUrl, category, expiryDate, active, priceVerifiedAt, clipCoupon
+    image, imageUrl, affiliateUrl, category, asin, expiryDate, active, priceVerifiedAt, clipCoupon
   }
 `
 

@@ -182,6 +182,7 @@ export default async function DealsPage({ searchParams }: Props) {
                 salePrice={deal.salePrice}
                 originalPrice={deal.originalPrice}
                 affiliateUrl={deal.affiliateUrl}
+                asin={deal.asin}
                 slug={deal.slug.current}
                 affiliateSlug={deal.affiliateSlug}
                 image={deal.hasCardImage && deal.image ? urlFor(deal.image).width(400).url() : undefined}

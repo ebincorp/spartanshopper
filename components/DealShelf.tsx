@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { urlFor } from '@/lib/sanity.client'
 import type { Deal } from '@/lib/types'
 import SaveFindButton from './SaveFindButton'
+import { BlackFridayCardLabel, BlackFridayPrice } from './BlackFridayFlag'
+import { getBlackFridayTarget } from '@/lib/black-friday-offers'
 import { isPriceFresh } from '@/lib/deal-price'
 
 type Props = {
@@ -34,11 +36,24 @@ export default function DealShelf({ title, description, deals }: Props) {
 
       <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-3 sm:mx-0 sm:px-0">
         {deals.map((deal) => {
-          const priceFresh = isPriceFresh(deal.priceVerifiedAt)
-          const discount = priceFresh ? savings(deal) : null
           // Prefer the uploaded Sanity asset; raw Amazon imageUrls reject hotlinks.
           const image = deal.image ? urlFor(deal.image).width(360).url() : deal.imageUrl
           const shopUrl = deal.affiliateSlug ? `/go/${deal.affiliateSlug}` : deal.affiliateUrl
+          const offerTarget = getBlackFridayTarget(shopUrl, deal.asin)
+          const priceFresh = isPriceFresh(deal.priceVerifiedAt)
+          const discount = priceFresh ? savings(deal) : null
+          const savingsBadge = discount && discount <= 75
+            ? <span className="rounded bg-[#E63946] px-1.5 py-1 text-xs font-extrabold text-white">{discount}% off{deal.clipCoupon ? ' w/ coupon' : ''}</span>
+            : null
+          const pricing = priceFresh ? (
+            <div className="mt-2 flex flex-wrap items-baseline gap-1.5">
+              <span className="text-lg font-extrabold text-slate-950">${deal.salePrice.toFixed(2)}</span>
+              {deal.originalPrice && deal.originalPrice > deal.salePrice && <span className="text-xs text-slate-500 line-through">${deal.originalPrice.toFixed(2)}</span>}
+              {deal.clipCoupon && <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[11px] font-bold text-emerald-800">Clip coupon</span>}
+            </div>
+          ) : (
+            <p className="mt-2 text-sm font-semibold text-slate-600">Check current price</p>
+          )
           return (
             <article key={deal._id} className="w-[186px] shrink-0 snap-start sm:w-[204px]">
               <Link href={`/deals/${deal.slug.current}`} className="group block" aria-label={`View ${deal.title} deal details`}>
@@ -51,20 +66,14 @@ export default function DealShelf({ title, description, deals }: Props) {
                 </div>
                 <div className="pt-3">
                   <div className="mb-1 flex min-h-6 items-center gap-1.5">
-                    {discount && discount <= 75 && <span className="rounded bg-[#E63946] px-1.5 py-1 text-xs font-extrabold text-white">{discount}% off{deal.clipCoupon ? ' w/ coupon' : ''}</span>}
+                    {savingsBadge && (offerTarget ? <BlackFridayPrice target={offerTarget}>{savingsBadge}</BlackFridayPrice> : savingsBadge)}
                     <span className="text-xs font-semibold text-slate-500">{deal.store}</span>
                   </div>
                   <h3 className="line-clamp-2 min-h-10 text-sm font-bold leading-5 text-slate-900 group-hover:text-[#E63946]">{deal.title}</h3>
                   <p className="mt-2 text-xs font-semibold text-rose-700 underline underline-offset-2">See product &amp; offer details</p>
-                  {priceFresh ? (
-                    <div className="mt-2 flex flex-wrap items-baseline gap-1.5">
-                      <span className="text-lg font-extrabold text-slate-950">${deal.salePrice.toFixed(2)}</span>
-                      {deal.originalPrice && deal.originalPrice > deal.salePrice && <span className="text-xs text-slate-500 line-through">${deal.originalPrice.toFixed(2)}</span>}
-                      {deal.clipCoupon && <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[11px] font-bold text-emerald-800">Clip coupon</span>}
-                    </div>
-                  ) : (
-                    <p className="mt-2 text-sm font-semibold text-slate-600">Check current price</p>
-                  )}
+                  {offerTarget
+                    ? <BlackFridayPrice target={offerTarget} flagClassName="mt-2">{pricing}</BlackFridayPrice>
+                    : pricing}
                 </div>
               </Link>
               <a
@@ -74,7 +83,7 @@ export default function DealShelf({ title, description, deals }: Props) {
                 rel="sponsored nofollow noopener noreferrer"
                 className="mt-3 block w-full rounded-lg bg-[#E63946] py-2 text-center text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
               >
-                Check retailer price →
+                {offerTarget ? <BlackFridayCardLabel target={offerTarget}>Check retailer price →</BlackFridayCardLabel> : 'Check retailer price →'}
               </a>
               <SaveFindButton find={{ kind: 'deal', slug: deal.slug.current, title: deal.title }} />
             </article>

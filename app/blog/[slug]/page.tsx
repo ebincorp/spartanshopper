@@ -14,6 +14,8 @@ import DealsPromoWidget from '@/components/DealsPromoWidget'
 import EmailSignup from '@/components/EmailSignup'
 import RelatedKitchenGuides from '@/components/RelatedKitchenGuides'
 import TikTokEmbed from '@/components/TikTokEmbed'
+import BlackFridayFlag, { BlackFridayTopCTA } from '@/components/BlackFridayFlag'
+import { getBlackFridayTarget } from '@/lib/black-friday-offers'
 import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
@@ -116,22 +118,69 @@ function linkRel(href?: string): string {
     : 'noopener noreferrer'
 }
 
+function articleProductLink(href: string | undefined, children: React.ReactNode) {
+  const target = getBlackFridayTarget(href)
+  const link = (
+    <a
+      href={href}
+      target="_blank"
+      rel={linkRel(href)}
+      className="underline hover:opacity-80 transition"
+      style={{ color: '#E63946' }}
+    >
+      {children}
+    </a>
+  )
+  if (!target?.goSlug) return link
+
+  return (
+    <>
+      {link}{' '}
+      <BlackFridayFlag target={target} />
+    </>
+  )
+}
+
+type OfferMark = { href?: string }
+type OfferCell = string | { markDefs?: OfferMark[] }[]
+
+function withTopOfferCTA(body: NonNullable<Post['body']>) {
+  const disclosure = body.slice(0, 5).findIndex(block =>
+    block._type === 'block' &&
+    /\b(?:as an amazon associate|may earn a commission|earns? from qualifying purchases|earns? an affiliate commission|affiliate disclosure)\b/i.test(blockText(block)),
+  )
+  const insertAfter = Math.max(0, disclosure)
+  const links = body.flatMap((block, index) => {
+    const marks = (block.markDefs ?? []) as OfferMark[]
+    const rows = block.rows as { cells?: OfferCell[] }[] | undefined
+    const tableLinks = block._type === 'table'
+      ? (rows ?? []).flatMap(row => row.cells ?? [])
+        .flatMap(cell => typeof cell === 'string'
+          ? [cell.includes('||') ? cell.split('||')[1] : undefined]
+          : cell.flatMap(value => (value.markDefs ?? []).map(mark => mark.href)))
+      : []
+
+    return [...marks.map(mark => mark.href), ...tableLinks].flatMap(href => {
+      if (!href) return []
+      const target = getBlackFridayTarget(href)
+      return target?.goSlug ? [{ href, target, alreadyNearTop: index <= insertAfter + 3 }] : []
+    })
+  })
+  if (!links.length) return body
+
+  return [
+    ...body.slice(0, insertAfter + 1),
+    { _type: 'blackFridayTopCTA', _key: 'black-friday-top-cta', links, showDisclosure: disclosure < 0 },
+    ...body.slice(insertAfter + 1),
+  ]
+}
+
 // Components used when rendering Portable Text inside table cells
 const cellPtComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong className="font-bold">{children}</strong>,
     em: ({ children }) => <em className="italic">{children}</em>,
-    link: ({ value, children }) => (
-      <a
-        href={value?.href}
-        target="_blank"
-        rel={linkRel(value?.href)}
-        className="underline hover:opacity-80 transition"
-        style={{ color: '#E63946' }}
-      >
-        {children}
-      </a>
-    ),
+    link: ({ value, children }) => articleProductLink(value?.href, children),
   },
   block: {
     normal: ({ children }) => <>{children}</>,
@@ -145,21 +194,14 @@ function renderTableCell(cell: string | unknown[]) {
   // Legacy plain-string format with optional "text||href" link separator
   const sepIdx = cell.indexOf('||')
   if (sepIdx === -1) return <>{cell}</>
-  return (
-    <a
-      href={cell.slice(sepIdx + 2)}
-      target="_blank"
-      rel={linkRel(cell.slice(sepIdx + 2))}
-      className="underline hover:opacity-80 transition"
-      style={{ color: '#E63946' }}
-    >
-      {cell.slice(0, sepIdx)}
-    </a>
-  )
+  return articleProductLink(cell.slice(sepIdx + 2), cell.slice(0, sepIdx))
 }
 
 const portableTextComponents: PortableTextComponents = {
   types: {
+    blackFridayTopCTA: ({ value }) => (
+      <BlackFridayTopCTA links={value.links} showDisclosure={value.showDisclosure} />
+    ),
     tiktokEmbed: ({ value }) => {
       if (!value?.videoUrl || !value?.videoId) return null
       return <TikTokEmbed videoUrl={value.videoUrl} videoId={value.videoId} />
@@ -281,17 +323,7 @@ const portableTextComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong className="font-bold">{children}</strong>,
     em: ({ children }) => <em className="italic">{children}</em>,
-    link: ({ value, children }) => (
-      <a
-        href={value?.href}
-        target="_blank"
-        rel={linkRel(value?.href)}
-        className="underline hover:opacity-80 transition"
-        style={{ color: '#E63946' }}
-      >
-        {children}
-      </a>
-    ),
+    link: ({ value, children }) => articleProductLink(value?.href, children),
   },
 }
 
@@ -385,7 +417,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         {post.body && (
           <div className="prose-custom">
-            <PortableText value={post.body} components={portableTextComponents} />
+            <PortableText value={withTopOfferCTA(post.body)} components={portableTextComponents} />
           </div>
         )}
 
