@@ -22,12 +22,7 @@ const redirectQuery = `
 `
 
 export async function getRedirectBySlug(slug: string): Promise<{ url: string } | null> {
-  console.log(`[/go] Looking up slug: "${slug}"`)
-
   const url = await redirectClient.fetch<string | null>(redirectQuery, { slug })
-
-  console.log(`[/go] Resolved URL for "${slug}": ${url ?? 'none'}`)
-
   if (!url) return null
   return { url }
 }
