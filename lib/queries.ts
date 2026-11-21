@@ -77,14 +77,14 @@ const COUPON_DATE_FILTER = `
 export const couponsQuery = `
   *[_type == "coupon" && ${COUPON_DATE_FILTER}] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
-    image, affiliateUrl, startDate, expiryDate, verified, active, category, tags
+    image, affiliateUrl, startDate, expiryDate, verified, verification{status, checkedOn}, active, category, tags
   }
 `
 
 export const featuredCouponsQuery = `
   *[_type == "coupon" && ${COUPON_DATE_FILTER}] | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
-    image, affiliateUrl, startDate, expiryDate, verified, active, category, tags
+    image, affiliateUrl, startDate, expiryDate, verified, verification{status, checkedOn}, active, category, tags
   }
 `
 
@@ -93,14 +93,14 @@ export const couponBySlugQuery = `
   // coupons whose start date hasn't arrived stay hidden.
   *[_type == "coupon" && slug.current == $slug && (!defined(startDate) || startDate <= now())][0] {
     _id, title, slug, store, code, discount, description, whyWeLikeThis, seo,
-    image, affiliateUrl, "affiliateSlug": affiliateSlug.current, startDate, expiryDate, verified, active, category, tags
+    image, affiliateUrl, "affiliateSlug": affiliateSlug.current, startDate, expiryDate, verified, verification{status, checkedOn}, active, category, tags
   }
 `
 
 export const relatedCouponsQuery = `
   *[_type == "coupon" && ${COUPON_DATE_FILTER} && category == $category && _id != $currentId] | order(_createdAt desc) [0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
-    image, affiliateUrl, startDate, expiryDate, verified, active, category
+    image, affiliateUrl, startDate, expiryDate, verified, verification{status, checkedOn}, active, category
   }
 `
 

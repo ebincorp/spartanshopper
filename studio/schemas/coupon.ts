@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { couponVerificationLabels, formatCouponVerificationDate } from '../../lib/couponVerification'
 
 export default defineType({
   name: 'coupon',
@@ -90,9 +91,46 @@ export default defineType({
     }),
     defineField({
       name: 'verified',
-      title: 'Verified / Working',
+      title: 'Verified / Working (legacy)',
+      description: 'Legacy field. Use Verification Evidence to display a dated result to shoppers.',
       type: 'boolean',
       initialValue: false,
+    }),
+    defineField({
+      name: 'verification',
+      title: 'Verification Evidence',
+      type: 'object',
+      description: 'Record the most recent supported observation. Clear or recheck this evidence when the code or eligibility changes.',
+      fields: [
+        defineField({
+          name: 'status',
+          title: 'Result and Method',
+          type: 'string',
+          description: 'Use a checkout result only when the discount was actually attempted on eligible items.',
+          options: {
+            list: Object.entries(couponVerificationLabels).map(([value, title]) => ({ title, value })),
+          },
+          validation: (Rule) => Rule.required().custom((value) =>
+            value && !Object.hasOwn(couponVerificationLabels, value) ? 'Choose a listed verification result.' : true,
+          ),
+        }),
+        defineField({
+          name: 'checkedOn',
+          title: 'Check Date',
+          type: 'date',
+          description: 'Use the date the offer was observed or confirmed.',
+          validation: (Rule) => Rule.required().custom((value) =>
+            value && !formatCouponVerificationDate(value) ? 'Enter a valid check date on or before today.' : true,
+          ),
+        }),
+        defineField({
+          name: 'evidenceNote',
+          title: 'Editorial Evidence Note',
+          type: 'text',
+          rows: 2,
+          description: 'Record the source and relevant test conditions. Keep coupon codes and personal details out of this field.',
+        }),
+      ],
     }),
     defineField({
       name: 'active',

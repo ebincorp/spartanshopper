@@ -51,7 +51,7 @@ export default function TermsOfServicePage() {
         <section>
           <h2 className="text-xl font-bold text-gray-900 mb-3">4. Coupon Codes</h2>
           <p className="text-gray-600 leading-relaxed">
-            Coupon codes listed on the Site are provided as-is. We do not guarantee that any code will work at checkout. Coupon codes may expire, be limited to specific products, or have been revoked by the issuing retailer. The &quot;Verified&quot; label indicates codes that were tested at the time of listing but does not guarantee ongoing validity.
+            Coupon codes listed on the Site are provided as-is. We do not guarantee that any code will work at checkout. Coupon codes may expire, be limited to specific products, or have been revoked by the issuing retailer. A dated coupon check records the result and method on the stated date. Confirm the current terms and discount at checkout.
           </p>
         </section>
 

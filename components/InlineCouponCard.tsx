@@ -1,4 +1,6 @@
 import CopyButton from '@/components/CopyButton'
+import CouponVerificationLabel from '@/components/CouponVerificationLabel'
+import type { CouponVerification } from '@/lib/couponVerification'
 import { isCouponEnded } from '@/lib/offer-status'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
 
@@ -15,6 +17,7 @@ interface InlineCoupon {
   startDate?: string
   active?: boolean
   imageUrl?: string
+  verification?: CouponVerification | null
 }
 
 interface Props {
@@ -48,6 +51,9 @@ export default function InlineCouponCard({ coupon }: Props) {
         {coupon.description && (
           <p className="text-sm text-gray-600 mt-2 leading-relaxed">{coupon.description}</p>
         )}
+        <div className="mt-2">
+          <CouponVerificationLabel verification={coupon.verification} />
+        </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           {coupon.code && (

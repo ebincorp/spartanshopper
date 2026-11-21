@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     default: 'SpartanShopper — Deals, Coupons & Sweepstakes',
     template: '%s — SpartanShopper',
   },
-  description: 'Find the best deals, verified coupon codes, and free sweepstakes — all in one place.',
+  description: 'Find shopping deals, coupon codes, buying guides, and free sweepstakes on SpartanShopper.',
   keywords: 'deals, coupons, coupon codes, sweepstakes, discounts, promo codes, free prizes',
   metadataBase: new URL('https://www.spartanshopper.com'),
   // Site-wide verification tags. `other` emits arbitrary <meta name=... content=...>
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
   openGraph: {
     title: 'SpartanShopper — Deals, Coupons & Sweepstakes',
-    description: 'Find the best deals, verified coupon codes, and free sweepstakes — all in one place.',
+    description: 'Find shopping deals, coupon codes, buying guides, and free sweepstakes on SpartanShopper.',
     url: 'https://www.spartanshopper.com',
     siteName: 'SpartanShopper',
     type: 'website',
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'SpartanShopper — Deals, Coupons & Sweepstakes',
-    description: 'Find the best deals, verified coupon codes, and free sweepstakes — all in one place.',
+    description: 'Find shopping deals, coupon codes, buying guides, and free sweepstakes on SpartanShopper.',
     images: ['/og-default.png'],
   },
 }

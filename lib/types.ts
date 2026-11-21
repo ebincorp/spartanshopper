@@ -1,3 +1,5 @@
+import type { CouponVerification } from './couponVerification'
+
 export interface SanityImage {
   _type: 'image'
   asset: { _ref: string; _type: 'reference' }
@@ -47,6 +49,7 @@ export interface Coupon {
   startDate?: string
   expiryDate?: string
   verified?: boolean
+  verification?: CouponVerification | null
   active: boolean
   category?: string
   tags?: string[]

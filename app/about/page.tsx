@@ -49,7 +49,7 @@ export default function AboutPage() {
               {
                 step: '1',
                 title: 'Browse Offers',
-                desc: 'Explore curated deals, verified coupon codes, and free sweepstakes — all updated daily.',
+                desc: 'Explore curated deals, coupon codes, and free sweepstakes.',
               },
               {
                 step: '2',
@@ -97,8 +97,8 @@ export default function AboutPage() {
               },
               {
                 icon: '🏷️',
-                title: 'Verified Coupon Codes',
-                desc: 'Codes marked "Verified" have been tested. We flag expired codes as quickly as possible.',
+                title: 'Dated Coupon Checks',
+                desc: 'When available, we show the last recorded coupon check and how the offer was checked.',
               },
               {
                 icon: '🏆',

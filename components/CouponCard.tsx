@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
+import type { CouponVerification } from '@/lib/couponVerification'
+import CouponVerificationLabel from './CouponVerificationLabel'
 import SaveFindButton from './SaveFindButton'
 
 interface CouponCardProps {
@@ -17,7 +19,7 @@ interface CouponCardProps {
   slug: string
   affiliateSlug?: string
   expiryDate?: string
-  verified?: boolean
+  verification?: CouponVerification | null
 }
 
 function isExpired(expiryDate?: string): boolean {
@@ -36,9 +38,10 @@ export default function CouponCard({
   slug,
   affiliateSlug,
   expiryDate,
-  verified,
+  verification,
 }: CouponCardProps) {
   const expiryLabel = offerExpiryLabel(expiryDate)
+  const couponUrl = `/coupons/${slug}`
   const shopUrl = affiliateSlug ? `/go/${affiliateSlug}` : affiliateUrl
   const [revealed, setRevealed] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -73,8 +76,8 @@ export default function CouponCard({
     <div className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-200">
 
       {/* Image */}
-      <Link href={`/coupons/${slug}`} className="block relative w-full h-36 bg-gray-100 overflow-hidden">
-        {image && !imageFailed ? (
+      {image && !imageFailed ? (
+        <Link href={couponUrl} className="block relative w-full h-36 bg-gray-100 overflow-hidden">
           <Image
             src={image}
             alt={title}
@@ -83,14 +86,14 @@ export default function CouponCard({
             className="object-contain"
             onError={() => setImageFailed(true)}
           />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300">
-            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-        )}
-      </Link>
+        </Link>
+      ) : (
+        <div aria-hidden="true" className="w-full h-36 bg-gray-100 flex items-center justify-center text-gray-300">
+          <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+      )}
 
       {/* Top bar */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="px-4 py-3 flex items-center justify-between">
@@ -100,32 +103,26 @@ export default function CouponCard({
             <p className="text-white font-extrabold text-lg leading-tight">{discount}</p>
           )}
         </div>
-        <div className="flex flex-col items-end gap-1">
-          {verified && !expired && (
-            <span className="bg-green-500 text-white text-sm font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              Previously checked
-            </span>
-          )}
-          {expired && (
-            <span className="bg-gray-500 text-white text-sm font-bold px-2 py-0.5 rounded-full">
-              Expired
-            </span>
-          )}
-        </div>
+        {expired && (
+          <span className="bg-gray-500 text-white text-sm font-bold px-2 py-0.5 rounded-full">
+            Expired
+          </span>
+        )}
       </div>
 
       {/* Body */}
       <div className="p-4 flex flex-col flex-1">
-        <Link href={`/coupons/${slug}`} className="hover:underline">
+        <Link href={couponUrl} className="hover:underline">
           <h3 className="text-gray-900 font-bold text-base leading-snug mb-1">{title}</h3>
         </Link>
         {description && (
           <p className="text-gray-500 text-sm leading-relaxed mb-4">{description}</p>
         )}
-        {!description && <div className="mb-4" />}
+        {!expired && (
+          <div className="mb-4">
+            <CouponVerificationLabel verification={verification} />
+          </div>
+        )}
 
         {/* Coupon Code Box */}
         {code && code.trim() !== '' && (

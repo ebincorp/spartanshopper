@@ -34,7 +34,7 @@ export default async function RelatedCoupons({ currentId, category }: Props) {
             slug={coupon.slug.current}
             affiliateSlug={coupon.affiliateSlug}
             expiryDate={coupon.expiryDate}
-            verified={coupon.verified}
+            verification={coupon.verification}
           />
         ))}
       </div>

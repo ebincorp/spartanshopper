@@ -5,12 +5,13 @@ import CouponFilterBar from '@/components/CouponFilterBar'
 import Link from 'next/link'
 import { pageMetadata } from '@/lib/seo'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
+import { getCouponVerification } from '@/lib/couponVerification'
 
 export const revalidate = 3600
 
 export const metadata = pageMetadata({
-  title: 'Coupon Codes: Check Terms Before You Buy',
-  description: 'Find a coupon by category, reveal the code and check eligible products and expiry dates. Confirm the discount in your cart before placing an order.',
+  title: 'Coupon Codes & Offer Terms',
+  description: 'Browse coupon codes by category. See dated offer checks when available, then confirm eligibility and the final discount at checkout.',
   path: '/coupons',
 })
 
@@ -22,12 +23,13 @@ export default async function CouponsPage() {
   const verified = coupons.filter((c) => c.verified)
   const unverified = coupons.filter((c) => !c.verified)
   const sorted = [...verified, ...unverified]
+  const datedChecks = coupons.filter((coupon) => getCouponVerification(coupon.verification) !== null).length
 
   const offerCatalogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'OfferCatalog',
-    name: 'Coupon Codes & Promo Offers',
-    description: 'Coupon offers with codes, eligibility notes and expiry dates where supplied.',
+    name: 'Coupon Codes & Offer Terms',
+    description: 'Browse coupon codes and offer terms across shopping categories.',
     url: 'https://www.spartanshopper.com/coupons',
     numberOfItems: coupons.length,
     itemListElement: sorted.slice(0, 15).map((c, i) => ({
@@ -60,20 +62,16 @@ export default async function CouponsPage() {
           <p className="max-w-2xl text-white/80 mb-3">Choose a category, reveal the code and check the offer details before placing your order.</p>
           <p className="text-white/60">
             {coupons.length} coupon{coupons.length !== 1 ? 's' : ''} available
-            {verified.length > 0 && ` · ${verified.length} previously checked`}
+            {datedChecks > 0 && ` · ${datedChecks} with dated checks`}
           </p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-10">
-        {/* Verified banner */}
-        {verified.length > 0 && (
-          <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-5 py-3 mb-8">
-            <span className="text-green-600 text-xl">✓</span>
-            <p className="text-green-700 text-sm font-medium">
-              <strong>Check that the discount appears in your cart.</strong> Eligibility can depend on the product, seller or account. A previously checked code may have changed.
-            </p>
-          </div>
+        {sorted.length > 0 && (
+          <p className="bg-white border border-slate-200 rounded-xl px-5 py-3 mb-8 text-slate-700 text-sm">
+            Each dated result shows what was checked and when. Confirm eligibility and the final discount at checkout.
+          </p>
         )}
 
         {sorted.length > 0 ? (

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import CopyButton from '@/components/CopyButton'
+import CouponVerificationLabel from '@/components/CouponVerificationLabel'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
@@ -45,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description = coupon.seo?.metaDescription
     || coupon.description
-    || `${coupon.discount ? `Save ${coupon.discount} at ${coupon.store}` : `Save at ${coupon.store}`}. See the offer terms and confirm the discount at checkout.`
+    || `See the listed coupon offer for ${coupon.store} and check whether your order qualifies.`
 
   const ogImage = coupon.image
     ? urlFor(coupon.image).width(1200).height(630).url()
@@ -170,11 +171,6 @@ export default async function CouponPage({ params }: Props) {
                   Ended
                 </span>
               )}
-              {coupon.verified && !ended && (
-                <span className="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full">
-                  ✓ Previously checked
-                </span>
-              )}
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
@@ -187,6 +183,12 @@ export default async function CouponPage({ params }: Props) {
               <p className="text-2xl font-extrabold mb-4" style={{ color: '#E63946' }}>
                 {coupon.discount}
               </p>
+            )}
+
+            {!ended && (
+              <div className="mb-4">
+                <CouponVerificationLabel verification={coupon.verification} />
+              </div>
             )}
 
             {coupon.code && !ended && (
