@@ -4,7 +4,7 @@ import { client, urlFor } from '@/lib/sanity.client'
 import { dealsQuery, dealsByCategoryQuery, dealCategoriesQuery } from '@/lib/queries'
 import type { Deal } from '@/lib/types'
 import DealCard from '@/components/DealCard'
-import { isPriceFresh } from '@/lib/deal-price'
+import { dealCardFacts, dealDisplayTitle } from '@/lib/deal-product-copy'
 import { endingSoonDeals } from '@/lib/ending-soon-deals'
 import EndingSoonDeals from '@/components/EndingSoonDeals'
 import DealShelf from '@/components/DealShelf'
@@ -35,7 +35,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const { category } = await searchParams
   return pageMetadata({
     title: 'Shopping Deals: Compare Models & Offers',
-    description: 'Browse deals by category, then check the exact model, size and included accessories. Read offer details before visiting the retailer for the current price.',
+    description: 'Browse by category and compare models, sizes and included accessories before you visit the retailer.',
     path: '/deals',
     // Category-filtered views canonicalise to the unfiltered listing.
     ...(category ? { canonicalPath: '/deals' } : {}),
@@ -64,17 +64,12 @@ export default async function DealsPage({ searchParams }: Props) {
         itemListElement: deals.map((d, i) => ({
           '@type': 'ListItem',
           position: i + 1,
-          name: d.title,
+          name: dealDisplayTitle(d.title),
           url: `https://www.spartanshopper.com/deals/${d.slug.current}`,
         })),
       }
     : null
 
-  const discount = (deal: Deal) =>
-    deal.originalPrice && deal.originalPrice > deal.salePrice
-      ? (deal.originalPrice - deal.salePrice) / deal.originalPrice
-      : 0
-  const byDiscount = (a: Deal, b: Deal) => discount(b) - discount(a)
   const inCategories = (values: string[]) => (deal: Deal) => values.includes(deal.category ?? '')
 
   // Shelves only show deals with a real product image, and each deal appears on
@@ -89,21 +84,14 @@ export default async function DealsPage({ searchParams }: Props) {
     picked.forEach((deal) => claimed.add(deal._id))
     return picked
   }
-  // Verified prices lead; stale ones follow (they render as "Check current price").
-  const fresh = (deal: Deal) => isPriceFresh(deal.priceVerifiedAt)
-  const byDiscountPool = [...shelfCandidates].sort((a, b) => Number(fresh(b)) - Number(fresh(a)) || byDiscount(a, b))
-  const topShelf = shelf(byDiscountPool)
-  // "Best savings" only makes sense when savings are actually on show.
-  const topShelfHasPrices = topShelf.some(fresh)
+  // The query returns newest first. Keep that order within each group.
+  const featuredCandidates = shelfCandidates.filter(deal => dealCardFacts(deal.title, deal.description).length > 0)
   const shelves = [
-    topShelfHasPrices
-      ? { title: 'Compare prices and product details', description: 'Recently checked prices appear first. Open a product to see the selected model and offer notes.', deals: topShelf }
-      : { title: 'Explore the current listings', description: 'Open a product for model and offer details, then check its current price with the retailer.', deals: topShelf },
-    { title: 'Beauty, fashion and luxury', description: 'Compare the size, color or attachment bundle before choosing your version.', deals: shelf(byDiscountPool.filter(inCategories(['luxury', 'health-beauty', 'fashion']))) },
-    { title: 'For the kitchen and around the house', description: 'Check capacity, counter space and included accessories against the job you need done.', deals: shelf(byDiscountPool.filter(inCategories(['home-garden', 'food-dining']))) },
-    { title: 'Small purchases and gift ideas', description: 'Check the pack size and delivered total before deciding whether an extra is worth adding.', deals: shelf(byDiscountPool.filter((deal) => deal.salePrice <= 50)) },
-    { title: 'Clothing, luggage and home finds', description: 'Check garment measurements, suitcase dimensions and product sizes before ordering.', deals: shelf(byDiscountPool.filter(inCategories(['fashion', 'home-garden', 'travel']))) },
-    { title: 'Recently added deals', description: 'See what was added to the directory, with links to the product details and retailer.', deals: shelf(shelfCandidates) },
+    { title: 'Recently added', description: 'See the model, included parts and fit details for new finds.', deals: shelf(featuredCandidates) },
+    { title: 'Beauty, fashion and luxury', description: 'Compare the size, color or attachment bundle before choosing your version.', deals: shelf(featuredCandidates.filter(inCategories(['luxury', 'health-beauty', 'fashion']))) },
+    { title: 'For the kitchen and around the house', description: 'Check capacity, counter space and included accessories against the job you need done.', deals: shelf(featuredCandidates.filter(inCategories(['home-garden', 'food-dining']))) },
+    { title: 'For your car and workshop', description: 'Match the model, power needs and included fittings to your setup.', deals: shelf(featuredCandidates.filter(inCategories(['automotive', 'tools', 'home-improvement']))) },
+    { title: 'Clothing, luggage and home finds', description: 'Check garment measurements, suitcase dimensions and product sizes before ordering.', deals: shelf(featuredCandidates.filter(inCategories(['fashion', 'home-garden', 'travel']))) },
   ]
 
   return (
@@ -119,7 +107,7 @@ export default async function DealsPage({ searchParams }: Props) {
       <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4 sm:py-14">
         <div className="max-w-7xl mx-auto">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-rose-300">SpartanShopper deals</p>
-          <h1 className="text-white text-4xl font-extrabold tracking-tight mb-2 sm:text-5xl">Check what you get for the price.</h1>
+          <h1 className="text-white text-4xl font-extrabold tracking-tight mb-2 sm:text-5xl">Find the model that fits.</h1>
           <p className="max-w-2xl text-white/70">
             Browse {deals.length} active deal{deals.length !== 1 ? 's' : ''}{category ? ` in ${CATEGORY_LABELS[category] ?? category}` : ' by category'}.
             {' '}Open the details to check the model, size or included pieces before visiting the retailer.
@@ -180,7 +168,7 @@ export default async function DealsPage({ searchParams }: Props) {
                 title={deal.title}
                 store={deal.store}
                 salePrice={deal.salePrice}
-                originalPrice={deal.originalPrice}
+                description={deal.description}
                 affiliateUrl={deal.affiliateUrl}
                 asin={deal.asin}
                 slug={deal.slug.current}
@@ -189,6 +177,8 @@ export default async function DealsPage({ searchParams }: Props) {
                 imageUrl={deal.hasCardImage ? deal.imageUrl : undefined}
                 expiryDate={deal.expiryDate}
                 priceVerifiedAt={deal.priceVerifiedAt}
+                priceVerificationSource={deal.priceVerificationSource}
+                priceApiObservation={deal.priceApiObservation}
                 clipCoupon={deal.clipCoupon}
               />
             ))}

@@ -21,7 +21,7 @@ test('clip-coupon deals verify against the pre-coupon price and are never auto-d
   assert.equal(decide(clipDeal, item(24)).action, 'OK')
   assert.equal(decide(clipDeal, item(24.9)).action, 'OK')
   assert.equal(decide(clipDeal, item(28)).action, 'REVIEW')
-  assert.equal(decide(clipDeal, undefined).action, 'DEACTIVATED')
+  assert.equal(decide(clipDeal, undefined).action, 'REVIEW')
 })
 
 test('regular deals keep the existing rules', () => {

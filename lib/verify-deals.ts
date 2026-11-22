@@ -6,7 +6,7 @@
  * Rules (per record with an asin):
  *  - explicit out-of-stock signal              → DEACTIVATE (active=false)
  *  - missing listing or price data             → REVIEW (no mutation)
- *  - currentPrice within ±$1 of stored price   → OK (no change)
+ *  - currentPrice within ±$1 of stored price   → OK (save the observed price)
  *  - price moved but savingsPercent >= 15       → UPDATE (salePrice/originalPrice)
  *  - savingsPercent < 15                        → DEACTIVATE
  *  - NOT_YET_ELIGIBLE overall                   → no-op, mutate nothing
@@ -14,14 +14,16 @@
  *    stored PRE-coupon price (originalPrice); the API can't see clip coupons, so
  *    within ±$1 → OK, otherwise REVIEW (no mutation — coupon math needs a human)
  *
- * Deals that come back OK or UPDATED get `priceVerifiedAt` stamped; the site only
- * shows a stored price while that stamp is recent (lib/deal-price.ts).
+ * Save the observed prices and timestamp together for successful deal checks.
+ * An API check of a clip-coupon deal covers only the pre-coupon price, so it
+ * cannot refresh the timestamp of the stored coupon-adjusted amount.
  *
  * Coupons carry no salePrice, so the ±$1 / UPDATE branches don't apply to them;
  * they are only ever DEACTIVATED (unavailable or savings<15) or left OK.
  */
 import { createClient } from '@sanity/client'
 import { getItems, type CreatorItem } from './creators-api'
+import { CREATORS_API_PRICE_SOURCE, isPriceAmount } from './deal-price'
 
 const PRICE_TOLERANCE = 1 // dollars
 const MIN_SAVINGS = 15 // percent
@@ -33,6 +35,7 @@ const MIN_SAVINGS = 15 // percent
 // fault, mutate NOTHING, and surface SUSPECTED_FAULT so callers can alert.
 const FAULT_UNAVAILABLE_RATIO = 0.5
 const FAULT_MIN_SAMPLE = 5 // don't trip the guard on tiny batches
+const MISSING_PRICE_REASON = 'Amazon API returned no usable price; check product page'
 
 export type Action = 'OK' | 'UPDATED' | 'DEACTIVATED' | 'REVIEW'
 
@@ -86,8 +89,8 @@ export function decide(rec: Record, item: CreatorItem | undefined): VerifyRow {
 
   // The Creators API sometimes omits a purchasable ASIN or its price. That is
   // not evidence that the live offer ended; a person must check the listing.
-  if (!item || item.currentPrice == null) {
-    return { ...base, action: 'REVIEW', reason: 'Amazon API returned no price; check product page' }
+  if (!item || !isPriceAmount(item.currentPrice)) {
+    return { ...base, action: 'REVIEW', reason: MISSING_PRICE_REASON }
   }
 
   if (!item.available) {
@@ -142,9 +145,9 @@ export function decide(rec: Record, item: CreatorItem | undefined): VerifyRow {
 export async function runVerifyDeals(opts: { execute: boolean; publishedOnly?: boolean }): Promise<VerifyResult> {
   const client = makeClient().withConfig({ perspective: opts.publishedOnly === false ? 'raw' : 'published' })
 
-  const records = await client.fetch<Record[]>(
+  const records = await client.fetch<(Record & { _rev: string })[]>(
     `*[_type in ["deal","coupon"] && active == true && defined(asin)]{
-      _id, _type, title, asin, salePrice, originalPrice, clipCoupon
+      _id, _rev, _type, title, asin, salePrice, originalPrice, clipCoupon
     }`
   )
 
@@ -161,7 +164,7 @@ export async function runVerifyDeals(opts: { execute: boolean; publishedOnly?: b
   // Guard: an implausible share of missing-price results signals an API fault
   // (empty/partial response), not that every product genuinely went dead. Never
   // commit that — it would blank the deals page. Surface it for alerting instead.
-  const unavailable = rows.filter((r) => r.reason === 'Amazon API returned no price; check product page').length
+  const unavailable = rows.filter((r) => r.reason === MISSING_PRICE_REASON).length
   if (rows.length >= FAULT_MIN_SAMPLE && unavailable / rows.length > FAULT_UNAVAILABLE_RATIO) {
     return { status: 'SUSPECTED_FAULT', rows, checked: rows.length, unavailable }
   }
@@ -170,20 +173,24 @@ export async function runVerifyDeals(opts: { execute: boolean; publishedOnly?: b
     const verifiedAt = new Date().toISOString()
     let tx = client.transaction()
     let mutations = 0
-    for (const row of rows) {
+    for (const [index, row] of rows.entries()) {
+      const record = records[index]
       const item = byAsin.get(row.asin)
-      if (row.action === 'OK' && row.type === 'deal') {
-        tx = tx.patch(row.id, (p) => p.set({ priceVerifiedAt: verifiedAt }))
+      if (row.action === 'DEACTIVATED') {
+        tx = tx.patch(row.id, (p) => p.ifRevisionId(record._rev).set({ active: false }))
         mutations++
-      } else if (row.action === 'DEACTIVATED') {
-        tx = tx.patch(row.id, (p) => p.set({ active: false }))
-        mutations++
-      } else if (row.action === 'UPDATED' && item) {
+      } else if ((row.action === 'UPDATED' || (row.action === 'OK' && row.type === 'deal' && !record.clipCoupon))
+        && item && isPriceAmount(item.currentPrice)) {
+        const { currentPrice, listPrice } = item
         tx = tx.patch(row.id, (p) =>
-          p.set({
-            salePrice: item.currentPrice,
-            originalPrice: item.listPrice ?? item.currentPrice,
-            ...(row.type === 'deal' && { priceVerifiedAt: verifiedAt }),
+          p.ifRevisionId(record._rev).set({
+            salePrice: currentPrice,
+            originalPrice: isPriceAmount(listPrice) ? listPrice : currentPrice,
+            ...(row.type === 'deal' && {
+              priceVerifiedAt: verifiedAt,
+              priceVerificationSource: CREATORS_API_PRICE_SOURCE,
+              priceApiObservation: { amount: item.currentPrice, checkedAt: verifiedAt },
+            }),
           })
         )
         mutations++

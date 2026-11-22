@@ -1,4 +1,4 @@
-import { isPriceFresh } from './deal-price'
+import { hasFreshApiPrice } from './deal-price'
 import { endTime } from './offer-status'
 import type { Deal } from './types'
 
@@ -7,8 +7,8 @@ export function endingSoonDeals(deals: Deal[], now = Date.now(), limit = 6): Dea
   return deals
     .filter(deal => {
       const end = endTime(deal.expiryDate)
-      return deal.active && deal.hasCardImage === true && deal.salePrice > 0 &&
-        isPriceFresh(deal.priceVerifiedAt, now) && end !== null &&
+      return deal.active && deal.hasCardImage === true &&
+        hasFreshApiPrice(deal, now) && end !== null &&
         end > now && end <= now + 48 * 60 * 60 * 1000
     })
     .sort((a, b) => endTime(a.expiryDate)! - endTime(b.expiryDate)! || a._id.localeCompare(b._id))

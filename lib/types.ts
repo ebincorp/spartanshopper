@@ -1,4 +1,5 @@
 import type { CouponVerification } from './couponVerification'
+import type { ApiPriceObservation } from './deal-price'
 
 export interface SanityImage {
   _type: 'image'
@@ -28,6 +29,8 @@ export interface Deal {
   hasCardImage?: boolean
   /** Last time the verify job confirmed salePrice against Amazon. See lib/deal-price.ts. */
   priceVerifiedAt?: string
+  priceVerificationSource?: string
+  priceApiObservation?: ApiPriceObservation
   /** Price depends on a no-code clip coupon on the Amazon product page. */
   clipCoupon?: boolean
   /** Hand-picked guides (deal page only); overrides the automatic category match. */

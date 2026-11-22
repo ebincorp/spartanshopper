@@ -12,8 +12,9 @@ function load(file, imports = {}) {
 const policy = load('lib/saved-finds.ts')
 const request = body => new Request('http://localhost/api/saved-finds', { method: 'POST', body: JSON.stringify(body) })
 test('saved-finds API omits expired prices, future shopping links and coupon codes', async () => {
+  const currentStamp = new Date().toISOString()
   const records = [
-    { _type: 'deal', slug: 'active', title: 'Current title', active: true, salePrice: 12, priceVerifiedAt: new Date().toISOString(), affiliateSlug: 'shop-active' },
+    { _type: 'deal', slug: 'active', title: 'Current title', active: true, store: 'Amazon', salePrice: 12, priceVerificationSource: 'amazon-creators-api', priceVerifiedAt: currentStamp, priceApiObservation: { amount: 12, checkedAt: currentStamp }, affiliateSlug: 'shop-active' },
     { _type: 'coupon', slug: 'expired', title: 'Expired', active: true, expiryDate: '2020-01-01', discount: 'Secret old offer', code: 'DO-NOT-RETURN', affiliateSlug: 'shop-expired' },
     { _type: 'deal', slug: 'future', title: 'Future', active: true, startDate: '2099-01-01', affiliateSlug: 'shop-future' },
   ]
@@ -91,7 +92,7 @@ test('dashboard price checks force dry-run and published scope regardless of req
 
 
 test('old stored prices do not override production freshness policy', async () => {
-  const records = [{ _type: 'deal', slug: 'old-price', title: 'Old', active: true, salePrice: 12, priceVerifiedAt: '2020-01-01' }]
+  const records = [{ _type: 'deal', slug: 'old-price', title: 'Old', active: true, store: 'Amazon', salePrice: 12, priceVerificationSource: 'amazon-creators-api', priceVerifiedAt: '2020-01-01' }]
   const route = load('app/api/saved-finds/route.ts', { '@/lib/saved-finds': policy, '@/lib/sanity.client': { client: { fetch: async () => records } } })
   const response = await route.POST(request([{ kind: 'deal', slug: 'old-price', title: 'Old' }]))
   const { finds } = await response.json()

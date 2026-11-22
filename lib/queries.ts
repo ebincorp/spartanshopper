@@ -30,15 +30,15 @@ const DEAL_HAS_CARD_IMAGE = `image.asset->metadata.dimensions.width > 1`
 export const dealsQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER}] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, clipCoupon,
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, priceVerificationSource, priceApiObservation, clipCoupon,
     "hasCardImage": ${DEAL_HAS_CARD_IMAGE} == true
   }
 `
 
 export const featuredDealsQuery = `
-  *[_type == "deal" && ${DEAL_DATE_FILTER} && defined(slug.current) && salePrice > 0 && ${DEAL_HAS_CARD_IMAGE}] | order(_createdAt desc)[0...3] {
+  *[_type == "deal" && ${DEAL_DATE_FILTER} && defined(slug.current) && ${DEAL_HAS_CARD_IMAGE}] | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, clipCoupon,
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, priceVerificationSource, priceApiObservation, clipCoupon,
     "hasCardImage": ${DEAL_HAS_CARD_IMAGE} == true
   }
 `
@@ -46,7 +46,7 @@ export const featuredDealsQuery = `
 export const dealsByCategoryQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER} && category == $category] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, clipCoupon,
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, priceVerificationSource, priceApiObservation, clipCoupon,
     "hasCardImage": ${DEAL_HAS_CARD_IMAGE} == true
   }
 `
@@ -55,7 +55,7 @@ export const relatedDealsQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER} && category == $category && _id != $id && ${DEAL_HAS_CARD_IMAGE}]
   | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    image, imageUrl, affiliateUrl, category, asin, expiryDate, active, priceVerifiedAt, clipCoupon
+    description, image, imageUrl, affiliateUrl, category, asin, expiryDate, active, priceVerifiedAt, priceVerificationSource, priceApiObservation, clipCoupon
   }
 `
 
@@ -63,7 +63,7 @@ export const dealBySlugQuery = `
   *[_type == "deal" && slug.current == $slug][0] {
     brand,
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
-    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, clipCoupon,
+    description, image, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, priceVerificationSource, priceApiObservation, clipCoupon,
     // Filter refs before dereferencing: unpublished/future posts drop out, picked order is kept.
     "relatedGuides": relatedGuides[defined(@->slug.current) && @->publishedAt <= now()]->{ _id, title, slug }
   }
