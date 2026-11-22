@@ -45,12 +45,13 @@ Live `/logo.png` returned 404. Its replacement, `/android-chrome-512x512.png`, r
 | `app/page.tsx` | Added stable identifiers for the site and publisher and linked them. |
 | `app/privacy-policy/page.tsx` | Added `WebPage` JSON-LD. |
 | `app/search/page.tsx` | Kept retired article slugs out of site search results. |
-| `app/sitemap.ts` | Omitted registered redirects from the article sitemap. |
+| `app/sitemap.ts` | Omitted registered redirects from the article sitemap. Removed request-time modification dates from the home page and four directories. Content URLs retain their Sanity modification timestamp. |
 | `app/sweepstakes/[slug]/page.tsx` | Added a branded image for an open sweepstakes with no asset, checked the optional image reference, and escaped Offer JSON-LD. |
 | `app/terms-of-service/page.tsx` | Added `WebPage` JSON-LD. |
 | `components/EditorialImage.tsx` | Added a responsive native image component that requests variants directly from Sanity. |
 | `components/InlineCouponCard.tsx` | Requested a 160-pixel CDN rendition for the 64-pixel image and made it lazy-load. |
 | `components/PageJsonLd.tsx` | Added a small shared component for informational page markup, using the page’s meta description. |
+| `components/SweepstakesCard.tsx` | Linked open sweepstakes cards to their canonical detail routes using the card titles. |
 | `lib/blog-redirects.json` | Centralized the existing blog redirect destinations. |
 | `lib/blogQueries.ts` | Shared legacy-slug exclusions and resolved known old links in article content. |
 | `lib/editorial-image.ts` | Added the existing fallback constant, crop-aware responsive CDN URLs, and JPEG social-sharing URLs. |
@@ -60,9 +61,16 @@ Live `/logo.png` returned 404. Its replacement, `/android-chrome-512x512.png`, r
 | `next.config.mjs` | Loaded the shared blog redirects while preserving the legacy magnesium `/post/` route. |
 | `tests/technical-seo.test.ts` | Added checks for incomplete metadata, JSON-LD fallback, valid publisher logo, redirect preservation, image sizing, and factual deal markup. |
 
+## Search Console follow-up
+
+Google’s November 15 Page indexing report showed 145 indexed URLs and 297 exclusions. The audit matched all 297 example URLs to the report counts and probed their live responses. The live sitemap contained 120 excluded URLs that still met the basic technical requirements for indexing, plus the retired sea-moss redirect. Google’s individual URL Inspection confirmed the 72-hour emergency kit checklist is already indexed. Google did not identify the underlying reason for non-selection of the eligible pages it has yet to index.
+
+The gas-card giveaway was the only eligible detail without an incoming HTML link in the audited crawl. The branch now links active giveaways from the directory. The sitemap also no longer claims each request updates the home page and the four directories. Both changes address verified discovery defects. Eight other excluded article URLs are unpublished drafts and four are archived. Publishing decisions remain separate from this branch.
+
 ## Verification scope
 
 - OpenSEO independently crawled 356 URLs. It reported no missing titles, missing descriptions, or broken internal page links. Its separate length and editorial flags fall outside the missing-field checks.
 - The direct crawls started from the sitemap and public entry points and followed public internal HTML links. They counted returned JSON-LD types and checked HTTP image responses. The image response size threshold is 300 KiB.
 - The Next.js production build succeeded, TypeScript passed, and all 23 targeted tests passed.
+- The final build generated 337 static routes. The local preview returned 321 sitemap entries, with five hub dates omitted and 316 content dates present. The sweepstakes directory linked the gas-card detail in server HTML. The 6 SEO tests and 9 social-product tests passed on the final build.
 - Verification used the branch's local production build. Production Sanity content was read only.

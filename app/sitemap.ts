@@ -10,17 +10,13 @@ const postSlugsQuery = `
     && !(slug.current in $redirectedSlugs)
     // Time-bound posts drop out once past seo.noindexAfter (they send noindex too).
     && !(defined(seo.noindexAfter) && seo.noindexAfter <= now())] {
-    "slug": slug.current, _updatedAt, publishedAt
+    "slug": slug.current, _updatedAt
   }
 `
 
 interface SlugEntry {
   slug: string
   _updatedAt: string
-}
-
-interface PostSlugEntry extends SlugEntry {
-  publishedAt?: string
 }
 
 // Sitemap discovery must reflect CMS publishes without waiting for a rebuild
@@ -36,23 +32,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     client.fetch<SlugEntry[]>(dealSlugsQuery, {}, { cache: 'no-store' }),
     client.fetch<SlugEntry[]>(couponSlugsQuery, {}, { cache: 'no-store' }),
     client.fetch<SlugEntry[]>(sweepstakeSlugsQuery, {}, { cache: 'no-store' }),
-    client.fetch<PostSlugEntry[]>(postSlugsQuery, { redirectedSlugs: redirectedPostSlugs }, { cache: 'no-store' }),
+    client.fetch<SlugEntry[]>(postSlugsQuery, { redirectedSlugs: redirectedPostSlugs }, { cache: 'no-store' }),
   ])
 
+  // These routes also change when offers expire or site code changes. Omit
+  // lastModified until we can report a reliable content-change timestamp.
   const staticPages: MetadataRoute.Sitemap = [
-    { url: BASE_URL,                       lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
-    { url: `${BASE_URL}/blog`,             lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${BASE_URL}/deals`,            lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${BASE_URL}/coupons`,          lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    { url: BASE_URL, changeFrequency: 'weekly', priority: 1.0 },
+    { url: `${BASE_URL}/blog`, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE_URL}/deals`, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE_URL}/coupons`, changeFrequency: 'weekly', priority: 0.8 },
     ...(sweepstakes.length > 0
-      ? [{ url: `${BASE_URL}/sweepstakes`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 }]
+      ? [{ url: `${BASE_URL}/sweepstakes`, changeFrequency: 'weekly' as const, priority: 0.8 }]
       : []),
   ]
 
   const dynamicPages: MetadataRoute.Sitemap = [
     ...posts.map((p) => ({
       url: `${BASE_URL}/blog/${p.slug}`,
-      lastModified: new Date(p._updatedAt ?? p.publishedAt ?? Date.now()),
+      lastModified: new Date(p._updatedAt),
       changeFrequency: 'daily' as const,
       priority: 0.6,
     })),

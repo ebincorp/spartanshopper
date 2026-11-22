@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface SweepstakesCardProps {
   title: string
@@ -84,7 +85,13 @@ export default function SweepstakesCard({
       {/* Body */}
       <div className="px-5 pb-5 flex flex-col flex-1">
         <p className="text-white/50 text-xs uppercase tracking-wide font-semibold mb-1">{sponsor}</p>
-        <h3 className="text-white font-bold text-base leading-snug mb-2">{title}</h3>
+        <h3 className="text-white font-bold text-base leading-snug mb-2">
+          {deadline.expired ? title : (
+            <Link href={`/sweepstakes/${slug}`} className="hover:underline focus-visible:underline">
+              {title}
+            </Link>
+          )}
+        </h3>
 
         {/* Prize */}
         <div className="bg-white/5 rounded-xl px-4 py-3 mb-4">
