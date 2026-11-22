@@ -1,3 +1,4 @@
+import { structuredDataImageVariant } from './editorial-image'
 import { SITE_NAME, SITE_URL } from './seo'
 import type { Post } from './types'
 
@@ -106,6 +107,26 @@ function isArticle(node: Node) {
   return types.some(type => typeof type === 'string' && ARTICLE_TYPES.has(type))
 }
 
+function articleImage(value: unknown): unknown {
+  if (typeof value === 'string') return structuredDataImageVariant(value)?.src ?? value
+  if (Array.isArray(value)) return value.map(articleImage)
+  if (!value || typeof value !== 'object') return value
+
+  const image = value as Node
+  const url = typeof image.url === 'string' ? structuredDataImageVariant(image.url) : undefined
+  const contentUrl = typeof image.contentUrl === 'string' ? structuredDataImageVariant(image.contentUrl) : undefined
+  if (!url && !contentUrl) return value
+
+  const dimensions = typeof image.contentUrl === 'string' ? contentUrl : url
+  return {
+    ...image,
+    ...(url && { url: url.src }),
+    ...(contentUrl && { contentUrl: contentUrl.src }),
+    ...(dimensions && typeof image.width === 'number' && { width: dimensions.width }),
+    ...(dimensions && typeof image.height === 'number' && { height: dimensions.height }),
+  }
+}
+
 function faqNode(blocks: TextBlock[]): Node | undefined {
   const questions = blocks.flatMap((block, index) => {
     if (block._type !== 'block' || (block.style !== 'h2' && block.style !== 'h3')) return []
@@ -143,7 +164,9 @@ function productList(post: Post): Node | undefined {
 }
 
 export function generateJsonLd(post: Post, coverUrl?: string) {
-  const authored = authoredNodes(post.jsonLd)
+  const authored = authoredNodes(post.jsonLd).map(node =>
+    isArticle(node) && 'image' in node ? { ...node, image: articleImage(node.image) } : node,
+  )
   const supplemental = authored.length ? authored : [productList(post), faqNode(post.body ?? [])].filter(Boolean)
   const graph = authored.some(isArticle) ? authored : [articleNode(post, coverUrl), ...supplemental]
   return serializeJsonLd(graph.length === 1

@@ -15,6 +15,22 @@ export function sanityImageVariant(src: string, width: number): string {
   return url.toString()
 }
 
+/** Convert untransformed PNGs used in authored article markup. */
+export function structuredDataImageVariant(src: string) {
+  const url = sanityUrl(src)
+  if (!url || url.search || url.hash) return undefined
+  const size = url.pathname.match(/-(\d+)x(\d+)\.png$/i)
+  if (!size) return undefined
+  const sourceWidth = Number(size[1])
+  const sourceHeight = Number(size[2])
+  const width = Math.min(1200, sourceWidth)
+  return {
+    src: sanityImageVariant(src, width),
+    width,
+    height: Math.round(sourceHeight * width / sourceWidth),
+  }
+}
+
 export function sanityImageSrcSet(src: string, widths: number[]): string | undefined {
   const url = sanityUrl(src)
   if (!url || url.searchParams.has('h')) return undefined

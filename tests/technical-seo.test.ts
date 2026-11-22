@@ -36,6 +36,27 @@ test('article supplements its CMS schema without duplicating an explicit article
   assert.equal(explicit.publisher.logo.url, 'https://www.spartanshopper.com/android-chrome-512x512.png')
 })
 
+test('authored article markup uses smaller images and correct dimensions', () => {
+  const png = 'https://cdn.sanity.io/images/example/production/cover-1408x768.png'
+  const rendition = png + '?w=1200&fm=webp&q=78'
+  const portrait = 'https://cdn.sanity.io/images/example/production/portrait-1024x1536.png'
+  const external = 'https://example.com/cover-1408x768.png'
+  const crop = png + '?rect=0,0,800,600&w=800'
+  const markup = JSON.parse(generateJsonLd({
+    ...post,
+    jsonLd: JSON.stringify({ '@graph': [
+      { '@type': 'BlogPosting', image: [png, portrait, external, crop] },
+      { '@type': 'Article', image: { '@type': 'ImageObject', url: png, contentUrl: png, width: 1408, height: 768, caption: 'Original caption' } },
+      { '@type': 'ItemList', image: png },
+    ] }),
+  }))
+  assert.deepEqual(markup['@graph'][0].image, [rendition, portrait + '?w=1024&fm=webp&q=78', external, crop])
+  assert.deepEqual(markup['@graph'][1].image, {
+    '@type': 'ImageObject', url: rendition, contentUrl: rendition, width: 1200, height: 655, caption: 'Original caption',
+  })
+  assert.equal(markup['@graph'][2].image, png)
+})
+
 test('malformed CMS JSON-LD falls back to escaped article markup', () => {
   const markup = generateJsonLd({ ...post, title: 'Compare <script> examples', jsonLd: '{invalid' })
   assert.ok(!markup.includes('<'))
