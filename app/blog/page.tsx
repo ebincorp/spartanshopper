@@ -27,12 +27,45 @@ const CATEGORY_COLORS: Record<string, string> = {
   News: '#6D6875',
 }
 
+const GUIDE_TOPICS = [
+  {
+    name: 'Home security',
+    links: [
+      ['home-security-deals-and-buying-guides', 'Plan camera placement and power'],
+      ['best-security-camera-setup-for-renters', 'Set up a camera in a rental'],
+      ['outdoor-security-camera-no-outlet', 'Place a camera without an outlet'],
+      ['wired-vs-battery-video-doorbells', 'Choose a wired or battery doorbell'],
+    ],
+  },
+  {
+    name: 'Tool storage',
+    links: [
+      ['modular-tool-storage-system-labels', 'Choose labels for stackable toolboxes'],
+      ['how-to-label-toolbox-drawers', 'Map and label toolbox drawers'],
+      ['best-magnetic-labels-tool-chest', 'Compare tool chest label formats'],
+    ],
+  },
+  {
+    name: 'Holiday setup and storage',
+    links: [
+      ['christmas-ornament-storage-guide', 'Measure for an ornament storage box'],
+      ['christmas-tree-train-set-guide', 'Check train track fit and power'],
+      ['christmas-table-decorations-small-table', 'Decorate a small dining table'],
+    ],
+  },
+]
+
 export default async function BlogPage() {
   const posts = await client
     .fetch<Post[]>(getAllPostsQuery, { redirectedSlugs: redirectedPostSlugs })
     .catch(() => [] as Post[])
 
   const searchItems = posts.map(post => ({ id: post._id, title: post.title, slug: post.slug.current, excerpt: post.excerpt, category: post.category, publishedAt: post.publishedAt, updatedAt: post._updatedAt }))
+  const publishedSlugs = new Set(searchItems.map(post => post.slug))
+  const topics = GUIDE_TOPICS.map(topic => ({
+    ...topic,
+    links: topic.links.filter(([slug]) => publishedSlugs.has(slug)),
+  })).filter(topic => topic.links.length > 0)
   const labelCover = posts.find(post => post.slug.current === 'magnetic-toolbox-labels')?.coverImage
 
   const blogJsonLd = {
@@ -68,7 +101,7 @@ export default async function BlogPage() {
       {/* Header */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-white text-4xl font-extrabold mb-2">Work out what to buy and what to skip.</h1>
+          <h1 className="text-white text-4xl font-extrabold mb-2">Buying Guides &amp; Product Comparisons</h1>
           <p className="max-w-2xl text-white/80 mb-3">Compare similar products, check measurements and plan a project before filling your cart.</p>
           <p className="text-white/60">
             {posts.length} guide{posts.length !== 1 ? 's' : ''} and article{posts.length !== 1 ? 's' : ''}. Search by product, topic or the job you need done.
@@ -78,7 +111,32 @@ export default async function BlogPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-10">
         {posts.length > 0 ? (
-          <BlogDiscovery posts={searchItems} featured={<LabelGuideFeature posts={searchItems} image={labelCover?.asset ? urlFor(labelCover).width(900).url() : undefined} />}>
+          <BlogDiscovery posts={searchItems} featured={
+            <>
+              {topics.length > 0 && (
+                <nav aria-labelledby="guide-topics-heading" className="mb-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+                  <h2 id="guide-topics-heading" className="mb-4 text-2xl font-bold text-slate-900">Browse guides by topic</h2>
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {topics.map(topic => (
+                      <div key={topic.name}>
+                        <h3 className="mb-1 font-bold text-slate-900">{topic.name}</h3>
+                        <ul className="space-y-1">
+                          {topic.links.map(([slug, label]) => (
+                            <li key={slug}>
+                              <Link href={`/blog/${slug}`} className="inline-block py-1 text-rose-700 underline underline-offset-4">
+                                {label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </nav>
+              )}
+              <LabelGuideFeature posts={searchItems} image={labelCover?.asset ? urlFor(labelCover).width(900).url() : undefined} />
+            </>
+          }>
             {posts.map((post) => (
               <article
                 key={post._id}
