@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { pageMetadata } from '@/lib/seo'
+import PageJsonLd from '@/components/PageJsonLd'
 
 export const metadata: Metadata = pageMetadata({
   title: 'Contact',
@@ -10,6 +11,7 @@ export const metadata: Metadata = pageMetadata({
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-gray-50">
+      <PageJsonLd metadata={metadata} path="/contact" name="Contact SpartanShopper" type="ContactPage" />
 
       {/* Header */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4">

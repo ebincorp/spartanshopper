@@ -1,11 +1,13 @@
 import type { MetadataRoute } from 'next'
 import { client } from '@/lib/sanity.client'
 import { dealSlugsQuery, couponSlugsQuery, sweepstakeSlugsQuery } from '@/lib/queries'
+import { redirectedPostSlugs } from '@/lib/blogQueries'
 
 const BASE_URL = 'https://www.spartanshopper.com'
 
 const postSlugsQuery = `
   *[_type == "post" && defined(slug.current)
+    && !(slug.current in $redirectedSlugs)
     // Time-bound posts drop out once past seo.noindexAfter (they send noindex too).
     && !(defined(seo.noindexAfter) && seo.noindexAfter <= now())] {
     "slug": slug.current, _updatedAt, publishedAt
@@ -34,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     client.fetch<SlugEntry[]>(dealSlugsQuery, {}, { cache: 'no-store' }),
     client.fetch<SlugEntry[]>(couponSlugsQuery, {}, { cache: 'no-store' }),
     client.fetch<SlugEntry[]>(sweepstakeSlugsQuery, {}, { cache: 'no-store' }),
-    client.fetch<PostSlugEntry[]>(postSlugsQuery, {}, { cache: 'no-store' }),
+    client.fetch<PostSlugEntry[]>(postSlugsQuery, { redirectedSlugs: redirectedPostSlugs }, { cache: 'no-store' }),
   ])
 
   const staticPages: MetadataRoute.Sitemap = [

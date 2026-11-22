@@ -1,5 +1,21 @@
+import blogRedirects from './blog-redirects.json'
+import { SITE_URL } from './seo'
+
+export const redirectedPostSlugs = Object.keys(blogRedirects)
+
+export function canonicalBlogLink(href: string | undefined): string | undefined {
+  if (!href) return href
+  const local = href.replace(/^https?:\/\/(?:www\.)?spartanshopper\.com(?=\/)/i, '')
+  const match = /^\/blog\/([^/?#]+)\/?([?#].*)?$/.exec(local)
+  if (!match) return href
+  const destination = (blogRedirects as Record<string, string>)[match[1]]
+  if (!Object.hasOwn(blogRedirects, match[1]) || !destination) return href
+  return `${local === href ? '' : SITE_URL}${destination}${match[2] ?? ''}`
+}
+
 export const getAllPostsQuery = `
-  *[_type == "post" && defined(slug.current) && publishedAt <= now()] | order(publishedAt desc) {
+  *[_type == "post" && defined(slug.current) && publishedAt <= now()
+    && !(slug.current in $redirectedSlugs)] | order(publishedAt desc) {
     _id,
     _updatedAt,
     title,
@@ -45,7 +61,7 @@ export const getPostBySlugQuery = `
 `
 
 export const getAllPostSlugsQuery = `
-  *[_type == "post" && defined(slug.current)] {
+  *[_type == "post" && defined(slug.current) && !(slug.current in $redirectedSlugs)] {
     "slug": slug.current
   }
 `

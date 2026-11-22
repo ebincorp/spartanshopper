@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { client, urlFor } from '@/lib/sanity.client'
 import { couponsQuery, dealsQuery } from '@/lib/queries'
-import { getAllPostsQuery } from '@/lib/blogQueries'
+import { getAllPostsQuery, redirectedPostSlugs } from '@/lib/blogQueries'
 import type { Coupon, Deal, Post } from '@/lib/types'
 import CouponCard from '@/components/CouponCard'
 import { pageMetadata } from '@/lib/seo'
@@ -44,7 +44,7 @@ export default async function SearchPage({ searchParams }: Props) {
     const [allCoupons, allDeals, allPosts] = await Promise.all([
       client.fetch<Coupon[]>(couponsQuery).catch(() => [] as Coupon[]),
       client.fetch<Deal[]>(dealsQuery).catch(() => [] as Deal[]),
-      client.fetch<Post[]>(getAllPostsQuery).catch(() => [] as Post[]),
+      client.fetch<Post[]>(getAllPostsQuery, { redirectedSlugs: redirectedPostSlugs }).catch(() => [] as Post[]),
     ])
 
     coupons = allCoupons.filter((c) =>

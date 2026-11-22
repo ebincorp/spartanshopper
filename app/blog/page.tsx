@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { client, urlFor } from '@/lib/sanity.client'
-import { getAllPostsQuery } from '@/lib/blogQueries'
+import { getAllPostsQuery, redirectedPostSlugs } from '@/lib/blogQueries'
 import type { Post } from '@/lib/types'
 import BlogDiscovery from '@/components/BlogDiscovery'
 import LabelGuideFeature from '@/components/LabelGuideFeature'
 import VoltariTekOffer from '@/components/VoltariTekOffer'
 import { LABEL_GUIDE_SLUGS } from '@/lib/blog-discovery'
 import { pageMetadata } from '@/lib/seo'
+import EditorialImage from '@/components/EditorialImage'
+import { EDITORIAL_PLACEHOLDER } from '@/lib/editorial-image'
 
 export const revalidate = 3600
 
@@ -28,7 +29,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default async function BlogPage() {
   const posts = await client
-    .fetch<Post[]>(getAllPostsQuery)
+    .fetch<Post[]>(getAllPostsQuery, { redirectedSlugs: redirectedPostSlugs })
     .catch(() => [] as Post[])
 
   const searchItems = posts.map(post => ({ id: post._id, title: post.title, slug: post.slug.current, excerpt: post.excerpt, category: post.category, publishedAt: post.publishedAt, updatedAt: post._updatedAt }))
@@ -85,23 +86,13 @@ export default async function BlogPage() {
               >
                 {/* Cover image */}
                 <div className="relative w-full h-44 bg-gray-100 overflow-hidden">
-                  {post.coverImage?.asset ? (
-                    <Image
-                      src={urlFor(post.coverImage).width(600).url()}
-                      alt={post.coverImage.alt ?? post.title}
-                      fill
+                    <EditorialImage
+                      src={post.coverImage?.asset ? urlFor(post.coverImage).width(600).url() : EDITORIAL_PLACEHOLDER}
+                      alt={post.coverImage?.asset ? post.coverImage.alt ?? post.title : ''}
+                      widths={[320, 480, 640, 960]}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className={post.slug.current === 'holiday-deals-fragrance-coffee-car-gear' ? 'object-contain' : 'object-cover'}
-                      unoptimized
+                      className={`h-full w-full ${!post.coverImage?.asset || post.slug.current === 'holiday-deals-fragrance-coffee-car-gear' ? 'object-contain' : 'object-cover'}`}
                     />
-                  ) : (
-                    <div
-                      className="w-full h-full flex items-center justify-center text-4xl"
-                      style={{ backgroundColor: '#1A1A2E' }}
-                    >
-                      📝
-                    </div>
-                  )}
                   {/* Category badge */}
                   {post.category && (
                     <span

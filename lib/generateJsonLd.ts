@@ -1,270 +1,152 @@
+import { SITE_NAME, SITE_URL } from './seo'
 import type { Post } from './types'
 
-const SITE_URL = 'https://www.spartanshopper.com'
+const CONTEXT = 'https://schema.org'
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`
+export const WEBSITE_ID = `${SITE_URL}/#website`
+const LOGO = `${SITE_URL}/android-chrome-512x512.png`
+const ARTICLE_TYPES = new Set(['Article', 'BlogPosting', 'NewsArticle'])
+const QUESTION = /^(what|how|why|is|are|can|does|do|when|where|which|who|will|should)\b/i
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+type Node = Record<string, unknown>
+type TextBlock = { _type?: string; style?: string; children?: Array<{ text?: string }> }
 
-function parseCell(cell: string): { name: string; url: string | null } {
-  if (cell.includes('||')) {
-    const [name, url] = cell.split('||')
-    return { name: name.trim(), url: url.trim() }
-  }
-  return { name: cell.trim(), url: null }
+function blockText(block: TextBlock) {
+  return block.children?.map(child => child.text ?? '').join('').trim() ?? ''
 }
 
-function extractTableRows(body: any[]): Array<{ name: string; url: string | null; cells: string[] }> {
-  const tableBlock = body?.find((b: any) => b._type === 'table')
-  if (!tableBlock) return []
-
-  const rows: any[] = tableBlock.rows ?? []
-  return rows.slice(1).map((row: any) => {
-    const cells: string[] = row.cells ?? []
-    const first = parseCell(cells[0] ?? '')
-    return { name: first.name, url: first.url, cells }
-  })
+export function articleDescription(post: Post) {
+  const authored = post.seo?.metaDescription?.trim() || post.excerpt?.trim()
+  if (authored) return authored
+  const firstParagraph = post.body?.find((block: TextBlock) =>
+    block._type === 'block' && block.style === 'normal' && blockText(block))
+  if (!firstParagraph) return `Read ${post.title.trim()} on SpartanShopper.`
+  const text = blockText(firstParagraph).replace(/\s+/g, ' ')
+  return text.length > 160 ? text.slice(0, 159).replace(/\s+\S*$/, '') + '…' : text
 }
 
-function blockText(block: any): string {
-  return (block.children ?? [])
-    .map((s: any) => (s && typeof s === 'object' && 'text' in s ? String(s.text) : ''))
-    .join('')
+export function serializeJsonLd(data: unknown): string {
+  return JSON.stringify(data, (key, value) =>
+    ['logo', 'url', 'contentUrl'].includes(key)
+      && typeof value === 'string'
+      && /^(?:https?:\/\/(?:www\.)?spartanshopper\.com)?\/logo\.png$/i.test(value)
+      ? LOGO
+      : value,
+  ).replace(/</g, '\\u003c')
 }
 
-function getCoverImageUrl(post: Post): string | undefined {
-  if (!post.coverImage?.asset?._ref) return undefined
-  const ref = post.coverImage.asset._ref
-  // ref format: image-{hash}-{WxH}-{format}
-  const parts = ref.split('-')
-  if (parts.length < 4) return undefined
-  const format = parts[parts.length - 1]
-  const dimensions = parts[parts.length - 2]
-  const hash = parts.slice(1, parts.length - 2).join('-')
-  return `https://cdn.sanity.io/images/eohdr7jw/production/${hash}-${dimensions}.${format}`
-}
-
-function authorSchema(post: Post) {
-  return post.author
-    ? { '@type': 'Person', name: post.author }
-    : { '@type': 'Organization', name: 'SpartanShopper', url: SITE_URL }
-}
-
-// ── FAQ extraction ────────────────────────────────────────────────────────────
-
-const QUESTION_RE = /^(what|how|why|is|are|can|does|do|when|where|which|who|will|should)\b/i
-
-function extractFaqPairs(body: any[]): Array<{ question: string; answer: string }> {
-  const pairs: Array<{ question: string; answer: string }> = []
-  for (let i = 0; i < body.length; i++) {
-    const block = body[i]
-    if (block._type !== 'block') continue
-    if (block.style !== 'h2' && block.style !== 'h3') continue
-
-    const heading = blockText(block).trim()
-    if (!heading) continue
-    if (!QUESTION_RE.test(heading) && !heading.endsWith('?')) continue
-
-    // Collect following normal paragraphs as the answer (up to next heading or 4 blocks)
-    const answerParts: string[] = []
-    for (let j = i + 1; j < body.length && j <= i + 4; j++) {
-      const next = body[j]
-      if (next._type === 'block' && (next.style === 'h2' || next.style === 'h3')) break
-      if (next._type === 'block' && next.style === 'normal') {
-        const text = blockText(next).trim()
-        if (text) answerParts.push(text)
-      }
-    }
-    if (answerParts.length === 0) continue
-
-    pairs.push({
-      question: heading.endsWith('?') ? heading : `${heading}?`,
-      answer: answerParts.join(' '),
-    })
-  }
-  return pairs
-}
-
-function generateFaqSchema(pairs: Array<{ question: string; answer: string }>): object {
-  return {
-    '@type': 'FAQPage',
-    mainEntity: pairs.map((p) => ({
-      '@type': 'Question',
-      name: p.question,
-      acceptedAnswer: { '@type': 'Answer', text: p.answer },
-    })),
-  }
-}
-
-// ── Schema generators ─────────────────────────────────────────────────────────
-
-function generateArticleSchema(post: Post): object {
-  return {
-    '@type': 'Article',
-    headline: post.title,
-    description: post.excerpt ?? '',
-    url: `${SITE_URL}/blog/${post.slug.current}`,
-    datePublished: post.publishedAt,
-    dateModified: post._updatedAt ?? post.publishedAt,
-    author: authorSchema(post),
-    publisher: {
-      '@type': 'Organization',
-      name: 'SpartanShopper',
-      url: SITE_URL,
-      logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.png` },
-    },
-    ...(getCoverImageUrl(post) ? { image: getCoverImageUrl(post) } : {}),
-  }
-}
-
-function generateItemListSchema(post: Post, rows: ReturnType<typeof extractTableRows>): object {
-  return {
-    '@type': 'ItemList',
-    name: post.title,
-    description: post.excerpt ?? '',
-    url: `${SITE_URL}/blog/${post.slug.current}`,
-    numberOfItems: rows.length,
-    itemListElement: rows.map((row, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      name: row.name,
-      ...(row.url ? { url: row.url } : {}),
-    })),
-  }
-}
-
-function generateReviewSchema(post: Post): object {
-  // Strip trailing "review/comparison" suffixes to get the product name
-  const productName = post.title
-    .replace(/\s+(review|reviewed|vs\.?|comparison|guide|test)\s*.*$/i, '')
-    .trim() || post.title
-
-  return {
-    '@type': 'Review',
-    name: post.title,
-    description: post.excerpt ?? '',
-    url: `${SITE_URL}/blog/${post.slug.current}`,
-    datePublished: post.publishedAt,
-    dateModified: post._updatedAt ?? post.publishedAt,
-    itemReviewed: {
-      '@type': 'Product',
-      name: productName,
-    },
-    author: authorSchema(post),
-    publisher: {
-      '@type': 'Organization',
-      name: 'SpartanShopper',
-      url: SITE_URL,
-    },
-    ...(getCoverImageUrl(post) ? { image: getCoverImageUrl(post) } : {}),
-  }
-}
-
-// ── Breadcrumb helper ─────────────────────────────────────────────────────────
-
-export function generateBreadcrumbJsonLd(
-  crumbs: Array<{ name: string; url: string }>
-): string {
-  return JSON.stringify({
-    '@context': 'https://schema.org',
+export function generateBreadcrumbJsonLd(crumbs: { name: string; url: string }[]) {
+  return serializeJsonLd({
+    '@context': CONTEXT,
     '@type': 'BreadcrumbList',
-    itemListElement: crumbs.map((crumb, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      name: crumb.name,
-      item: crumb.url,
+    itemListElement: crumbs.map(({ name, url }, index) => ({
+      '@type': 'ListItem', position: index + 1, name, item: url,
     })),
   })
 }
 
-// ── Main exports ──────────────────────────────────────────────────────────────
-
-export function generateJsonLd(post: Post): string {
-  if (post.jsonLd && post.jsonLd.trim().length > 0) {
-    return post.jsonLd
-  }
-
-  const isReview = post.category === 'Reviews'
-  const body: any[] = post.body ?? []
-
-  let primary: object
-  if (isReview) {
-    const rows = extractTableRows(body)
-    primary = rows.length > 1
-      ? generateItemListSchema(post, rows)
-      : generateReviewSchema(post)
-  } else {
-    primary = generateArticleSchema(post)
-  }
-
-  // Add FAQ schema when 2+ question headings are found in the body
-  const faqPairs = extractFaqPairs(body)
-  if (faqPairs.length >= 2) {
-    return JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [primary, generateFaqSchema(faqPairs)],
-    })
-  }
-
-  return JSON.stringify({ '@context': 'https://schema.org', ...primary })
+export function generatePageJsonLd(
+  path: string,
+  name: string,
+  description?: string | null,
+  type: 'WebPage' | 'AboutPage' | 'ContactPage' = 'WebPage',
+) {
+  const url = new URL(path, SITE_URL).href
+  return serializeJsonLd({
+    '@context': CONTEXT,
+    '@type': type,
+    '@id': `${url}#webpage`,
+    url,
+    name,
+    ...(description && { description }),
+    isPartOf: { '@id': WEBSITE_ID },
+    publisher: { '@id': ORGANIZATION_ID },
+  })
 }
 
-export function generateJsonLdFromProducts(post: Post, products: any[]): string {
-  if (post.jsonLd && post.jsonLd.trim().length > 0) {
-    return post.jsonLd
+function articleNode(post: Post, coverUrl?: string): Node {
+  const url = new URL(post.seo?.canonicalUrl || `/blog/${post.slug.current}`, SITE_URL).href
+  return {
+    '@type': 'BlogPosting',
+    '@id': `${url}#article`,
+    headline: post.title,
+    description: articleDescription(post),
+    url,
+    mainEntityOfPage: url,
+    datePublished: post.publishedAt,
+    dateModified: post._updatedAt ?? post.publishedAt,
+    author: post.author
+      ? { '@type': 'Person', name: post.author }
+      : { '@type': 'Organization', '@id': ORGANIZATION_ID, name: SITE_NAME },
+    publisher: {
+      '@type': 'Organization', '@id': ORGANIZATION_ID, name: SITE_NAME,
+      logo: { '@type': 'ImageObject', url: LOGO },
+    },
+    ...(coverUrl && { image: coverUrl }),
   }
+}
 
-  const primary = {
+function authoredNodes(raw: string | undefined): Node[] {
+  if (!raw?.trim()) return []
+  try {
+    const parsed: unknown = JSON.parse(raw)
+    const list = Array.isArray(parsed) ? parsed
+      : parsed && typeof parsed === 'object' && '@graph' in parsed && Array.isArray(parsed['@graph'])
+        ? parsed['@graph'] : [parsed]
+    return list.filter((node): node is Node =>
+      node != null && typeof node === 'object' && !Array.isArray(node) && '@type' in node,
+    )
+  } catch {
+    return []
+  }
+}
+
+function isArticle(node: Node) {
+  const types = Array.isArray(node['@type']) ? node['@type'] : [node['@type']]
+  return types.some(type => typeof type === 'string' && ARTICLE_TYPES.has(type))
+}
+
+function faqNode(blocks: TextBlock[]): Node | undefined {
+  const questions = blocks.flatMap((block, index) => {
+    if (block._type !== 'block' || (block.style !== 'h2' && block.style !== 'h3')) return []
+    const question = blockText(block)
+    if (!question || (!QUESTION.test(question) && !question.endsWith('?'))) return []
+    const answer = []
+    for (const following of blocks.slice(index + 1, index + 5)) {
+      if (following.style === 'h2' || following.style === 'h3') break
+      if (following._type === 'block' && following.style === 'normal') answer.push(blockText(following))
+    }
+    const text = answer.filter(Boolean).join(' ')
+    return text ? [{
+      '@type': 'Question',
+      name: question.endsWith('?') ? question : `${question}?`,
+      acceptedAnswer: { '@type': 'Answer', text },
+    }] : []
+  })
+  return questions.length >= 2 ? { '@type': 'FAQPage', mainEntity: questions } : undefined
+}
+
+function productList(post: Post): Node | undefined {
+  const products = post.products?.filter(product => product.name?.trim())
+  if (!products?.length) return undefined
+  return {
     '@type': 'ItemList',
     name: post.title,
-    description: post.excerpt ?? '',
-    url: `${SITE_URL}/blog/${post.slug.current}`,
     numberOfItems: products.length,
-    // A Product needs an offer or a rating to be valid; items with neither are
-    // listed by name + link only.
-    itemListElement: products.map((product: any, i: number) => (typeof product.price !== 'number' && !(product.ratingValue && product.reviewCount) ? {
+    itemListElement: products.map((product, index) => ({
       '@type': 'ListItem',
-      position: i + 1,
+      position: index + 1,
       name: product.name,
-      ...(product.affiliateUrl ? { url: product.affiliateUrl } : {}),
-    } : {
-      '@type': 'ListItem',
-      position: i + 1,
-      item: {
-        '@type': 'Product',
-        name: product.name,
-        description: product.description ?? '',
-        image: product.image ?? '',
-        brand: { '@type': 'Brand', name: product.brand ?? '' },
-        // An Offer without a price is invalid; price-free articles (prices kept
-        // general so they can't go stale) rely on aggregateRating instead.
-        ...(typeof product.price === 'number' ? {
-          offers: {
-            '@type': 'Offer',
-            price: product.price,
-            priceCurrency: 'USD',
-            availability: 'https://schema.org/InStock',
-            url: product.affiliateUrl ?? '',
-          },
-        } : {}),
-        ...(product.ratingValue && product.reviewCount ? {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: product.ratingValue,
-            reviewCount: product.reviewCount,
-            bestRating: 5,
-            worstRating: 1,
-          },
-        } : {}),
-      },
+      ...(product.affiliateUrl && { url: product.affiliateUrl }),
     })),
   }
+}
 
-  const faqPairs = extractFaqPairs(post.body ?? [])
-  if (faqPairs.length >= 2) {
-    return JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [primary, generateFaqSchema(faqPairs)],
-    })
-  }
-
-  return JSON.stringify({ '@context': 'https://schema.org', ...primary })
+export function generateJsonLd(post: Post, coverUrl?: string) {
+  const authored = authoredNodes(post.jsonLd)
+  const supplemental = authored.length ? authored : [productList(post), faqNode(post.body ?? [])].filter(Boolean)
+  const graph = authored.some(isArticle) ? authored : [articleNode(post, coverUrl), ...supplemental]
+  return serializeJsonLd(graph.length === 1
+    ? { '@context': CONTEXT, ...graph[0] }
+    : { '@context': CONTEXT, '@graph': graph })
 }

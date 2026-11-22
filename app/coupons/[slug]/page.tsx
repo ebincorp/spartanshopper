@@ -9,7 +9,8 @@ import CopyButton from '@/components/CopyButton'
 import CouponVerificationLabel from '@/components/CouponVerificationLabel'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import { couponExpiryDisplay } from '@/lib/offerExpiry'
-import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
+import { generateBreadcrumbJsonLd, serializeJsonLd } from '@/lib/generateJsonLd'
+import { EDITORIAL_PLACEHOLDER } from '@/lib/editorial-image'
 import { pageMetadata } from '@/lib/seo'
 import { isCouponEnded } from '@/lib/offer-status'
 
@@ -56,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     || detailsDescription(coupon.description)
     || `See the listed coupon offer for ${coupon.store} and check whether your order qualifies.`
 
-  const ogImage = coupon.image
+  const ogImage = coupon.image?.asset
     ? urlFor(coupon.image).width(1200).height(630).url()
     : undefined
 
@@ -85,6 +86,7 @@ export default async function CouponPage({ params }: Props) {
   // filled GSC's "Page with redirect" report.)
   if (!coupon) notFound()
   const ended = isCouponEnded(coupon)
+  const imageUrl = coupon.image?.asset ? urlFor(coupon.image).width(800).url() : null
 
   const expiry = couponExpiryDisplay(coupon)
   const description = detailsDescription(coupon.description)
@@ -110,7 +112,7 @@ export default async function CouponPage({ params }: Props) {
     {!ended && (
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
     )}
     <script
@@ -153,11 +155,11 @@ export default async function CouponPage({ params }: Props) {
 
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
 
-          {coupon.image && (
-            <div className="relative w-full h-64 sm:h-80 bg-gray-100">
+          {(imageUrl || !ended) && (
+            <div className={`relative w-full ${imageUrl ? 'h-64 sm:h-80 bg-gray-100' : 'h-36 bg-[#1A1A2E]'}`}>
               <Image
-                src={urlFor(coupon.image).width(800).url()}
-                alt={coupon.title}
+                src={imageUrl ?? EDITORIAL_PLACEHOLDER}
+                alt={imageUrl ? coupon.title : ''}
                 fill
                 className="object-contain"
                 priority

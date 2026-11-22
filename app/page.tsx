@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { postCategoriesForDeals } from '@/lib/deal-categories'
 import { pageMetadata } from '@/lib/seo'
+import { ORGANIZATION_ID, WEBSITE_ID } from '@/lib/generateJsonLd'
 import { client, urlFor } from '@/lib/sanity.client'
 import { couponsQuery, featuredDealsQuery, dealsQuery } from '@/lib/queries'
 import type { Coupon, Deal, Post } from '@/lib/types'
@@ -36,10 +37,11 @@ export default async function HomePage() {
     : []
   const jsonLd = {
     '@context': 'https://schema.org', '@graph': [
-      { '@type': 'Organization', name: 'SpartanShopper.com', url: 'https://www.spartanshopper.com',
+      { '@type': 'Organization', '@id': ORGANIZATION_ID, name: 'SpartanShopper.com', url: 'https://www.spartanshopper.com',
         logo: 'https://www.spartanshopper.com/android-chrome-512x512.png',
         sameAs: ['https://www.instagram.com/spartanshopper', 'https://www.tiktok.com/@spartanshopper'] },
-      { '@type': 'WebSite', name: 'SpartanShopper', url: 'https://www.spartanshopper.com',
+      { '@type': 'WebSite', '@id': WEBSITE_ID, name: 'SpartanShopper', url: 'https://www.spartanshopper.com',
+        publisher: { '@id': ORGANIZATION_ID },
         potentialAction: { '@type': 'SearchAction', target: {
           '@type': 'EntryPoint', urlTemplate: 'https://www.spartanshopper.com/search?q={search_term_string}'
         }, 'query-input': 'required name=search_term_string' } },

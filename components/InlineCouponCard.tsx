@@ -3,6 +3,7 @@ import CouponVerificationLabel from '@/components/CouponVerificationLabel'
 import type { CouponVerification } from '@/lib/couponVerification'
 import { isCouponEnded } from '@/lib/offer-status'
 import { couponExpiryDisplay } from '@/lib/offerExpiry'
+import { sanityImageVariant } from '@/lib/editorial-image'
 
 interface InlineCoupon {
   _id: string
@@ -36,8 +37,9 @@ export default function InlineCouponCard({ coupon }: Props) {
       {coupon.imageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={coupon.imageUrl}
+          src={sanityImageVariant(coupon.imageUrl, 160)}
           alt={coupon.store}
+          loading="lazy"
           className="w-16 h-16 object-contain rounded flex-shrink-0"
         />
       )}

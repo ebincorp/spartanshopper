@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
 import { isPostPastNoindexDate } from '@/lib/offer-status'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { client, urlFor } from '@/lib/sanity.client'
-import { getPostBySlugQuery, getAllPostSlugsQuery } from '@/lib/blogQueries'
+import { canonicalBlogLink, getPostBySlugQuery, getAllPostSlugsQuery, redirectedPostSlugs } from '@/lib/blogQueries'
 import type { Post } from '@/lib/types'
-import { generateJsonLd, generateJsonLdFromProducts, generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
+import { articleDescription, generateJsonLd, generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import InlineCouponCard from '@/components/InlineCouponCard'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import DealsPromoWidget from '@/components/DealsPromoWidget'
@@ -17,6 +16,8 @@ import TikTokEmbed from '@/components/TikTokEmbed'
 import BlackFridayFlag, { BlackFridayTopCTA } from '@/components/BlackFridayFlag'
 import { getBlackFridayTarget } from '@/lib/black-friday-offers'
 import { pageMetadata } from '@/lib/seo'
+import EditorialImage from '@/components/EditorialImage'
+import { EDITORIAL_PLACEHOLDER } from '@/lib/editorial-image'
 
 export const revalidate = 3600
 export const dynamicParams = true
@@ -64,7 +65,7 @@ interface Props {
 
 export async function generateStaticParams() {
   const slugs = await client
-    .fetch<{ slug: string }[]>(getAllPostSlugsQuery)
+    .fetch<{ slug: string }[]>(getAllPostSlugsQuery, { redirectedSlugs: redirectedPostSlugs })
     .catch(() => [])
   return slugs.map((s) => ({ slug: s.slug }))
 }
@@ -80,14 +81,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // metaTitle overrides the post title but is still brand-suffixed, matching
   // the behaviour these posts already shipped with under the layout template.
   const searchIntent = SEARCH_INTENT_METADATA[slug]
-  const metaTitle = searchIntent?.title || BING_TITLE_OVERRIDES[slug] || post.seo?.metaTitle || post.title
-  const metaDescription = searchIntent?.description || post.seo?.metaDescription || post.excerpt
+  const metaTitle = searchIntent?.title || BING_TITLE_OVERRIDES[slug] || post.seo?.metaTitle?.trim() || post.title
+  const metaDescription = searchIntent?.description || articleDescription(post)
 
   return pageMetadata({
     title: metaTitle,
-    description: metaDescription ?? '',
+    description: metaDescription,
     path: `/blog/${slug}`,
-    image: post.coverImage ? (FULL_PRODUCT_COVERS.has(slug)
+    image: post.coverImage?.asset ? (FULL_PRODUCT_COVERS.has(slug)
       ? urlFor(post.coverImage).width(1200).height(630).fit('max').url()
       : urlFor(post.coverImage).width(1200).height(630).url()) : undefined,
     type: 'article',
@@ -119,6 +120,7 @@ function linkRel(href?: string): string {
 }
 
 function articleProductLink(href: string | undefined, children: React.ReactNode) {
+  href = canonicalBlogLink(href)
   const target = getBlackFridayTarget(href)
   const link = (
     <a
@@ -276,13 +278,11 @@ const portableTextComponents: PortableTextComponents = {
       return (
         <figure className="my-8 w-full">
           <div className="w-full rounded-xl overflow-hidden bg-gray-100" style={{ aspectRatio: '16/9' }}>
-            {/* Plain <img> — Sanity CDN already resizes; no Vercel transformation needed. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <EditorialImage
               src={imageUrl}
               alt={value.alt ?? ''}
-              loading="lazy"
-              decoding="async"
+              widths={[400, 768, 1200]}
+              sizes="(max-width: 768px) calc(100vw - 32px), 736px"
               className="w-full h-full object-contain"
             />
           </div>
@@ -334,15 +334,16 @@ export default async function BlogPostPage({ params }: Props) {
     .catch(() => null)
 
   if (!post) notFound()
+  const hasCover = Boolean(post.coverImage?.asset)
+  const fullCover = FULL_PRODUCT_COVERS.has(post.slug.current)
+  const cover = post.coverImage?.asset ? urlFor(post.coverImage).width(1200).url() : EDITORIAL_PLACEHOLDER
 
   return (
     <>
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
-        __html: post.products?.length
-          ? generateJsonLdFromProducts(post, post.products)
-          : generateJsonLd(post)
+        __html: generateJsonLd(post, hasCover ? cover : undefined)
       }}
     />
     <script
@@ -357,13 +358,15 @@ export default async function BlogPostPage({ params }: Props) {
     />
     <main className="min-h-screen bg-gray-50">
       {/* Cover image */}
-      {post.coverImage && (
-        <div className={`relative w-full max-w-3xl mx-auto overflow-hidden ${FULL_PRODUCT_COVERS.has(post.slug.current) ? 'h-64 sm:h-96 bg-white' : 'h-48 sm:h-96 bg-gray-200'}`}>
-          <Image
-            src={urlFor(post.coverImage).width(1200).url()}
-            alt={post.coverImage.alt || post.title}
-            fill
-            className={FULL_PRODUCT_COVERS.has(post.slug.current) ? 'object-contain' : `object-cover ${
+        <div className={`relative w-full max-w-3xl mx-auto overflow-hidden ${!hasCover ? 'h-32 sm:h-44 bg-[#1A1A2E]' : fullCover ? 'h-64 sm:h-96 bg-white' : 'h-48 sm:h-96 bg-gray-200'}`}>
+          <EditorialImage
+            src={cover}
+            alt={hasCover ? post.coverImage?.alt || post.title : ''}
+            widths={[480, 768, 1200, 1536]}
+            sizes="(max-width: 768px) 100vw, 768px"
+            loading="eager"
+            fetchPriority="high"
+            className={`h-full w-full ${!hasCover || fullCover ? 'object-contain' : `object-cover ${
               // is-amazon-luxury-authentic: the GZ94 sneaker sits in the
               // bottom ~45% of its 500x500 source frame — lower than the
               // other cover photos on this template — so object-center
@@ -371,18 +374,15 @@ export default async function BlogPostPage({ params }: Props) {
               // than a new schema field, since this is a one-off outlier,
               // not a pattern (see the object-center/max-w-3xl commits).
               post.slug.current === 'is-amazon-luxury-authentic' ? 'object-bottom' : 'object-center'
-            }`}
-            priority
-            unoptimized
+            }`}`}
           />
-          {!FULL_PRODUCT_COVERS.has(post.slug.current) && <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />}
+          {hasCover && !fullCover && <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />}
         </div>
-      )}
 
       {/* Header */}
       <div
         style={{ backgroundColor: '#1A1A2E' }}
-        className={`px-4 py-10 ${post.coverImage && !FULL_PRODUCT_COVERS.has(post.slug.current) ? '-mt-16 relative' : ''}`}
+        className={`px-4 py-10 ${hasCover && !fullCover ? '-mt-16 relative' : ''}`}
       >
         <div className="max-w-3xl mx-auto">
           {post.category && (

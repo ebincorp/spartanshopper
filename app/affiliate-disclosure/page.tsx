@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { pageMetadata } from '@/lib/seo'
+import PageJsonLd from '@/components/PageJsonLd'
 
 export const metadata: Metadata = pageMetadata({
   title: 'Affiliate Disclosure',
@@ -10,6 +11,7 @@ export const metadata: Metadata = pageMetadata({
 export default function AffiliateDisclosurePage() {
   return (
     <main className="min-h-screen bg-gray-50">
+      <PageJsonLd metadata={metadata} path="/affiliate-disclosure" name="Affiliate Disclosure" type="WebPage" />
       {/* Header */}
       <div style={{ backgroundColor: '#1A1A2E' }} className="py-12 px-4">
         <div className="max-w-3xl mx-auto">

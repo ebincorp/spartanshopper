@@ -23,10 +23,11 @@
  *     regardless of which page was being shared.
  */
 import type { Metadata } from 'next'
+import { EDITORIAL_PLACEHOLDER, socialImageUrl } from './editorial-image'
 
 export const SITE_URL = 'https://www.spartanshopper.com'
 export const SITE_NAME = 'SpartanShopper'
-const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`
+const DEFAULT_OG_IMAGE = `${SITE_URL}${EDITORIAL_PLACEHOLDER}`
 
 export interface PageMetaInput {
   /** Page title WITHOUT the brand suffix — this function appends it exactly once. */
@@ -69,10 +70,10 @@ export function pageMetadata(input: PageMetaInput): Metadata {
     canonicalPath,
   } = input
 
-  const fullTitle = absoluteTitle ?? `${title} — ${SITE_NAME}`
+  const fullTitle = absoluteTitle?.trim() || (title.trim() ? `${title.trim()} — ${SITE_NAME}` : SITE_NAME)
   const url = absoluteUrl(path)
   const canonical = absoluteUrl(canonicalPath ?? path)
-  const ogImage = image ?? DEFAULT_OG_IMAGE
+  const ogImage = image ? socialImageUrl(absoluteUrl(image)) : DEFAULT_OG_IMAGE
 
   return {
     // `absolute` bypasses the root layout's title template — without it the

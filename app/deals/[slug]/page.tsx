@@ -9,7 +9,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
+import { generateBreadcrumbJsonLd, generatePageJsonLd } from '@/lib/generateJsonLd'
 import { pageMetadata } from '@/lib/seo'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
 import { endTime } from '@/lib/offer-status'
@@ -122,14 +122,17 @@ export default async function DealPage({ params }: Props) {
     imageUrl,
     Boolean(price)
   )
+  const pageJsonLd = productJsonLd ? serializeDealJsonLd(productJsonLd) : !expired
+    ? generatePageJsonLd(`/deals/${slug}`, title, productNotes.join(' ') || undefined)
+    : null
 
   return (
     <>
     {/* An Offer price Google can't match on the landing page is worse than none. */}
-    {productJsonLd && (
+    {pageJsonLd && (
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: serializeDealJsonLd(productJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: pageJsonLd }}
       />
     )}
     <script

@@ -1,13 +1,16 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { pageMetadata } from '@/lib/seo'
+import { sanityImageVariant } from '@/lib/editorial-image'
+
+const builderScreenshot = 'https://cdn.sanity.io/images/eohdr7jw/production/4e7bf36c1459cefeaf278ab6f755359932e2b10e-2545x1304.jpg'
 import { voltaritekOffer as offer } from '@/lib/voltaritek-offer'
 
 export const metadata: Metadata = pageMetadata({
   title: 'Custom Labels for Your Workspace',
   description: 'Plan clear labels for carts, back bars, workshops, shelves, and supply stations, then preview a custom set in 3D.',
   path: '/custom-organization-labels',
-  image: 'https://cdn.sanity.io/images/eohdr7jw/production/4e7bf36c1459cefeaf278ab6f755359932e2b10e-2545x1304.jpg',
+  image: sanityImageVariant(builderScreenshot, 1200),
   // This campaign landing page is intentionally excluded from search until its
   // dedicated search-intent research and post-launch review are complete.
   noIndex: true,
@@ -54,7 +57,7 @@ export default function CustomOrganizationLabelsPage() {
           <div className="overflow-hidden rounded-3xl border border-white/15 bg-black/20 shadow-2xl">
             {/* Official builder screenshot, November 11, 2026. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="https://cdn.sanity.io/images/eohdr7jw/production/4e7bf36c1459cefeaf278ab6f755359932e2b10e-2545x1304.jpg" alt="VoltariTek live 3D builder showing Clinical style and a twelve-label set" className="h-full w-full object-contain" />
+            <img src={sanityImageVariant(builderScreenshot, 900)} alt="VoltariTek live 3D builder showing Clinical style and a twelve-label set" className="h-full w-full object-contain" />
           </div>
         </div>
       </section>

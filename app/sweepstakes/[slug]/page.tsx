@@ -6,7 +6,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { isSweepstakeEnded } from '@/lib/offer-status'
-import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
+import { generateBreadcrumbJsonLd, serializeJsonLd } from '@/lib/generateJsonLd'
+import { EDITORIAL_PLACEHOLDER } from '@/lib/editorial-image'
 import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 3600
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = ended
     ? `This ${sweep.sponsor} sweepstakes has ended. See the sweepstakes and deals that are live now on SpartanShopper.`
     : `Enter to win ${sweep.prize} from ${sweep.sponsor}. Free sweepstakes on SpartanShopper.`
-  const imageUrl = sweep.image
+  const imageUrl = sweep.image?.asset
     ? urlFor(sweep.image).width(1200).height(630).url()
     : undefined
 
@@ -57,7 +58,7 @@ export default async function SweepstakePage({ params }: Props) {
 
   if (!sweep) notFound()
 
-  const imageUrl = sweep.image ? urlFor(sweep.image).width(800).url() : null
+  const imageUrl = sweep.image?.asset ? urlFor(sweep.image).width(800).url() : null
   const deadline = new Date(sweep.entryDeadline)
   const expired = isSweepstakeEnded(sweep)
 
@@ -82,7 +83,7 @@ export default async function SweepstakePage({ params }: Props) {
     <>
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(sweepJsonLd) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(sweepJsonLd) }}
     />
     <script
       type="application/ld+json"
@@ -128,13 +129,14 @@ export default async function SweepstakePage({ params }: Props) {
 
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
 
-          {imageUrl && (
-            <div className="relative w-full h-64 sm:h-80">
+          {(imageUrl || !expired) && (
+            <div className={`relative w-full ${imageUrl ? 'h-64 sm:h-80' : 'h-36 bg-[#1A1A2E]'}`}>
               <Image
-                src={imageUrl}
-                alt={sweep.title}
+                src={imageUrl ?? EDITORIAL_PLACEHOLDER}
+                alt={imageUrl ? sweep.title : ''}
                 fill
-                className="object-cover object-top"
+                className={imageUrl ? 'object-cover object-top' : 'object-contain'}
+                unoptimized={!imageUrl}
                 priority
               />
             </div>
