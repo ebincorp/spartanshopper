@@ -7,12 +7,8 @@
  * Date-only values stay valid through the end of that UTC day, matching the
  * deal directory queries.
  */
-export function endTime(value?: string | null): number | null {
-  if (!value) return null
-  const iso = value.length === 10 ? `${value}T23:59:59.999Z` : value
-  const t = Date.parse(iso)
-  return Number.isNaN(t) ? null : t
-}
+import { endTime } from './offerExpiry'
+export { endTime } from './offerExpiry'
 
 const passed = (value: string | null | undefined, now: number) => {
   const t = endTime(value)

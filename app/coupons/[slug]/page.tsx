@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation'
 import CopyButton from '@/components/CopyButton'
 import CouponVerificationLabel from '@/components/CouponVerificationLabel'
 import RelatedCoupons from '@/components/RelatedCoupons'
-import { offerExpiryLabel } from '@/lib/offerExpiry'
+import { couponExpiryDisplay } from '@/lib/offerExpiry'
 import { generateBreadcrumbJsonLd } from '@/lib/generateJsonLd'
 import { pageMetadata } from '@/lib/seo'
 import { isCouponEnded } from '@/lib/offer-status'
@@ -24,6 +24,14 @@ export async function generateStaticParams() {
     .fetch<{ slug: string }[]>(couponSlugsQuery)
     .catch(() => [])
   return slugs.map((s) => ({ slug: s.slug }))
+}
+
+function detailsDescription(description?: string) {
+  return description
+    ?.replace(/(^|(?<=[.!?])\s+)Visit the page for the code,?\s+(?:and|then)\s+([a-z])/gi,
+      (_, space: string, initial: string) => space + initial.toUpperCase())
+    .replace(/(?:^|(?<=[.!?])\s+)Visit the page for the code[.!?]?(?=\s|$)/gi, '')
+    .trim()
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -45,7 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const description = coupon.seo?.metaDescription
-    || coupon.description
+    || detailsDescription(coupon.description)
     || `See the listed coupon offer for ${coupon.store} and check whether your order qualifies.`
 
   const ogImage = coupon.image
@@ -78,14 +86,15 @@ export default async function CouponPage({ params }: Props) {
   if (!coupon) notFound()
   const ended = isCouponEnded(coupon)
 
-  const expiryLabel = offerExpiryLabel(coupon.expiryDate)
+  const expiry = couponExpiryDisplay(coupon)
+  const description = detailsDescription(coupon.description)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Offer',
     name: coupon.title,
-    ...(coupon.description && { description: coupon.description }),
+    ...(description && { description }),
     url: coupon.affiliateUrl,
-    ...(expiryLabel && { validThrough: coupon.expiryDate?.length === 10 ? `${coupon.expiryDate}T23:59:59.999Z` : coupon.expiryDate }),
+    validThrough: expiry.validThrough,
     seller: {
       '@type': 'Organization',
       name: coupon.store,
@@ -203,11 +212,11 @@ export default async function CouponPage({ params }: Props) {
               </div>
             )}
 
-            {!ended && <p className="text-sm text-gray-600 mb-6">{expiryLabel ? `Expires: ${expiryLabel}` : 'End date not supplied — confirm with the retailer.'}</p>}
-            {coupon.description && <p className="text-gray-700 leading-relaxed mb-6">{coupon.description}</p>}
+            {!ended && <p className="text-sm text-gray-600 mb-6">{expiry.text}</p>}
+            {description && <p className="text-gray-700 leading-relaxed mb-6">{description}</p>}
             {!ended && (<>
             <div className="bg-slate-50 rounded-xl p-5 mb-6">
-              <h2 className="font-bold text-lg mb-2">How to use this offer</h2>
+              <h2 className="font-bold text-lg mb-2 text-slate-900">How to use this offer</h2>
               <p className="text-gray-700 leading-relaxed">{coupon.code ? 'Copy the code above, visit the retailer, and enter it at checkout.' : 'Visit the retailer and follow the offer instructions on its product or promotion page.'} Confirm that the discount applies to your selected item before paying. Availability and eligibility can change.</p>
             </div>
             <p className="text-sm text-gray-600 mb-4">We may earn a commission from qualifying purchases through this link. <Link href="/affiliate-disclosure" className="underline">Affiliate disclosure</Link></p>

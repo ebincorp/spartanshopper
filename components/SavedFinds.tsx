@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { findKey, offerStatus, type CurrentFind, type SavedFind } from '@/lib/saved-finds'
-import { offerExpiryLabel } from '@/lib/offerExpiry'
+import { couponExpiryDisplay, offerExpiryLabel } from '@/lib/offerExpiry'
 import { useSavedFinds } from './useSavedFinds'
 
 type Filter = 'all' | 'deal' | 'coupon'
@@ -137,8 +137,10 @@ export default function SavedFinds() {
       <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-busy={loading && finds.length > 0}>
         {visible.map(find => {
           const active = checked && find.status === 'available'
-          const timedExpiry = !!find.expiryDate && find.expiryDate.length > 10
-          const expiry = offerExpiryLabel(find.expiryDate, timedExpiry ? 'America/Los_Angeles' : 'UTC')
+          const expiry = offerExpiryLabel(find.expiryDate)
+          const endDateText = find.kind === 'coupon'
+            ? couponExpiryDisplay(find).text
+            : expiry ? `Listed expiry: ${expiry}` : 'End date not supplied'
           const detailPath = `/${find.kind === 'deal' ? 'deals' : 'coupons'}/${find.slug}`
           return <article key={findKey(find)} className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <FindImage find={find} />
@@ -153,7 +155,7 @@ export default function SavedFinds() {
                   <p className="text-xs text-slate-500">{find.kind === 'deal' ? 'Listed price' : 'Listed offer'}</p>
                   <p className="mt-1 text-2xl font-extrabold tracking-tight text-rose-800">{find.offer || 'See offer details'}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-600">{find.instructions}</p>
-                  <p className="mt-2 text-xs text-slate-500">{expiry ? `Listed expiry: ${expiry}${timedExpiry ? ' (PT)' : ''}` : 'End date not supplied'}</p>
+                  <p className="mt-2 text-xs text-slate-500">{endDateText}</p>
                 </> : <p className="text-sm leading-6 text-slate-500">{!checked ? loading ? 'Checking the latest listing before you shop.' : 'Your find is saved. Refresh to check the offer.' : { available: '', expired: 'This offer has ended. Keep it as a reminder or remove it below.', upcoming: 'This offer hasn’t started yet. Check back after its start date.', unavailable: 'This offer is no longer listed as active. You can keep it here as a reminder.' }[find.status]}</p>}
               </div>
               {active && <div className="mt-auto space-y-3 pt-2">

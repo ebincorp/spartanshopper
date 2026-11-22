@@ -6,7 +6,7 @@ const ts = require('typescript')
 function load(file, imports = {}, globals = {}) {
   const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText
   const exports = {}
-  vm.runInNewContext(code, { exports, require: name => imports[name] ?? require(name), ...globals })
+  vm.runInNewContext(code, { exports, require: name => imports[name] ?? (name === './offerExpiry' ? require('../lib/offerExpiry.ts') : require(name)), ...globals })
   return exports
 }
 const policy = load('lib/saved-finds.ts')

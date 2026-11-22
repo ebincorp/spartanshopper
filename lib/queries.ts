@@ -1,3 +1,5 @@
+import { offerHasNotExpiredGroq } from './offerExpiry'
+
 // ── DEALS ──────────────────────────────────────────────────────────────────
 // ── COUPON CATEGORIES (shared list) ─────────────────────────────────────────
 export const COUPON_CATEGORIES = [
@@ -20,7 +22,7 @@ export type CouponCategoryValue = typeof COUPON_CATEGORIES[number]['value']
 // Date-only expiries remain valid through the end of that UTC calendar day.
 const DEAL_DATE_FILTER = `active == true
   && (!defined(startDate) || startDate <= now())
-  && (!defined(expiryDate) || select(length(expiryDate) == 10 => expiryDate + "T23:59:59.999Z", expiryDate) > now())`
+  && ${offerHasNotExpiredGroq}`
 // Card surfaces (homepage picks, /deals shelves) need a real uploaded image.
 // Bulk imports have saved 1x1 transparent placeholders as the image asset, and
 // raw Amazon imageUrls reject hotlinks, so only a Sanity asset wider than 1px counts.
@@ -71,20 +73,20 @@ export const dealBySlugQuery = `
 const COUPON_DATE_FILTER = `
   active == true
   && (!defined(startDate) || startDate <= now())
-  && (!defined(expiryDate) || select(length(expiryDate) == 10 => expiryDate + "T23:59:59.999Z", expiryDate) > now())
+  && ${offerHasNotExpiredGroq}
 `
 
 export const couponsQuery = `
   *[_type == "coupon" && ${COUPON_DATE_FILTER}] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
-    image, affiliateUrl, startDate, expiryDate, verified, verification{status, checkedOn}, active, category, tags
+    image, affiliateUrl, startDate, expiryDate, expiryConfirmedFor, verified, verification{status, checkedOn, advertiserMatchMissing}, active, category, tags
   }
 `
 
 export const featuredCouponsQuery = `
   *[_type == "coupon" && ${COUPON_DATE_FILTER}] | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
-    image, affiliateUrl, startDate, expiryDate, verified, verification{status, checkedOn}, active, category, tags
+    image, affiliateUrl, startDate, expiryDate, expiryConfirmedFor, verified, verification{status, checkedOn, advertiserMatchMissing}, active, category, tags
   }
 `
 
@@ -93,14 +95,14 @@ export const couponBySlugQuery = `
   // coupons whose start date hasn't arrived stay hidden.
   *[_type == "coupon" && slug.current == $slug && (!defined(startDate) || startDate <= now())][0] {
     _id, title, slug, store, code, discount, description, whyWeLikeThis, seo,
-    image, affiliateUrl, "affiliateSlug": affiliateSlug.current, startDate, expiryDate, verified, verification{status, checkedOn}, active, category, tags
+    image, affiliateUrl, "affiliateSlug": affiliateSlug.current, startDate, expiryDate, expiryConfirmedFor, verified, verification{status, checkedOn, advertiserMatchMissing}, active, category, tags
   }
 `
 
 export const relatedCouponsQuery = `
   *[_type == "coupon" && ${COUPON_DATE_FILTER} && category == $category && _id != $currentId] | order(_createdAt desc) [0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, code, discount, description,
-    image, affiliateUrl, startDate, expiryDate, verified, verification{status, checkedOn}, active, category
+    image, affiliateUrl, startDate, expiryDate, expiryConfirmedFor, verified, verification{status, checkedOn, advertiserMatchMissing}, active, category
   }
 `
 
@@ -133,7 +135,7 @@ export const dealCategoriesQuery = `
 
 // ── COUNTS ───────────────────────────────────────────────────────────────────
 export const dealCountQuery = `count(*[_type == "deal" && ${DEAL_DATE_FILTER}])`
-export const couponCountQuery = `count(*[_type == "coupon" && active == true])`
+export const couponCountQuery = `count(*[_type == "coupon" && ${COUPON_DATE_FILTER}])`
 export const sweepstakeCountQuery = `count(*[_type == "sweepstake" && active == true])`
 
 // ── LINK CLOAKER ─────────────────────────────────────────────────────────────
@@ -156,9 +158,7 @@ export const dealSlugsQuery = `
 `
 
 export const couponSlugsQuery = `
-  *[_type == "coupon" && active == true && defined(slug.current)
-    && (!defined(startDate) || startDate <= now())
-    && (!defined(expiryDate) || select(length(expiryDate) == 10 => expiryDate + "T23:59:59.999Z", expiryDate) > now())] {
+  *[_type == "coupon" && ${COUPON_DATE_FILTER} && defined(slug.current)] {
     "slug": slug.current, _updatedAt
   }
 `

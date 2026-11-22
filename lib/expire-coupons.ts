@@ -6,6 +6,7 @@
  * rather than duplicating the query.
  */
 import { createClient } from '@sanity/client'
+import { offerExpiryGroq } from './offerExpiry'
 
 export interface ExpireResult {
   deactivated: number
@@ -24,21 +25,15 @@ function makeClient() {
 }
 
 export async function runExpireCoupons(): Promise<ExpireResult> {
-  const client = makeClient()
+  const client = makeClient().withConfig({ perspective: 'published' })
 
-  // Plain string comparison, not dateTime(expiryDate) < dateTime(now()) — GROQ's
-  // dateTime() can't parse bare "YYYY-MM-DD" values (no time component) and
-  // silently returns null, which drops those docs out of the filter forever.
-  // ISO date/datetime strings compare correctly as strings as long as both sides
-  // are zero-padded, so this matches the same approach lib/queries.ts already
-  // uses for the public coupons query.
-  const expired = await client.fetch<{ _id: string; _type: string }[]>(
-    `*[_type in ["deal", "coupon"] && active == true && defined(expiryDate) && expiryDate < now()]{ _id, _type }`
+  const expired = await client.fetch<{ _id: string; _type: string; _rev: string }[]>(
+    `*[_type in ["deal", "coupon"] && active == true && defined(expiryDate) && ${offerExpiryGroq} <= dateTime(now())]{ _id, _type, _rev }`
   )
 
   if (expired.length > 0) {
     let tx = client.transaction()
-    for (const doc of expired) tx = tx.patch(doc._id, (p) => p.set({ active: false }))
+    for (const doc of expired) tx = tx.patch(doc._id, (p) => p.ifRevisionId(doc._rev).set({ active: false }))
     await tx.commit()
   }
 

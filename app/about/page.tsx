@@ -37,7 +37,7 @@ export default function AboutPage() {
             SpartanShopper exists to help everyday people spend less and win more. We scour the internet for the best deals, verify coupon codes so you don&apos;t waste time at checkout, and surface legitimate free sweepstakes so you can enter to win without spending a dime.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            We believe saving money shouldn&apos;t require hours of searching. That&apos;s why we curate everything in one place — updated daily — so you can browse, click, and save in minutes.
+            We believe saving money shouldn&apos;t require hours of searching. That&apos;s why we bring guides, deals, and coupons together so you can compare options and check the final offer with the retailer.
           </p>
         </section>
 

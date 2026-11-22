@@ -128,6 +128,7 @@ export default async function SearchPage({ searchParams }: Props) {
                   slug={coupon.slug.current}
                   affiliateSlug={coupon.affiliateSlug}
                   expiryDate={coupon.expiryDate}
+                  expiryConfirmedFor={coupon.expiryConfirmedFor}
                   verification={coupon.verification}
                 />
               ))}

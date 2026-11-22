@@ -2,6 +2,9 @@ import { getCouponVerification, type CouponVerification } from '@/lib/couponVeri
 
 export default function CouponVerificationLabel({ verification }: { verification?: CouponVerification | null }) {
   const check = getCouponVerification(verification)
+  if (verification?.status === 'advertiser-listed' && verification.advertiserMatchMissing) {
+    return <p className="text-sm text-amber-900">No longer matched in the advertiser feed. Check with the retailer.</p>
+  }
   if (!check) return <p className="text-sm text-slate-600">No dated check on file.</p>
 
   return (

@@ -48,6 +48,7 @@ export interface Coupon {
   asin?: string
   startDate?: string
   expiryDate?: string
+  expiryConfirmedFor?: string | null
   verified?: boolean
   verification?: CouponVerification | null
   active: boolean

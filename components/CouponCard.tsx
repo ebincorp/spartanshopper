@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { offerExpiryLabel } from '@/lib/offerExpiry'
+import { couponExpiryDisplay, endTime } from '@/lib/offerExpiry'
 import type { CouponVerification } from '@/lib/couponVerification'
 import CouponVerificationLabel from './CouponVerificationLabel'
 import SaveFindButton from './SaveFindButton'
@@ -19,12 +19,12 @@ interface CouponCardProps {
   slug: string
   affiliateSlug?: string
   expiryDate?: string
+  expiryConfirmedFor?: string | null
   verification?: CouponVerification | null
 }
 
 function isExpired(expiryDate?: string): boolean {
-  if (!expiryDate) return false
-  return new Date(expiryDate.length === 10 ? `${expiryDate}T23:59:59.999Z` : expiryDate) < new Date()
+  return (endTime(expiryDate) ?? Infinity) <= Date.now()
 }
 
 export default function CouponCard({
@@ -38,9 +38,10 @@ export default function CouponCard({
   slug,
   affiliateSlug,
   expiryDate,
+  expiryConfirmedFor,
   verification,
 }: CouponCardProps) {
-  const expiryLabel = offerExpiryLabel(expiryDate)
+  const expiry = couponExpiryDisplay({ expiryDate, expiryConfirmedFor })
   const couponUrl = `/coupons/${slug}`
   const shopUrl = affiliateSlug ? `/go/${affiliateSlug}` : affiliateUrl
   const [revealed, setRevealed] = useState(false)
@@ -163,7 +164,7 @@ export default function CouponCard({
         {/* Expiry */}
         {!expired && (
           <p className="text-sm text-gray-500 mb-3" suppressHydrationWarning>
-            {expiryLabel ? `Expires: ${expiryLabel}` : 'End date not supplied — check with retailer'}
+            {expiry.text}
           </p>
         )}
 

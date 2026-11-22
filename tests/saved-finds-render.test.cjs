@@ -7,7 +7,7 @@ const { renderToStaticMarkup } = require('react-dom/server')
 function load(file, imports = {}) {
   const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.ReactJSX } }).outputText
   const exports = {}
-  vm.runInNewContext(code, { exports, require: name => imports[name] ?? require(name) })
+  vm.runInNewContext(code, { exports, require: name => imports[name] ?? (name === './offerExpiry' ? require('../lib/offerExpiry.ts') : require(name)) })
   return exports
 }
 const policy = load('lib/saved-finds.ts')

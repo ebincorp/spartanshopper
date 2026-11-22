@@ -1,3 +1,5 @@
+import { endTime } from './offerExpiry'
+
 export const SAVED_FINDS_KEY = 'spartanshopper.saved-finds.v1'
 export const SAVED_FINDS_EVENT = 'spartanshopper:saved-finds'
 export const MAX_SAVED_FINDS = 100
@@ -10,6 +12,7 @@ export interface CurrentFind extends SavedFind {
   offer?: string
   affiliateSlug?: string
   expiryDate?: string
+  expiryConfirmedFor?: string | null
   instructions?: string
 }
 export function validFind(value: unknown): value is SavedFind {
@@ -35,8 +38,9 @@ export function parseSavedFinds(raw: string | null): SavedFind[] {
 }
 export function offerStatus(active: boolean, start?: string, expiry?: string, now = Date.now()): CurrentFind['status'] {
   if (!active) return 'unavailable'
-  if ((start && !Number.isFinite(Date.parse(start))) || (expiry && !Number.isFinite(Date.parse(expiry)))) return 'unavailable'
+  const cutoff = endTime(expiry)
+  if ((start && !Number.isFinite(Date.parse(start))) || (expiry && cutoff === null)) return 'unavailable'
   if (start && new Date(start).getTime() > now) return 'upcoming'
-  if (expiry && new Date(expiry.length === 10 ? `${expiry}T23:59:59.999Z` : expiry).getTime() <= now) return 'expired'
+  if (cutoff !== null && cutoff <= now) return 'expired'
   return 'available'
 }

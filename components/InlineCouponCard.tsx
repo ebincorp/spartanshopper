@@ -2,7 +2,7 @@ import CopyButton from '@/components/CopyButton'
 import CouponVerificationLabel from '@/components/CouponVerificationLabel'
 import type { CouponVerification } from '@/lib/couponVerification'
 import { isCouponEnded } from '@/lib/offer-status'
-import { offerExpiryLabel } from '@/lib/offerExpiry'
+import { couponExpiryDisplay } from '@/lib/offerExpiry'
 
 interface InlineCoupon {
   _id: string
@@ -14,6 +14,7 @@ interface InlineCoupon {
   affiliateUrl: string
   affiliateSlug?: string
   expiryDate?: string
+  expiryConfirmedFor?: string | null
   startDate?: string
   active?: boolean
   imageUrl?: string
@@ -26,7 +27,7 @@ interface Props {
 
 export default function InlineCouponCard({ coupon }: Props) {
   if (isCouponEnded(coupon) || (coupon.startDate && Date.parse(coupon.startDate) > Date.now())) return null
-  const expiryLabel = offerExpiryLabel(coupon.expiryDate)
+  const expiry = couponExpiryDisplay(coupon)
 
   return (
     <div className="my-6 rounded-xl p-5 flex flex-col sm:flex-row gap-4 items-start border-2 border-dashed"
@@ -81,12 +82,7 @@ export default function InlineCouponCard({ coupon }: Props) {
           </a>
         </div>
 
-        {expiryLabel && (
-          <p className="text-xs text-gray-500 mt-3">
-            Expires{' '}
-            {expiryLabel}
-          </p>
-        )}
+        <p className="text-xs text-gray-600 mt-3">{expiry.text}</p>
       </div>
     </div>
   )

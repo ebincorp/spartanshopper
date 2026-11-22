@@ -8,6 +8,7 @@ export const couponVerificationLabels = {
 export interface CouponVerification {
   status?: keyof typeof couponVerificationLabels | null
   checkedOn?: string | null
+  advertiserMatchMissing?: boolean | null
 }
 
 const checkDateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -23,8 +24,9 @@ export function formatCouponVerificationDate(checkedOn?: string | null): string 
 }
 
 export function getCouponVerification(verification?: CouponVerification | null) {
-  const { status, checkedOn } = verification ?? {}
+  const { status, checkedOn, advertiserMatchMissing } = verification ?? {}
   if (!status || !Object.hasOwn(couponVerificationLabels, status) || !checkedOn) return null
+  if (status === 'advertiser-listed' && advertiserMatchMissing) return null
   const dateLabel = formatCouponVerificationDate(checkedOn)
   if (!dateLabel) return null
   return { status, label: couponVerificationLabels[status], checkedOn, dateLabel }

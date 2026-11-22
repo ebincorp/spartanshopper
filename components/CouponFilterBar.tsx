@@ -108,6 +108,7 @@ export default function CouponFilterBar({ coupons, initialLimit }: Props) {
               slug={coupon.slug.current}
               affiliateSlug={coupon.affiliateSlug}
               expiryDate={coupon.expiryDate}
+              expiryConfirmedFor={coupon.expiryConfirmedFor}
               verification={coupon.verification}
             />
           ))}

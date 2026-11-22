@@ -7,7 +7,7 @@ const ts = require('typescript')
 function load(file) {
   const exports = {}
   const source = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText
-  vm.runInNewContext(source, { exports, require: name => name === './offer-status' ? load('lib/offer-status.ts') : require(name) })
+  vm.runInNewContext(source, { exports, require: name => name === './offer-status' ? load('lib/offer-status.ts') : name === './offerExpiry' ? load('lib/offerExpiry.ts') : require(name) })
   return exports
 }
 const { socialProductFeatures: features, buildSocialProductCards: build, filterSocialProducts: filter } = load('lib/social-products.ts')
