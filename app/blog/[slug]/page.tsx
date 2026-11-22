@@ -11,6 +11,8 @@ import InlineCouponCard from '@/components/InlineCouponCard'
 import RelatedCoupons from '@/components/RelatedCoupons'
 import DealsPromoWidget from '@/components/DealsPromoWidget'
 import EmailSignup from '@/components/EmailSignup'
+import DrawerFitPlanner from '@/components/DrawerFitPlanner'
+import PatchCostCalculator from '@/components/PatchCostCalculator'
 import RelatedKitchenGuides from '@/components/RelatedKitchenGuides'
 import TikTokEmbed from '@/components/TikTokEmbed'
 import BlackFridayFlag, { BlackFridayTopCTA } from '@/components/BlackFridayFlag'
@@ -414,6 +416,9 @@ export default async function BlogPostPage({ params }: Props) {
             {post.excerpt}
           </p>
         )}
+
+        {slug === 'mechanic-shop-organization' && <DrawerFitPlanner />}
+        {slug === 'biodance-eye-patches-review' && <PatchCostCalculator />}
 
         {post.body && (
           <div className="prose-custom">
