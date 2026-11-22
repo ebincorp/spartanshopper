@@ -218,7 +218,7 @@ export function BlackFridayTopCTA({
           <a
             href={link.href}
             target="_blank"
-            rel="sponsored noopener noreferrer"
+            rel="sponsored nofollow noopener noreferrer"
             className="inline-flex min-h-11 items-center rounded-lg bg-[#1A1A2E] px-3 text-sm font-bold text-white hover:bg-slate-800"
           >
             Check today’s price

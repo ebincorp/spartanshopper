@@ -114,7 +114,7 @@ function blockText(value: { children?: unknown[] }): string {
 
 function linkRel(href?: string): string {
   return href?.includes('/go/')
-    ? 'sponsored noopener noreferrer'
+    ? 'sponsored nofollow noopener noreferrer'
     : 'noopener noreferrer'
 }
 
