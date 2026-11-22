@@ -61,7 +61,7 @@ export default function DealsPromoWidget() {
           <p className="mb-4 text-sm leading-relaxed text-gray-600">{offer.body}</p>
           <a
             href={offer.href}
-            rel="sponsored noopener"
+            rel="sponsored nofollow noopener"
             className="group flex w-full items-center justify-center gap-1.5 rounded-md px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             style={{ backgroundColor: offer.accent }}
           >
