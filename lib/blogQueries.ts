@@ -43,6 +43,12 @@ export const getPostBySlugQuery = `
     jsonLd,
     excerpt,
     coverImage,
+    buyingSummary {
+      verdict,
+      details,
+      evidence,
+      picks[] { _key, name, fit, check, "affiliateSlug": affiliateLink->slug.current }
+    },
     products[] {
       name, brand, price, affiliateUrl, image,
       ratingValue, reviewCount, description

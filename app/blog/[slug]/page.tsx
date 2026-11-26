@@ -19,6 +19,7 @@ import BlackFridayFlag, { BlackFridayTopCTA } from '@/components/BlackFridayFlag
 import { getBlackFridayTarget } from '@/lib/black-friday-offers'
 import { pageMetadata } from '@/lib/seo'
 import EditorialImage from '@/components/EditorialImage'
+import ArticleBuyingSummary from '@/components/ArticleBuyingSummary'
 import { EDITORIAL_PLACEHOLDER } from '@/lib/editorial-image'
 
 export const revalidate = 3600
@@ -339,6 +340,22 @@ export default async function BlogPostPage({ params }: Props) {
   const hasCover = Boolean(post.coverImage?.asset)
   const fullCover = FULL_PRODUCT_COVERS.has(post.slug.current)
   const cover = post.coverImage?.asset ? urlFor(post.coverImage).width(1200).url() : EDITORIAL_PLACEHOLDER
+  const buyingSummary = post.buyingSummary?.verdict?.trim() ? post.buyingSummary : undefined
+  const summaryHasLinks = buyingSummary?.picks?.some(pick => pick.affiliateSlug)
+  const coverImage = (
+    <div className={`relative w-full max-w-3xl mx-auto overflow-hidden ${!hasCover ? 'h-32 sm:h-44 bg-[#1A1A2E]' : fullCover ? 'h-64 sm:h-96 bg-white' : 'h-48 sm:h-96 bg-gray-200'}`}>
+      <EditorialImage
+        src={cover}
+        alt={hasCover ? post.coverImage?.alt || post.title : ''}
+        widths={[480, 768, 1200, 1536]}
+        sizes="(max-width: 768px) 100vw, 768px"
+        loading={buyingSummary ? 'lazy' : 'eager'}
+        fetchPriority={buyingSummary ? 'auto' : 'high'}
+        className={`h-full w-full ${!hasCover || fullCover ? 'object-contain' : `object-cover ${post.slug.current === 'is-amazon-luxury-authentic' ? 'object-bottom' : 'object-center'}`}`}
+      />
+      {hasCover && !fullCover && !buyingSummary && <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />}
+    </div>
+  )
 
   return (
     <>
@@ -359,35 +376,15 @@ export default async function BlogPostPage({ params }: Props) {
       }}
     />
     <main className="min-h-screen bg-gray-50">
-      {/* Cover image */}
-        <div className={`relative w-full max-w-3xl mx-auto overflow-hidden ${!hasCover ? 'h-32 sm:h-44 bg-[#1A1A2E]' : fullCover ? 'h-64 sm:h-96 bg-white' : 'h-48 sm:h-96 bg-gray-200'}`}>
-          <EditorialImage
-            src={cover}
-            alt={hasCover ? post.coverImage?.alt || post.title : ''}
-            widths={[480, 768, 1200, 1536]}
-            sizes="(max-width: 768px) 100vw, 768px"
-            loading="eager"
-            fetchPriority="high"
-            className={`h-full w-full ${!hasCover || fullCover ? 'object-contain' : `object-cover ${
-              // is-amazon-luxury-authentic: the GZ94 sneaker sits in the
-              // bottom ~45% of its 500x500 source frame — lower than the
-              // other cover photos on this template — so object-center
-              // still crops out most of the shoe. Targeted override rather
-              // than a new schema field, since this is a one-off outlier,
-              // not a pattern (see the object-center/max-w-3xl commits).
-              post.slug.current === 'is-amazon-luxury-authentic' ? 'object-bottom' : 'object-center'
-            }`}`}
-          />
-          {hasCover && !fullCover && <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />}
-        </div>
+      {!buyingSummary && coverImage}
 
       {/* Header */}
       <div
         style={{ backgroundColor: '#1A1A2E' }}
-        className={`px-4 py-10 ${hasCover && !fullCover ? '-mt-16 relative' : ''}`}
+        className={`px-4 ${buyingSummary ? 'py-6 sm:py-10' : 'py-10'} ${hasCover && !fullCover && !buyingSummary ? '-mt-16 relative' : ''}`}
       >
         <div className="max-w-3xl mx-auto">
-          {post.category && (
+          {post.category && !buyingSummary && (
             <span
               className="inline-block text-white text-xs font-bold px-3 py-1 rounded-full mb-4"
               style={{ backgroundColor: CATEGORY_COLORS[post.category] ?? '#E63946' }}
@@ -398,7 +395,7 @@ export default async function BlogPostPage({ params }: Props) {
           <h1 className="text-white text-3xl sm:text-4xl font-extrabold leading-tight mb-4">
             {post.title}
           </h1>
-          <p className="text-white/50 text-sm">
+          <p className="text-white/75 text-sm">
             {post.author && <span>{post.author} · </span>}
             {new Date(post.publishedAt).toLocaleDateString('en-US', {
               month: 'long',
@@ -410,8 +407,10 @@ export default async function BlogPostPage({ params }: Props) {
       </div>
 
       {/* Body */}
-      <div className="max-w-3xl mx-auto px-4 py-10">
-        {post.excerpt && (
+      <div className={`max-w-3xl mx-auto px-4 ${buyingSummary ? 'py-6 sm:py-10' : 'py-10'}`}>
+        {buyingSummary && <ArticleBuyingSummary summary={buyingSummary} />}
+        {buyingSummary && hasCover && <div className="mb-7">{coverImage}</div>}
+        {!buyingSummary && post.excerpt && (
           <p className="text-lg text-gray-500 leading-relaxed mb-8 pb-8 border-b border-gray-200">
             {post.excerpt}
           </p>
@@ -422,7 +421,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         {post.body && (
           <div className="prose-custom">
-            <PortableText value={withTopOfferCTA(post.body)} components={portableTextComponents} />
+            <PortableText value={summaryHasLinks ? post.body : withTopOfferCTA(post.body)} components={portableTextComponents} />
           </div>
         )}
 

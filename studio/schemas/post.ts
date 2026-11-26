@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity'
+import { defineArrayMember, defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'post',
@@ -172,7 +172,43 @@ export default defineType({
         },
       ],
     }),
-    // ── END PRODUCTS ────────────────────────────────────────────────────────
+    defineField({
+      name: 'buyingSummary',
+      title: 'Buying Summary',
+      description: 'Optional opening for reviews and comparisons. Name the exact model, buyer fit, and the caveat that changes the decision.',
+      type: 'object',
+      fields: [
+        defineField({ name: 'verdict', type: 'text', rows: 3, validation: rule => rule.required() }),
+        defineField({
+          name: 'details',
+          title: 'Quick Facts',
+          description: 'Use verified specs, included pieces, or dated price context with its source.',
+          type: 'array',
+          of: [defineArrayMember({ type: 'string' })],
+        }),
+        defineField({
+          name: 'evidence',
+          description: 'Identify the source of specifications, outside testing, or buyer feedback used here.',
+          type: 'text',
+          rows: 2,
+        }),
+        defineField({
+          name: 'picks',
+          type: 'array',
+          of: [defineArrayMember({
+            name: 'buyingPick',
+            type: 'object',
+            fields: [
+              defineField({ name: 'name', title: 'Exact Product', type: 'string', validation: rule => rule.required() }),
+              defineField({ name: 'fit', title: 'Good Fit For', type: 'string' }),
+              defineField({ name: 'check', title: 'Check First', type: 'string' }),
+              defineField({ name: 'affiliateLink', type: 'reference', to: [{ type: 'affiliateLink' }] }),
+            ],
+            preview: { select: { title: 'name', subtitle: 'fit' } },
+          })],
+        }),
+      ],
+    }),
     defineField({
       name: 'body',
       title: 'Body',

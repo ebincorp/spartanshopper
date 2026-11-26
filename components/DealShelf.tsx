@@ -1,4 +1,4 @@
-import { urlFor } from '@/lib/sanity.client'
+import { dealPhotoUrl } from '@/lib/deal-photo'
 import type { Deal } from '@/lib/types'
 import DealCard from './DealCard'
 
@@ -21,7 +21,7 @@ export default function DealShelf({ title, description, deals }: Props) {
             <DealCard
               {...deal}
               slug={deal.slug.current}
-              image={deal.image ? urlFor(deal.image).width(400).url() : undefined}
+              image={dealPhotoUrl(deal, 400)}
               imageAlt={deal.image?.alt}
               imageAttribution={deal.image?.attribution}
               compact

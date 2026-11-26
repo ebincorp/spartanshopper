@@ -2,11 +2,12 @@ import Link from 'next/link'
 import { postCategoriesForDeals } from '@/lib/deal-categories'
 import { pageMetadata } from '@/lib/seo'
 import { ORGANIZATION_ID, WEBSITE_ID } from '@/lib/generateJsonLd'
-import { client, urlFor } from '@/lib/sanity.client'
+import { client } from '@/lib/sanity.client'
 import { couponsQuery, featuredDealsQuery, dealsQuery } from '@/lib/queries'
 import type { Coupon, Deal, Post } from '@/lib/types'
 import CouponFilterBar from '@/components/CouponFilterBar'
 import DealCard from '@/components/DealCard'
+import { dealPhotoUrl } from '@/lib/deal-photo'
 import EndingSoonDeals from '@/components/EndingSoonDeals'
 import { endingSoonDeals } from '@/lib/ending-soon-deals'
 import HalloweenFeature from '@/components/HalloweenFeature'
@@ -102,10 +103,9 @@ export default async function HomePage() {
               key={deal._id}
               {...deal}
               slug={deal.slug.current}
-              image={deal.image ? urlFor(deal.image).width(400).url() : undefined}
+              image={dealPhotoUrl(deal, 400)}
               imageAlt={deal.image?.alt}
               imageAttribution={deal.image?.attribution}
-              imageUrl={deal.imageUrl}
             />
           ))}
         </div>

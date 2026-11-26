@@ -23,7 +23,6 @@ interface DealCardProps {
   image?: string
   imageAlt?: string
   imageAttribution?: DealPhotoAttribution
-  imageUrl?: string
   expiryDate?: string
   priceVerifiedAt?: string
   priceVerificationSource?: string
@@ -52,15 +51,11 @@ export default function DealCard(props: DealCardProps) {
     affiliateSlug,
     asin,
     image,
-    imageUrl,
     expiryDate,
   } = props
   const title = dealDisplayTitle(rawTitle)
   const facts = dealCardFacts(title, description)
   const shopUrl = affiliateSlug ? `/go/${affiliateSlug}` : affiliateUrl
-  // Amazon's source URLs can reject browser hotlinks. Prefer the uploaded
-  // Sanity asset, which is stable and is available for the repaired deals.
-  const imgSrc = image || imageUrl
   const expiryStatus = getExpiryStatus(expiryDate)
   const expiryLabel = offerExpiryLabel(expiryDate)
   const expired = expiryStatus === 'expired'
@@ -76,38 +71,27 @@ export default function DealCard(props: DealCardProps) {
   ) : null
 
   return (
-    <article className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      {/* Image */}
-      <div className={compact ? "relative h-36 w-full overflow-hidden bg-white" : "relative h-44 w-full overflow-hidden bg-white"}>
-        {imgSrc ? (
-          <Image
-            src={imgSrc}
-            alt={props.imageAlt || title}
-            fill
-            unoptimized
-            className="object-contain group-hover:scale-105 transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300">
-            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+    <article className={`group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white ${image ? '' : 'self-start'}`}>
+      {image && (
+        <>
+          <div className={compact ? 'relative h-36 w-full bg-white' : 'relative h-44 w-full bg-white'}>
+            <Image
+              src={image}
+              alt={props.imageAlt || title}
+              fill
+              unoptimized
+              className="object-contain"
+            />
           </div>
-        )}
-        {/* Expired badge */}
-        {expiryStatus === 'expired' && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <span className="text-white font-extrabold text-xl tracking-widest">EXPIRED</span>
-          </div>
-        )}
-      </div>
-      {image && <DealPhotoCredit attribution={props.imageAttribution} />}
+          <DealPhotoCredit attribution={props.imageAttribution} />
+        </>
+      )}
 
       <div className="flex flex-1 flex-col p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">{store}</p>
-        <h3 className="mt-1 text-base font-bold leading-snug text-[#1A1A2E]">
+        <h3 className="text-base font-bold leading-snug text-[#1A1A2E]">
           <Link href={`/deals/${slug}`} className="hover:underline">{title}</Link>
         </h3>
+        <p className="mt-1 text-sm text-slate-600">{store}</p>
         {facts.length > 0 && (
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-5 text-slate-700">
             {facts.map(fact => (

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { client, urlFor } from '@/lib/sanity.client'
+import { client } from '@/lib/sanity.client'
+import { dealPhotoUrl } from '@/lib/deal-photo'
 import { dealsQuery, dealsByCategoryQuery, dealCategoriesQuery } from '@/lib/queries'
 import type { Deal } from '@/lib/types'
 import DealCard from '@/components/DealCard'
@@ -58,10 +59,7 @@ export default async function DealsPage({ searchParams }: Props) {
 
   const inCategories = (values: string[]) => (deal: Deal) => values.includes(deal.category ?? '')
 
-  // Shelves only show deals with a real product image, and each deal appears on
-  // at most one shelf (earlier shelves claim first). The full grid below still
-  // lists every active deal.
-  const shelfCandidates = deals.filter((deal) => deal.hasCardImage)
+  // Each deal appears on at most one shelf. The full grid lists every active deal.
   const claimed = new Set<string>()
   const urgentDeals = endingSoonDeals(deals)
   urgentDeals.forEach(deal => claimed.add(deal._id))
@@ -71,7 +69,7 @@ export default async function DealsPage({ searchParams }: Props) {
     return picked
   }
   // The query returns newest first. Keep that order within each group.
-  const featuredCandidates = shelfCandidates.filter(deal => dealCardFacts(deal.title, deal.description).length > 0)
+  const featuredCandidates = deals.filter(deal => dealCardFacts(deal.title, deal.description).length > 0)
   const shelves = [
     { title: 'Recently added', description: 'See the model, included parts and fit details for new finds.', deals: shelf(featuredCandidates) },
     { title: 'Beauty, fashion and luxury', description: 'Compare the size, color or attachment bundle before choosing your version.', deals: shelf(featuredCandidates.filter(inCategories(['luxury', 'health-beauty', 'fashion']))) },
@@ -187,10 +185,9 @@ export default async function DealsPage({ searchParams }: Props) {
                   asin={deal.asin}
                   slug={deal.slug.current}
                   affiliateSlug={deal.affiliateSlug}
-                  image={deal.hasCardImage && deal.image ? urlFor(deal.image).width(400).url() : undefined}
-                  imageAlt={deal.hasCardImage ? deal.image?.alt : undefined}
+                  image={dealPhotoUrl(deal, 400)}
+                  imageAlt={deal.image?.alt}
                   imageAttribution={deal.image?.attribution}
-                  imageUrl={deal.hasCardImage ? deal.imageUrl : undefined}
                   expiryDate={deal.expiryDate}
                   priceVerifiedAt={deal.priceVerifiedAt}
                   priceVerificationSource={deal.priceVerificationSource}

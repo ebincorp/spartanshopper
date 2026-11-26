@@ -27,7 +27,7 @@ export interface Deal {
   salePrice: number
   originalPrice?: number
   description?: string
-  image?: SanityImage & { attribution?: DealPhotoAttribution }
+  image?: SanityImage & { attribution?: DealPhotoAttribution; originalFilename?: string }
   imageUrl?: string
   affiliateUrl: string
   category?: string
@@ -83,6 +83,7 @@ export interface Post {
   author?: string
   category?: string
   excerpt?: string
+  buyingSummary?: BuyingSummary
   coverImage?: SanityImage
   relatedCategory?: string
   seo?: {
@@ -104,6 +105,19 @@ export interface Post {
   }>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any[]
+}
+
+export interface BuyingSummary {
+  verdict: string
+  details?: string[]
+  evidence?: string
+  picks?: {
+    _key: string
+    name: string
+    fit?: string
+    check?: string
+    affiliateSlug?: string | null
+  }[]
 }
 
 export interface Sweepstake {

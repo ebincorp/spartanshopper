@@ -6,6 +6,7 @@ const genericCopy = /^(?:scent preference is subjective|the checked offer is sha
 const shortVariant = /\b(?:in (?:black|white|brown|grey|gray|red|blue|green)|size \w{1,5})[.!]?$/i
 const shortTitleOffer = /(?:\s*[:—–-]\s*|\s+|\()(?:save\s+)?(?:\d+(?:\.\d+)?%|\$\s*\d[\d,.]*)\s*(?:off|discount|savings)?(?:\s+with\s+coupon)?\)?\s*$/i
 const fitCue = /\b(?:check|match|measure|allow|suits?|choose|required?|requires|separately|only|compatible|clearance|instead|fits?|before installing)\b/i
+const purchaseCondition = /\b(?:subscription|membership|sold separately|not included|requires an additional)\b/i
 const ignoredWords = new Set(['this', 'that', 'with', 'from', 'includes', 'listed', 'listing', 'exact', 'selected', 'model', 'check', 'product', 'before', 'ordering', 'buying', 'retailer'])
 
 function words(value: string) {
@@ -38,6 +39,8 @@ export function dealCardFacts(title: string, description?: string | null) {
   })
   const first = facts[0]
   if (!first) return []
-  const second = facts.slice(1).find(sentence => fitCue.test(sentence)) || facts[1]
+  const remaining = facts.slice(1)
+  const second = remaining.find(sentence => purchaseCondition.test(sentence))
+    || remaining.find(sentence => fitCue.test(sentence)) || remaining[0]
   return second ? [first, second] : [first]
 }

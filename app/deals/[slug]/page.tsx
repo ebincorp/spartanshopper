@@ -1,6 +1,7 @@
 import { formatPriceCheckTime, hasFreshApiPrice } from '@/lib/deal-price'
 import { dealDisplayTitle, dealProductDescription } from '@/lib/deal-product-copy'
-import { client, urlFor } from '@/lib/sanity.client'
+import { client } from '@/lib/sanity.client'
+import { dealPhotoUrl } from '@/lib/deal-photo'
 import { dealBySlugQuery, dealSlugsQuery, relatedDealsQuery } from '@/lib/queries'
 import { autoGuideCategoriesForDeal } from '@/lib/deal-categories'
 import DealCard from '@/components/DealCard'
@@ -53,9 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ended = !deal.active || (endTime(deal.expiryDate) ?? Infinity) <= Date.now()
 
   const { title, description } = dealSearchCopy({ ...deal, title: dealDisplayTitle(deal.title) }, ended)
-  const imageUrl = deal.image
-    ? urlFor(deal.image).width(1200).height(630).url()
-    : deal.imageUrl || undefined
+  const imageUrl = dealPhotoUrl(deal, 1200, 630)
 
   return {
     ...pageMetadata({
@@ -80,12 +79,7 @@ export default async function DealPage({ params }: Props) {
 
   if (!deal) notFound()
 
-  // Prefer the Sanity asset; fall back to the Amazon-compliant imageUrl string so the
-  // Product schema `image` (and visible image) is never omitted — mirrors DealCard's
-  // `imageUrl || image`. This was the root cause of the GSC "Missing field image" errors
-  // when older deals carried only the imageUrl string and no Sanity asset.
-  // Keep shoppers who aren't ready to buy on the site: same-category deals
-  // (with real images) and guides from the matching post categories.
+  // Keep related deals and guides available to shoppers who are still comparing.
   // Hand-picked guides win; otherwise only auto-match for categories specific
   // enough to be a close fit, closest post category first, then newest. With
   // neither, the section is hidden and the page ends with related deals.
@@ -110,7 +104,7 @@ export default async function DealPage({ params }: Props) {
     ? pickedGuides
     : [...matchedGuides].sort((a, b) => categoryRank(a) - categoryRank(b)).slice(0, 3)
 
-  const imageUrl = deal.image ? urlFor(deal.image).width(800).url() : deal.imageUrl || null
+  const imageUrl = dealPhotoUrl(deal, 800)
   const shopUrl = deal.affiliateSlug ? `/go/${deal.affiliateSlug}` : deal.affiliateUrl
 
   const expired = !deal.active || (endTime(deal.expiryDate) ?? Infinity) <= Date.now()
@@ -120,7 +114,7 @@ export default async function DealPage({ params }: Props) {
   const price = !expired && hasFreshApiPrice(deal) ? deal : null
   const productJsonLd = dealProductJsonLd(
     { ...deal, title, description: productNotes.join(' ') },
-    imageUrl,
+    imageUrl ?? null,
     Boolean(price)
   )
   const pageJsonLd = productJsonLd ? serializeDealJsonLd(productJsonLd) : !expired
@@ -175,52 +169,19 @@ export default async function DealPage({ params }: Props) {
         )}
 
         <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-
-          {imageUrl && (
-            <div className="relative w-full h-64 sm:h-80 bg-white">
-              <Image
-                src={imageUrl}
-                alt={deal.image?.alt || title}
-                fill
-                className="object-contain"
-                priority
-                unoptimized
-              />
-              {expired && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                  <span className="text-white font-extrabold text-2xl tracking-widest">DEAL ENDED</span>
-                </div>
-              )}
-            </div>
-          )}
-          {deal.image && <DealPhotoCredit attribution={deal.image.attribution} />}
-
           <div className="p-6 sm:p-8">
-
-            <div className="flex items-center gap-3 mb-4">
-              <span
-                className="text-xs font-bold uppercase tracking-widest text-white px-3 py-1 rounded-full"
-                style={{ backgroundColor: '#E63946' }}
-              >
-                Deal
-              </span>
-              {expired && (
-                <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                  Ended
-                </span>
-              )}
-            </div>
-
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-950 mb-2">
               {title}
             </h1>
 
-            <p className="text-gray-500 text-sm font-medium mb-6">Store: {deal.store}</p>
+            <p className="mb-4 text-sm font-medium text-slate-600">{deal.store}</p>
 
             {productNotes.length > 0 && (
-              <section aria-labelledby="deal-product-notes" className="mb-6 rounded-xl bg-slate-50 p-5">
-                <h2 id="deal-product-notes" className="font-bold text-slate-900">What to check before you buy</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-700">{productNotes.join(' ')}</p>
+              <section aria-labelledby="deal-product-notes" className="mb-5 rounded-xl bg-slate-50 p-4">
+                <h2 id="deal-product-notes" className="font-bold text-slate-900">Fit and buying details</h2>
+                <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-6 text-slate-700">
+                  {productNotes.map((note, index) => <li key={index}>{note}</li>)}
+                </ul>
               </section>
             )}
 
@@ -234,26 +195,56 @@ export default async function DealPage({ params }: Props) {
             )}
 
             {expiryLabel && !expired && (
-              <p className="text-sm text-gray-400 mb-6">
-                Expires:{' '}
-                {expiryLabel}
-              </p>
+              <p className="mb-4 text-sm font-semibold text-slate-700">Ends {expiryLabel}</p>
             )}
 
-            <p className="mb-3 text-xs leading-relaxed text-gray-500">
-              Affiliate disclosure: We may earn a commission from qualifying purchases, at no extra cost to you.
-            </p>
-            {!expired && <a
-              href={shopUrl}
-              target="_blank"
-              rel="sponsored noopener noreferrer nofollow"
-              className="block w-full rounded-xl bg-[#B42332] py-4 text-center text-lg font-bold text-white hover:bg-rose-900"
-            >
-              Check price at {deal.store}
-            </a>}
-
+            {!expired && (
+              <>
+                <p className="mb-3 text-sm leading-5 text-slate-600">
+                  We may earn a commission from qualifying purchases.{' '}
+                  <Link href="/affiliate-disclosure" className="font-semibold text-rose-800 underline underline-offset-4">
+                    Affiliate disclosure
+                  </Link>
+                </p>
+                <a
+                  href={shopUrl}
+                  target="_blank"
+                  rel="sponsored noopener noreferrer nofollow"
+                  aria-label={`Check current price for ${title} at ${deal.store}`}
+                  className="flex min-h-11 items-center justify-center rounded-xl bg-[#B42332] px-3 py-3 text-center font-bold text-white hover:bg-rose-900"
+                >
+                  Check current price at {deal.store}
+                </a>
+              </>
+            )}
           </div>
+
+          {imageUrl && (
+            <figure className="border-t border-slate-100">
+              <div className="relative h-56 w-full sm:h-80">
+                <Image
+                  src={imageUrl}
+                  alt={deal.image?.alt || title}
+                  fill
+                  className="object-contain"
+                  unoptimized
+                />
+              </div>
+              <DealPhotoCredit attribution={deal.image?.attribution} />
+            </figure>
+          )}
         </div>
+
+        {!imageUrl && !expired && (
+          <section aria-labelledby="deal-buying-checks" className="mt-6 border-b border-slate-200 pb-6">
+            <h2 id="deal-buying-checks" className="text-lg font-bold text-slate-950">Before checkout</h2>
+            <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-6 text-slate-700">
+              <li>Match the model, color, size, or pack count to the listing.</li>
+              <li>Confirm which accessories come with it and which cost extra.</li>
+              <li>Check delivery and return terms for the selected seller.</li>
+            </ul>
+          </section>
+        )}
 
         {relatedDeals.length > 0 && (
           <section aria-labelledby="related-deals-title" className="mt-10">
@@ -277,10 +268,9 @@ export default async function DealPage({ params }: Props) {
                   asin={d.asin}
                   slug={d.slug.current}
                   affiliateSlug={d.affiliateSlug}
-                  image={d.image ? urlFor(d.image).width(400).url() : undefined}
+                  image={dealPhotoUrl(d, 400)}
                   imageAlt={d.image?.alt}
                   imageAttribution={d.image?.attribution}
-                  imageUrl={d.imageUrl}
                   expiryDate={d.expiryDate}
                   priceVerifiedAt={d.priceVerifiedAt}
                   priceVerificationSource={d.priceVerificationSource}
