@@ -11,8 +11,8 @@ export interface DealPhotoAttribution {
   title?: string
   author: string
   sourceUrl: string
-  licenseName: string
-  licenseUrl: string
+  licenseName?: string
+  licenseUrl?: string
   changes?: string
 }
 
