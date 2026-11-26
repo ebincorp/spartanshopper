@@ -38,11 +38,6 @@ export default defineType({
       type: 'number',
     }),
     defineField({
-      name: 'clipCoupon',
-      title: 'Clip coupon on retailer listing',
-      type: 'boolean',
-    }),
-    defineField({
       name: 'clipCouponObservation',
       title: 'Observed clip coupon',
       type: 'object',
