@@ -22,6 +22,8 @@ export default function DealShelf({ title, description, deals }: Props) {
               {...deal}
               slug={deal.slug.current}
               image={deal.image ? urlFor(deal.image).width(400).url() : undefined}
+              imageAlt={deal.image?.alt}
+              imageAttribution={deal.image?.attribution}
               compact
             />
           </div>

@@ -1,12 +1,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import SaveFindButton from './SaveFindButton'
+import DealPhotoCredit from './DealPhotoCredit'
 import { BlackFridayCardLabel, BlackFridayPrice } from './BlackFridayFlag'
 import { getBlackFridayTarget } from '@/lib/black-friday-offers'
 import { formatPriceCheckTime, hasFreshApiPrice, type ApiPriceObservation } from '@/lib/deal-price'
 import { dealCardFacts, dealDisplayTitle } from '@/lib/deal-product-copy'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
 import { endTime } from '@/lib/offer-status'
+import type { DealPhotoAttribution } from '@/lib/types'
 
 interface DealCardProps {
   title: string
@@ -19,6 +21,8 @@ interface DealCardProps {
   affiliateSlug?: string
   asin?: string
   image?: string
+  imageAlt?: string
+  imageAttribution?: DealPhotoAttribution
   imageUrl?: string
   expiryDate?: string
   priceVerifiedAt?: string
@@ -78,7 +82,7 @@ export default function DealCard(props: DealCardProps) {
         {imgSrc ? (
           <Image
             src={imgSrc}
-            alt={title}
+            alt={props.imageAlt || title}
             fill
             unoptimized
             className="object-contain group-hover:scale-105 transition-transform duration-300"
@@ -97,6 +101,7 @@ export default function DealCard(props: DealCardProps) {
           </div>
         )}
       </div>
+      {image && <DealPhotoCredit attribution={props.imageAttribution} />}
 
       <div className="flex flex-1 flex-col p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">{store}</p>

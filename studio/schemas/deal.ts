@@ -67,6 +67,29 @@ export default defineType({
           title: 'Alt Text',
           type: 'string',
         }),
+        defineField({
+          name: 'attribution',
+          title: 'Photo Attribution',
+          description: 'Add the credit required by the photo’s license.',
+          type: 'object',
+          fields: [
+            defineField({ name: 'author', title: 'Photographer', type: 'string', validation: (rule) => rule.required() }),
+            defineField({
+              name: 'sourceUrl',
+              title: 'Original Photo Page',
+              type: 'url',
+              validation: (rule) => rule.required().uri({ scheme: ['https'] }),
+            }),
+            defineField({ name: 'licenseName', title: 'License Name', type: 'string', validation: (rule) => rule.required() }),
+            defineField({
+              name: 'licenseUrl',
+              title: 'License URL',
+              type: 'url',
+              validation: (rule) => rule.required().uri({ scheme: ['https'] }),
+            }),
+            defineField({ name: 'changes', title: 'Photo Changes', type: 'string' }),
+          ],
+        }),
       ],
     }),
     defineField({

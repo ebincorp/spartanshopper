@@ -188,6 +188,8 @@ export default async function DealsPage({ searchParams }: Props) {
                   slug={deal.slug.current}
                   affiliateSlug={deal.affiliateSlug}
                   image={deal.hasCardImage && deal.image ? urlFor(deal.image).width(400).url() : undefined}
+                  imageAlt={deal.hasCardImage ? deal.image?.alt : undefined}
+                  imageAttribution={deal.image?.attribution}
                   imageUrl={deal.hasCardImage ? deal.imageUrl : undefined}
                   expiryDate={deal.expiryDate}
                   priceVerifiedAt={deal.priceVerifiedAt}

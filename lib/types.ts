@@ -7,6 +7,14 @@ export interface SanityImage {
   alt?: string
 }
 
+export interface DealPhotoAttribution {
+  author: string
+  sourceUrl: string
+  licenseName: string
+  licenseUrl: string
+  changes?: string
+}
+
 export interface Deal {
   /** Manufacturer brand when supplied separately from the retailer. */
   brand?: string
@@ -18,7 +26,7 @@ export interface Deal {
   salePrice: number
   originalPrice?: number
   description?: string
-  image?: SanityImage
+  image?: SanityImage & { attribution?: DealPhotoAttribution }
   imageUrl?: string
   affiliateUrl: string
   category?: string

@@ -96,7 +96,19 @@ export default async function HomePage() {
         <div className="flex flex-wrap justify-between gap-3 items-end mb-5"><h2 id="spartan-picks-title" className="text-3xl font-extrabold tracking-tight">Spartan Picks</h2><Link href="/deals" className="font-semibold underline underline-offset-4">View all deals</Link></div>
         <p className="text-slate-600 mb-2">See what each model includes and what to check before you buy.</p>
         <p className="text-sm text-slate-600 mb-5">Check the retailer for the current price and availability.</p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{deals.map(deal => <DealCard key={deal._id} {...deal} slug={deal.slug.current} image={deal.image ? urlFor(deal.image).width(400).url() : undefined} imageUrl={deal.imageUrl} />)}</div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {deals.map(deal => (
+            <DealCard
+              key={deal._id}
+              {...deal}
+              slug={deal.slug.current}
+              image={deal.image ? urlFor(deal.image).width(400).url() : undefined}
+              imageAlt={deal.image?.alt}
+              imageAttribution={deal.image?.attribution}
+              imageUrl={deal.imageUrl}
+            />
+          ))}
+        </div>
         {guides.length > 0 && <aside className="mt-6 rounded-xl border border-slate-200 bg-white p-5" aria-label="Related shopping guides">
           <h3 className="font-bold text-lg">Work out what you need before checkout</h3>
           <p className="mt-1 text-sm text-slate-600">These related guides explain the choices behind the purchase.</p>

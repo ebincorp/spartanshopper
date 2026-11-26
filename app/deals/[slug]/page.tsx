@@ -4,6 +4,7 @@ import { client, urlFor } from '@/lib/sanity.client'
 import { dealBySlugQuery, dealSlugsQuery, relatedDealsQuery } from '@/lib/queries'
 import { autoGuideCategoriesForDeal } from '@/lib/deal-categories'
 import DealCard from '@/components/DealCard'
+import DealPhotoCredit from '@/components/DealPhotoCredit'
 import type { Deal, Post } from '@/lib/types'
 import type { Metadata } from 'next'
 import Image from 'next/image'
@@ -179,7 +180,7 @@ export default async function DealPage({ params }: Props) {
             <div className="relative w-full h-64 sm:h-80 bg-white">
               <Image
                 src={imageUrl}
-                alt={title}
+                alt={deal.image?.alt || title}
                 fill
                 className="object-contain"
                 priority
@@ -192,6 +193,7 @@ export default async function DealPage({ params }: Props) {
               )}
             </div>
           )}
+          {deal.image && <DealPhotoCredit attribution={deal.image.attribution} />}
 
           <div className="p-6 sm:p-8">
 
@@ -276,6 +278,8 @@ export default async function DealPage({ params }: Props) {
                   slug={d.slug.current}
                   affiliateSlug={d.affiliateSlug}
                   image={d.image ? urlFor(d.image).width(400).url() : undefined}
+                  imageAlt={d.image?.alt}
+                  imageAttribution={d.image?.attribution}
                   imageUrl={d.imageUrl}
                   expiryDate={d.expiryDate}
                   priceVerifiedAt={d.priceVerifiedAt}
