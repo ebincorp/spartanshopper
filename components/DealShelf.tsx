@@ -13,9 +13,9 @@ export default function DealShelf({ title, description, deals }: Props) {
 
   return (
     <section aria-label={title} className="mb-10">
-      <h2 className="text-2xl font-extrabold tracking-tight text-slate-950">{title}</h2>
-      {description && <p className="mt-1 text-sm text-slate-600">{description}</p>}
-      <div className="-mx-4 mt-4 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto px-4 pb-3 sm:mx-0 sm:px-0">
+      <h2 className="text-xl font-extrabold tracking-tight text-slate-950 sm:text-2xl">{title}</h2>
+      {description && <p className="mt-1 hidden text-sm text-slate-600 sm:block">{description}</p>}
+      <div className="-mx-4 mt-3 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto px-4 pb-3 sm:mx-0 sm:mt-4 sm:px-0">
         {deals.map(deal => (
           <div key={deal._id} className="flex w-[min(76vw,268px)] shrink-0 snap-start [&>article]:w-full">
             <DealCard

@@ -31,6 +31,22 @@ test('renders specific fit and included parts without reproducing stale price pr
   assert.doesNotMatch(html, /\$\d|Price checked|% OFF/)
 })
 
+test('shows required equipment before the retailer link on both deal card layouts', () => {
+  const requirement = 'A compatible Sync Module is required and sold separately.'
+  const addOn = {
+    ...product,
+    title: 'Test Outdoor Camera Add-on',
+    description: `This add-on expands coverage at a second location. ${requirement}`,
+  }
+
+  for (const compact of [false, true]) {
+    const html = renderToStaticMarkup(createElement(DealCard, { ...addOn, compact }))
+    const termPosition = html.indexOf(requirement)
+    const retailerPosition = html.indexOf('href="/go/test-camera"')
+    assert.ok(termPosition >= 0 && retailerPosition > termPosition)
+  }
+})
+
 test('requires a fresh Creators API observation for the exact Amazon price', () => {
   const api = {
     ...product, priceVerificationSource: CREATORS_API_PRICE_SOURCE,

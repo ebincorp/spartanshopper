@@ -104,9 +104,9 @@ export default function DealCard(props: DealCardProps) {
           <Link href={`/deals/${slug}`} className="hover:underline">{title}</Link>
         </h3>
         {facts.length > 0 && (
-          <ul className="mt-3 space-y-2 text-sm leading-5 text-slate-700">
-            {facts.slice(0, compact ? 1 : 2).map(fact => (
-              <li key={fact} className="border-l-2 border-slate-200 pl-2.5">{fact}</li>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-5 text-slate-700">
+            {facts.map(fact => (
+              <li key={fact}>{fact}</li>
             ))}
           </ul>
         )}
