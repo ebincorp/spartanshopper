@@ -8,6 +8,7 @@ export interface SanityImage {
 }
 
 export interface DealPhotoAttribution {
+  title?: string
   author: string
   sourceUrl: string
   licenseName: string

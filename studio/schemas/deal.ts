@@ -73,6 +73,7 @@ export default defineType({
           description: 'Add the credit required by the photo’s license.',
           type: 'object',
           fields: [
+            defineField({ name: 'title', title: 'Original Photo Title', type: 'string' }),
             defineField({ name: 'author', title: 'Photographer', type: 'string', validation: (rule) => rule.required() }),
             defineField({
               name: 'sourceUrl',
