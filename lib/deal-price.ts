@@ -18,6 +18,12 @@ export interface ApiPriceObservation {
   checkedAt: string
 }
 
+export interface ClipCouponObservation {
+  label: string
+  checkedAt: string
+  terms?: string
+}
+
 interface DealPriceObservation {
   store?: string | null
   salePrice?: number | null

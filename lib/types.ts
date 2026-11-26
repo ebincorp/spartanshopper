@@ -1,5 +1,5 @@
 import type { CouponVerification } from './couponVerification'
-import type { ApiPriceObservation } from './deal-price'
+import type { ApiPriceObservation, ClipCouponObservation } from './deal-price'
 
 export interface SanityImage {
   _type: 'image'
@@ -42,6 +42,7 @@ export interface Deal {
   priceApiObservation?: ApiPriceObservation
   /** Price depends on a no-code clip coupon on the Amazon product page. */
   clipCoupon?: boolean
+  clipCouponObservation?: ClipCouponObservation
   /** Hand-picked guides (deal page only); overrides the automatic category match. */
   relatedGuides?: { _id: string; title: string; slug: { current: string } }[]
 }

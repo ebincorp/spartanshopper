@@ -39,6 +39,22 @@ export default defineType({
     }),
     defineField({
       name: 'clipCoupon',
+      title: 'Clip coupon on retailer listing',
+      type: 'boolean',
+    }),
+    defineField({
+      name: 'clipCouponObservation',
+      title: 'Observed clip coupon',
+      type: 'object',
+      hidden: ({ document }) => document?.clipCoupon !== true,
+      fields: [
+        defineField({ name: 'label', title: 'Verified coupon label', type: 'string', validation: Rule => Rule.required() }),
+        defineField({ name: 'checkedAt', title: 'Checked at', type: 'datetime', validation: Rule => Rule.required() }),
+        defineField({ name: 'terms', title: 'Material restriction', type: 'string' }),
+      ],
+    }),
+    defineField({
+      name: 'clipCoupon',
       title: 'Clip Coupon (no code)',
       type: 'boolean',
       initialValue: false,

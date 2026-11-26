@@ -2,9 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import SaveFindButton from './SaveFindButton'
 import DealPhotoCredit from './DealPhotoCredit'
+import DealClipCoupon from './DealClipCoupon'
 import { BlackFridayCardLabel, BlackFridayPrice } from './BlackFridayFlag'
 import { getBlackFridayTarget } from '@/lib/black-friday-offers'
-import { formatPriceCheckTime, hasFreshApiPrice, type ApiPriceObservation } from '@/lib/deal-price'
+import { formatPriceCheckTime, hasFreshApiPrice, type ApiPriceObservation, type ClipCouponObservation } from '@/lib/deal-price'
 import { dealCardFacts, dealDisplayTitle } from '@/lib/deal-product-copy'
 import { offerExpiryLabel } from '@/lib/offerExpiry'
 import { endTime } from '@/lib/offer-status'
@@ -28,6 +29,7 @@ interface DealCardProps {
   priceVerificationSource?: string
   priceApiObservation?: ApiPriceObservation
   clipCoupon?: boolean
+  clipCouponObservation?: ClipCouponObservation
 }
 
 function getExpiryStatus(expiryDate?: string): 'expired' | 'soon' | 'ok' | null {
@@ -92,6 +94,7 @@ export default function DealCard(props: DealCardProps) {
           <Link href={`/deals/${slug}`} className="hover:underline">{title}</Link>
         </h3>
         <p className="mt-1 text-sm text-slate-600">{store}</p>
+        {!expired && props.clipCoupon && <DealClipCoupon observation={props.clipCouponObservation} />}
         {facts.length > 0 && (
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-5 text-slate-700">
             {facts.map(fact => (

@@ -27,11 +27,12 @@ const DEAL_DATE_FILTER = `active == true
 // checks both the dimensions and the illustration metadata before showing a photo.
 const DEAL_HAS_CARD_IMAGE = `image.asset->metadata.dimensions.width > 1`
 const DEAL_IMAGE_FIELDS = `image { ..., "originalFilename": asset->originalFilename }, "hasCardImage": ${DEAL_HAS_CARD_IMAGE} == true`
+const DEAL_CLIP_COUPON_FIELDS = `clipCouponObservation { label, checkedAt, terms }`
 export const dealsQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER}] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
     description, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, priceVerificationSource, priceApiObservation, clipCoupon,
-    ${DEAL_IMAGE_FIELDS}
+    ${DEAL_IMAGE_FIELDS}, ${DEAL_CLIP_COUPON_FIELDS}
   }
 `
 
@@ -39,7 +40,7 @@ export const featuredDealsQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER} && defined(slug.current)] | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
     description, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, priceVerificationSource, priceApiObservation, clipCoupon,
-    ${DEAL_IMAGE_FIELDS}
+    ${DEAL_IMAGE_FIELDS}, ${DEAL_CLIP_COUPON_FIELDS}
   }
 `
 
@@ -47,7 +48,7 @@ export const dealsByCategoryQuery = `
   *[_type == "deal" && ${DEAL_DATE_FILTER} && category == $category] | order(_createdAt desc) {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
     description, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, priceVerificationSource, priceApiObservation, clipCoupon,
-    ${DEAL_IMAGE_FIELDS}
+    ${DEAL_IMAGE_FIELDS}, ${DEAL_CLIP_COUPON_FIELDS}
   }
 `
 
@@ -56,7 +57,7 @@ export const relatedDealsQuery = `
   | order(_createdAt desc)[0...3] {
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
     description, imageUrl, affiliateUrl, category, asin, expiryDate, active, priceVerifiedAt, priceVerificationSource, priceApiObservation, clipCoupon,
-    ${DEAL_IMAGE_FIELDS}
+    ${DEAL_IMAGE_FIELDS}, ${DEAL_CLIP_COUPON_FIELDS}
   }
 `
 
@@ -65,7 +66,7 @@ export const dealBySlugQuery = `
     brand,
     _id, title, slug, "affiliateSlug": affiliateSlug.current, store, salePrice, originalPrice,
     description, imageUrl, affiliateUrl, category, asin, rating, reviewCount, expiryDate, active, priceVerifiedAt, priceVerificationSource, priceApiObservation, clipCoupon,
-    ${DEAL_IMAGE_FIELDS},
+    ${DEAL_IMAGE_FIELDS}, ${DEAL_CLIP_COUPON_FIELDS},
     // Filter refs before dereferencing: unpublished/future posts drop out, picked order is kept.
     "relatedGuides": relatedGuides[defined(@->slug.current) && @->publishedAt <= now()]->{ _id, title, slug }
   }

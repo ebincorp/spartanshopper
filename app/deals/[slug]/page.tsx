@@ -1,4 +1,5 @@
 import { formatPriceCheckTime, hasFreshApiPrice } from '@/lib/deal-price'
+import DealClipCoupon from '@/components/DealClipCoupon'
 import { dealDisplayTitle, dealProductDescription } from '@/lib/deal-product-copy'
 import { client } from '@/lib/sanity.client'
 import { dealPhotoUrl } from '@/lib/deal-photo'
@@ -175,6 +176,9 @@ export default async function DealPage({ params }: Props) {
             </h1>
 
             <p className="mb-4 text-sm font-medium text-slate-600">{deal.store}</p>
+            {!expired && deal.clipCoupon && (
+              <div className="mb-5"><DealClipCoupon observation={deal.clipCouponObservation} showCheckTime /></div>
+            )}
 
             {productNotes.length > 0 && (
               <section aria-labelledby="deal-product-notes" className="mb-5 rounded-xl bg-slate-50 p-4">
@@ -276,6 +280,7 @@ export default async function DealPage({ params }: Props) {
                   priceVerificationSource={d.priceVerificationSource}
                   priceApiObservation={d.priceApiObservation}
                   clipCoupon={d.clipCoupon}
+                  clipCouponObservation={d.clipCouponObservation}
                 />
               ))}
             </div>

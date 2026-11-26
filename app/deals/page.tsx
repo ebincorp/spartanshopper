@@ -193,6 +193,7 @@ export default async function DealsPage({ searchParams }: Props) {
                   priceVerificationSource={deal.priceVerificationSource}
                   priceApiObservation={deal.priceApiObservation}
                   clipCoupon={deal.clipCoupon}
+                  clipCouponObservation={deal.clipCouponObservation}
                 />
               ))}
             </div>
