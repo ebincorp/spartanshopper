@@ -97,10 +97,6 @@ One teaspoon (5g) mixed into 16 oz of water 30 minutes before your largest meal.
 
 [Shop Organic India Whole Husk Psyllium on Amazon](https://www.spartanshopper.com/go/organic-india-psyllium)
 
-### ColonBroom — Best for Combined Gut Health and Weight Management
-
-If your weight management goals are tied to bloating, irregular digestion, or gut dysbiosis, ColonBroom's prebiotic-enhanced psyllium formula addresses both simultaneously.
-
 ---
 
 ## Realistic Expectations

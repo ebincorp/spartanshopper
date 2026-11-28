@@ -60,7 +60,7 @@ Sea moss is dense in carrageenan and sulfated polysaccharides — complex carboh
 
 These effects typically resolve within 1–2 weeks as your gut adjusts. Starting at half the recommended serving and working up gradually over two weeks significantly reduces the likelihood of digestive disruption.
 
-If you're already using psyllium husk or ColonBroom for regularity, be aware that stacking multiple high-fiber supplements at once can amplify the digestive adjustment period. See our [psyllium husk for constipation guide](https://www.spartanshopper.com/blog/psyllium-husk-constipation) for guidance on layering fiber supplements.
+If you're already using psyllium husk for regularity, be aware that stacking multiple high-fiber supplements at once can amplify the digestive adjustment period. See our [psyllium husk for constipation guide](https://www.spartanshopper.com/blog/psyllium-husk-constipation) for guidance on layering fiber supplements.
 
 ---
 

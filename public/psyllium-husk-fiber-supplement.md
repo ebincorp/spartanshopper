@@ -96,10 +96,6 @@ If you need a flavored option to maintain daily consistency, Metamucil's Premium
 
 [Shop Metamucil Premium Blend on Amazon](https://www.spartanshopper.com/go/metamucil-premium-blend)
 
-### ColonBroom — Best for Gut Health Stack
-
-ColonBroom combines psyllium husk with a prebiotic blend for people whose digestive issues go beyond simple irregularity. The strawberry flavor makes daily compliance easier and the formula is free of aspartame and artificial dyes.
-
 ---
 
 ## Side Effects and Who Should Be Cautious

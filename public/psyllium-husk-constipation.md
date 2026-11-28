@@ -105,18 +105,6 @@ Whole husk powder has a slightly different texture than refined psyllium husk po
 
 ---
 
-### ColonBroom — Best for Constipation + Gut Health Combined
-
-**ColonBroom** is a psyllium husk-based supplement that adds a prebiotic fiber blend specifically targeting gut microbiome support alongside constipation relief. It's the product to consider if your constipation is tied to broader gut issues — bloating, irregular cycle, or a history of antibiotic use that may have disrupted your microbiome.
-
-It comes in a strawberry flavor that makes daily use easier to maintain, and the dose is clean relative to many flavored fiber supplements — no aspartame, no artificial dyes.
-
-- **Dose**: 1 scoop in 300ml water once daily
-- **Best for**: Constipation with concurrent bloating or gut dysbiosis
-- **Clean label**: ✅ No aspartame, no artificial dyes
-
----
-
 ### Metamucil 4-in-1 Psyllium Fiber — The Familiar Option
 
 **Metamucil** is the most recognized psyllium husk brand in the world and it works — the active ingredient is identical to every other psyllium product on this list. The tradeoff is the standard formulation contains sucrose (sugar) and Yellow 6 food dye. If you're using it for occasional constipation relief and those ingredients don't concern you, it's a perfectly functional option.
@@ -199,7 +187,7 @@ Psyllium husk is one of the few fiber types that is well-tolerated in IBS, parti
 
 Psyllium husk for constipation is not a gimmick — it's a mechanically sound, clinically studied intervention that works when you take it correctly. The difference between "it worked" and "it did nothing" is almost always hydration and patience.
 
-For most people, **NOW Foods Psyllium Husk Capsules** is the cleanest, most consistent daily option. If you prefer powder and want organic sourcing, **Organic India Whole Husk Psyllium** is the better pick. And if your constipation is part of a broader gut health picture with bloating or irregularity, **ColonBroom** brings in the prebiotic angle that plain psyllium doesn't.
+For most people, **NOW Foods Psyllium Husk Capsules** is the cleanest, most consistent daily option. If you prefer powder and want organic sourcing, **Organic India Whole Husk Psyllium** is the better pick.
 
 Start at 5g, drink more water than you think you need, give it 48–72 hours, and you'll have a clear read on whether it's working.
 
