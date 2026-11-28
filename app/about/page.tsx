@@ -124,7 +124,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-extrabold text-gray-900 mb-4">Our Affiliate Relationships</h2>
           <p className="text-gray-600 leading-relaxed mb-3">
             SpartanShopper earns commissions through affiliate programs, primarily via{' '}
-            <strong>Amazon Associates</strong>, along with additional affiliate networks (including MaxBounty, ClickDealer, and CJ Affiliate) for select deals, coupons, and sweepstakes. When you click a link and complete a qualifying action, we may receive a small commission from the advertiser.
+            <strong>Amazon Associates</strong>, along with additional affiliate networks (including MaxBounty and CJ Affiliate) for select deals, coupons, and sweepstakes. When you click a link and complete a qualifying action, we may receive a small commission from the advertiser.
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
             This never affects the price you pay — you get the same deal, discount, or free entry regardless of whether we earn a commission. These relationships are what allow us to keep SpartanShopper free and updated.
