@@ -115,8 +115,6 @@ It comes in a strawberry flavor that makes daily use easier to maintain, and the
 - **Best for**: Constipation with concurrent bloating or gut dysbiosis
 - **Clean label**: ✅ No aspartame, no artificial dyes
 
-[Shop ColonBroom Fiber Supplement on Amazon](https://www.spartanshopper.com/go/colonbroom-fiber)
-
 ---
 
 ### Metamucil 4-in-1 Psyllium Fiber — The Familiar Option

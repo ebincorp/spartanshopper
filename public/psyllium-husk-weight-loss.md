@@ -101,8 +101,6 @@ One teaspoon (5g) mixed into 16 oz of water 30 minutes before your largest meal.
 
 If your weight management goals are tied to bloating, irregular digestion, or gut dysbiosis, ColonBroom's prebiotic-enhanced psyllium formula addresses both simultaneously.
 
-[Shop ColonBroom on Amazon](https://www.spartanshopper.com/go/colonbroom-fiber)
-
 ---
 
 ## Realistic Expectations
